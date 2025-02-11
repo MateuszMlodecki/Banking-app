@@ -1,0 +1,45 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./App.css";
+import { Register } from "./pages/FormAuth/Register/Register";
+import { Login } from "./pages/FormAuth/Login/Login";
+import { LandingPage } from "./Layout/LandingPage/LandingpPage";
+import { UserDetailsProvider } from "./context/UserContext";
+import { StepperParent } from "./pages/UserDetails/StepperParent";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./themes/theme";
+import { Dashboard } from "./Layout/Dashboard/Dashboard";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/stepper",
+    element: <StepperParent />,
+  },
+  {
+    path: "/Dashboard",
+    element: <Dashboard />,
+  },
+]);
+const App = () => {
+  return (
+    <>
+      <ThemeProvider theme={theme}>
+        <UserDetailsProvider>
+          <RouterProvider router={router} />
+        </UserDetailsProvider>
+      </ThemeProvider>
+    </>
+  );
+};
+
+export default App;
