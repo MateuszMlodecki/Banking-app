@@ -18,6 +18,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LockIcon from "@mui/icons-material/Lock";
 import { Vault } from "../../components/Vault";
 import { useNavigate } from "react-router-dom";
+import { theme } from "../../themes/theme";
 
 const drawerWidth = 240;
 const navItems = ["Sign In", "Sign Up"];
@@ -44,15 +45,12 @@ export const LandingPage = (props: DrawerAppBarProps) => {
       onClick={handleDrawerToggle}
       sx={{
         textAlign: "center",
-        color: "f7f5f2",
-        backgroundColor: "#222222",
-        height: "100%",
       }}
     >
-      <Typography variant="h6" sx={{ my: 2, color: "#F7F5F2" }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
         BankingApp
       </Typography>
-      <Divider sx={{ borderColor: "#444" }} />
+      <Divider sx={{ borderColor: theme.palette.grey[800] }} />
       <List>
         {navItems.map((item: string) => (
           <ListItem

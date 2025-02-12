@@ -8,11 +8,13 @@ import { StepperParent } from "./pages/UserDetails/StepperParent";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./themes/theme";
 import { Dashboard } from "./Layout/Dashboard/Dashboard";
+import { NewLandingPage } from "./Layout/LandingPage/newLandingPage";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LandingPage />,
   },
+  { path: "/newlanding", element: <NewLandingPage /> },
   {
     path: "/register",
     element: <Register />,

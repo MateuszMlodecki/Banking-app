@@ -1,5 +1,4 @@
 import { createTheme, PaletteColorOptions } from "@mui/material";
-import { purple } from "@mui/material/colors";
 
 // export { default as amber } from './amber';
 // export { default as blue } from './blue';
@@ -25,26 +24,32 @@ import { purple } from "@mui/material/colors";
 // deklarowanie modulow typescriptowych https://www.totaltypescript.com/books/total-typescript-essentials/modules-scripts-and-declaration-files
 declare module "@mui/material/styles" {
   interface Palette {
-    third?: PaletteColorOptions;
+    tertiary: PaletteColorOptions;
   }
   interface PaletteOptions {
-    third?: PaletteColorOptions;
+    tertiary?: PaletteColorOptions;
   }
 }
 
 export const theme = createTheme({
   palette: {
     primary: {
-      main: purple[500], // tutaj powinien byc twoj fioletowy
-      light: purple[300], // 1-2 odcienie jasniejszy
-      dark: purple[700], // 1-2 odcienie ciemniejszy
-      contrastText: "#fff", // np dla fioletu bialy
+      main: "#333333", //szary
+      light: "474747", // 1-2 odcienie jasniejszy
+      dark: "#1f1f1f", // 1-2 odcienie ciemniejszy
+      contrastText: "#F7F5F2", // np dla fioletu bialy
     },
     secondary: {
-      main: "#1c1c1c", //kolor dodatkowy
-      light: "#333333", // 1-2 odcienie jasniejszy
-      dark: "#444444", // 1-2 odcienie ciemniejszy
+      main: "#690DAD", //fioletowy
+      light: "#8010D1", // 1-2 odcienie jasniejszy
+      dark: "#520A85", // 1-2 odcienie ciemniejszy
       contrastText: "#F7F5F2", // kontrastowy
+    },
+    tertiary: {
+      main: "#99FF66", //zielony
+      light: "#BBFF99",
+      dark: "#85FF47",
+      contrastText: "",
     },
     grey: {
       // te odcienie szarosci masz po to, zeby ich uzywac
@@ -60,7 +65,7 @@ export const theme = createTheme({
       900: "#212121",
     },
     text: {
-      primary: "#f2f2f2",
+      primary: "#F7F5F2",
       secondary: "#F7F5F2",
       disabled: "#bdbdbd",
     },
@@ -80,6 +85,12 @@ export const theme = createTheme({
     },
     h2: {
       fontSize: "2.2rem",
+    },
+    h3: {
+      fontSize: "1.875rem",
+    },
+    h4: {
+      fontSize: "1.5rem",
     },
     button: {
       fontSize: "0.875rem",
