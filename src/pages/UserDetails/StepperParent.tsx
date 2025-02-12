@@ -6,6 +6,7 @@ import { AddressInfo } from "./AddressInfo";
 import { BankDetails } from "./BankDetails";
 import { Summary } from "./Summary";
 import { Step1Values, Step2Values, Step3Values } from "../../types/types";
+import { theme } from "../../themes/theme"; // Import your theme
 
 export const StepperParent: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -71,21 +72,30 @@ export const StepperParent: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
-        backgroundColor: "background.default",
+        backgroundColor: theme.palette.background.default,
+        padding: 3,
       }}
     >
       <Box
         sx={{
-          marginTop: "200px",
+          marginTop: "50px",
           display: "flex",
           flexDirection: "column",
-          justifySelf: "center",
-          backgroundColor: "background.default",
+          justifyContent: "center",
+          backgroundColor: theme.palette.background.paper,
           borderRadius: 1,
           boxShadow: 3,
           padding: 3,
         }}
       >
+        <Stepper activeStep={activeStep} sx={{ marginBottom: 3 }}>
+          {steps.map((step) => (
+            <Step key={step.id}>
+              <StepLabel>{step.label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+
         <Box>
           {steps.map(({ id, component }) => activeStep === id && component)}
           <Box sx={{ marginTop: 3, display: "flex", justifyContent: "center" }}>
@@ -99,8 +109,9 @@ export const StepperParent: React.FC = () => {
                 onClick={handleNext}
                 disabled={!isStepValid}
                 sx={{
-                  backgroundColor: "#6a0dad",
-                  "&:hover": { backgroundColor: "#520A85" },
+                  backgroundColor: theme.palette.secondary.main,
+                  "&:hover": { backgroundColor: theme.palette.secondary.dark },
+                  marginLeft: 2,
                 }}
               >
                 Next
@@ -108,13 +119,6 @@ export const StepperParent: React.FC = () => {
             )}
           </Box>
         </Box>
-        <Stepper sx={{ margin: "30px" }} activeStep={activeStep}>
-          {steps.map((step) => (
-            <Step key={step.id}>
-              <StepLabel>{step.label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
       </Box>
     </Box>
   );
