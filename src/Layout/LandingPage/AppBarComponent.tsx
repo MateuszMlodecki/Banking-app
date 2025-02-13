@@ -26,7 +26,7 @@ export const AppBarComponent: React.FC<AppBarComponentProps> = ({
   };
 
   return (
-    <AppBar component="nav" sx={{ background: theme.palette.primary.main }}>
+    <AppBar component="nav" sx={{ background: theme.palette.primary.dark }}>
       <Toolbar>
         <IconButton
           aria-label="open drawer"
@@ -35,7 +35,7 @@ export const AppBarComponent: React.FC<AppBarComponentProps> = ({
           sx={{
             mr: 2,
             display: { sm: "none" },
-            background: theme.palette.primary.main,
+            background: theme.palette.primary.dark,
             borderRadius: "50%",
             padding: "8px",
             "&:hover": { background: theme.palette.grey[800] },

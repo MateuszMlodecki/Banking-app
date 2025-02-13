@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../themes/theme";
+import { drawerWidth } from "../../utils/constants";
 
 const navItems = ["Sign In", "Sign Up"];
 
@@ -19,7 +20,7 @@ interface NavigationDrawerProps {
   handleDrawerToggle: () => void;
 }
 
-export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
+export const LandingPageDrawerComponent: React.FC<NavigationDrawerProps> = ({
   mobileOpen,
   handleDrawerToggle,
 }) => {
@@ -41,9 +42,10 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
         display: { xs: "block", sm: "none" },
         "& .MuiDrawer-paper": {
           boxSizing: "border-box",
-          width: 240,
+          width: drawerWidth,
           backgroundColor: theme.palette.primary.dark,
-          borderRight: "2px solid #444",
+          borderRight: "2px solid",
+          borderColor: theme.palette.grey[800],
         },
       }}
     >

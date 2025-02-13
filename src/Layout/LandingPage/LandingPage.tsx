@@ -1,10 +1,10 @@
 import React from "react";
 import { CssBaseline, Box } from "@mui/material";
 import { AppBarComponent } from "./AppBarComponent";
-import { NavigationDrawer } from "./NavigationDrawer";
+import { LandingPageDrawerComponent } from "./LandingPageDrawerComponent";
 import { MainContent } from "./MainContent";
 
-export const NewLandingPage: React.FC = () => {
+export const LandingPage: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
 
   const handleDrawerToggle = () => {
@@ -15,7 +15,7 @@ export const NewLandingPage: React.FC = () => {
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <CssBaseline />
       <AppBarComponent handleDrawerToggle={handleDrawerToggle} />
-      <NavigationDrawer
+      <LandingPageDrawerComponent
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
       />

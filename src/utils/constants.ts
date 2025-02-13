@@ -13,4 +13,4 @@ export const formatAccountNumber = (value: string) => {
 
   return formatted;
 };
-export const drawerWidth = 240;
+export const drawerWidth = "240px";

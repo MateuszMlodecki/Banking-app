@@ -3,7 +3,9 @@ import { Box, Typography } from "@mui/material";
 export const Overview = () => {
   return (
     <Box>
-      <Typography sx={{ color: "text.primary" }}>Overview</Typography>
+      <Typography sx={{ color: "text.primary" }}>
+        OverviewOverviewOverviewOverviewOverviewOverview
+      </Typography>
     </Box>
   );
 };

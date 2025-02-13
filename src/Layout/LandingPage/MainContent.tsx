@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
-import { Vault } from "../../components/Vault";
+import { Vault } from "../../components/VaultAnimation/Vault";
 import { theme } from "../../themes/theme";
 
 export const MainContent: React.FC = () => {

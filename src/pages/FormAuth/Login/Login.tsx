@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { emailRegex } from "../../../utils/constants";
 import { LoginValues } from "../../../types/types";
 import { useNavigate } from "react-router-dom";
+import { theme } from "../../../themes/theme";
 
 const validationSchema = yup.object({
   email: yup
@@ -50,15 +51,19 @@ export const Login = () => {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
-        backgroundColor: "background.default",
+        backgroundColor: theme.palette.primary.dark,
       }}
     >
       <CssBaseline />
-      <AppBar position="static" sx={{ background: "primary.main" }}>
+      <AppBar position="static" sx={{ background: theme.palette.primary.dark }}>
         <Toolbar>
           <Typography
             variant="h6"
-            sx={{ flexGrow: 1, color: "text.primary", fontWeight: "bold" }}
+            sx={{
+              flexGrow: 1,
+              color: theme.palette.primary.contrastText,
+              fontWeight: "bold",
+            }}
           >
             BankingApp
           </Typography>
@@ -68,7 +73,7 @@ export const Login = () => {
         component="form"
         onSubmit={handleSubmit(onSubmit)}
         sx={{
-          backgroundColor: "background.default",
+          backgroundColor: theme.palette.primary.dark,
           display: "flex",
           flexDirection: "column",
           gap: "15px",
@@ -82,7 +87,10 @@ export const Login = () => {
       >
         <Typography
           variant="h5"
-          sx={{ color: "text.primary", textAlign: "center" }}
+          sx={{
+            color: theme.palette.primary.contrastText,
+            textAlign: "center",
+          }}
         >
           Please provide your details to authenticate
         </Typography>
@@ -92,7 +100,7 @@ export const Login = () => {
           name="email"
           error={!!errors.email}
           helperText={errors.email?.message ?? ""}
-          sx={{ backgroundColor: "background.default" }}
+          sx={{ backgroundColor: theme.palette.primary.dark }}
         />
         <TextField
           {...register("password")}
@@ -101,14 +109,14 @@ export const Login = () => {
           type="password"
           error={!!errors.password}
           helperText={errors.password?.message ?? ""}
-          sx={{ backgroundColor: "background.default" }}
+          sx={{ backgroundColor: theme.palette.primary.dark }}
         />
         <Button
           type="submit"
           variant="contained"
           sx={{
-            backgroundColor: "#6a0dad",
-            "&:hover": { backgroundColor: "#520A85" },
+            backgroundColor: theme.palette.secondary.main,
+            "&:hover": { backgroundColor: theme.palette.secondary.dark },
           }}
         >
           Login
