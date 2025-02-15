@@ -8,7 +8,7 @@ interface AppBarComponentProps {
   handleDrawerToggle: () => void;
 }
 
-export const DashboardAppBarComponent: React.FC<AppBarComponentProps> = ({
+export const DashboardAppBar: React.FC<AppBarComponentProps> = ({
   handleDrawerToggle,
 }) => {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, CssBaseline, Toolbar } from "@mui/material";
-import { DashboardAppBarComponent } from "./DashboardAppBarComponent";
+import { DashboardAppBar } from "./DashboardAppBar";
 import { DrawerComponent } from "./DrawerComponent";
 import { DashboardContent } from "./DashboardContent";
 import { ActiveViewType } from "../../types/types";
@@ -23,7 +23,7 @@ export const Dashboard: React.FC = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <CssBaseline />
-      <DashboardAppBarComponent handleDrawerToggle={handleDrawerToggle} />
+      <DashboardAppBar handleDrawerToggle={handleDrawerToggle} />
       <DrawerComponent
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}

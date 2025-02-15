@@ -20,7 +20,7 @@ interface NavigationDrawerProps {
   handleDrawerToggle: () => void;
 }
 
-export const LandingPageDrawerComponent: React.FC<NavigationDrawerProps> = ({
+export const LandingPageDrawer: React.FC<NavigationDrawerProps> = ({
   mobileOpen,
   handleDrawerToggle,
 }) => {

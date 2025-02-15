@@ -69,6 +69,7 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
       <Box>
         <Toolbar>
           <Typography
+            variant="h6"
             sx={{
               marginX: "auto",
               padding: 2,
@@ -77,9 +78,10 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
             }}
           >
             John Doe
+            {/* Notatka dla mnie z przyszlosci, tutaj dynamiczna nazwa uzytkownika */}
           </Typography>
         </Toolbar>
-        <Divider sx={{ borderColor: "#444" }} />
+        <Divider sx={{ borderColor: theme.palette.grey[800] }} />
         <List>
           {menuList.map(({ text, icon }) => (
             <ListItem key={text} disablePadding>

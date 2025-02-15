@@ -21,7 +21,7 @@ export const MainContent: React.FC = () => {
         sx={{
           paddingTop: "200px",
           display: "flex",
-          flexDirection: "row",
+          flexDirection: { xs: "column", sm: "row" },
           alignItems: "center",
         }}
       >
@@ -43,11 +43,11 @@ export const MainContent: React.FC = () => {
 
           <Box
             sx={{
-              width: "66%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               marginTop: "100px",
+              marginBottom: "25px",
               padding: "10px",
               color: theme.palette.secondary.light,
               background: theme.palette.primary.main,

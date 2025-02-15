@@ -16,7 +16,7 @@ interface AppBarComponentProps {
   handleDrawerToggle: () => void;
 }
 
-export const AppBarComponent: React.FC<AppBarComponentProps> = ({
+export const LandingPageAppBar: React.FC<AppBarComponentProps> = ({
   handleDrawerToggle,
 }) => {
   const navigate = useNavigate();
