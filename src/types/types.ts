@@ -1,11 +1,7 @@
 export type RegisterValues = {
-  name: string;
-  lastName: string;
-  age: number;
   email: string;
   password: string;
   repeatPassword: string;
-  city?: string | null;
 };
 export type LoginValues = Pick<RegisterValues, "email" | "password">;
 
