@@ -40,10 +40,12 @@ export const DashboardAppBar: React.FC<AppBarComponentProps> = ({
           noWrap
           component="div"
           sx={{
+            display: "flex",
+            flexDirection: { xs: "row-reverse", sm: "row" },
             flexGrow: 1,
             color: theme.palette.primary.contrastText,
             fontWeight: "bold",
-            marginLeft: drawerWidth,
+            marginLeft: { sm: drawerWidth },
           }}
         >
           BankingApp dashboard

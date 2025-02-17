@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, CssBaseline, Toolbar } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import { DashboardAppBar } from "./DashboardAppBar";
 import { DrawerComponent } from "./DrawerComponent";
 import { DashboardContent } from "./DashboardContent";
@@ -39,7 +39,6 @@ export const Dashboard: React.FC = () => {
           overflow: "hidden",
         }}
       >
-        <Toolbar />
         <DashboardContent activeView={activeView} />
       </Box>
     </Box>
