@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { Register } from "./pages/FormAuth/Register/Register";
 import { Login } from "./pages/FormAuth/Login/Login";
-import { LandingPage } from "./Layout/LandingPage/LandingpPage";
+import { LandingPage } from "./Layout/LandingPage/LandingPage";
 import { UserDetailsProvider } from "./context/UserContext";
 import { StepperParent } from "./pages/UserDetails/StepperParent";
 import { ThemeProvider } from "@mui/material";
@@ -13,6 +13,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <LandingPage />,
   },
+
   {
     path: "/register",
     element: <Register />,

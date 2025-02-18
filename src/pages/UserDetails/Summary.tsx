@@ -9,7 +9,7 @@ export const Summary: React.FC = () => {
   return (
     <Box>
       <Typography variant="h2">Summary</Typography>
-      <Typography sx={{ maxWidth: "50%", color: "black" }}>
+      <Typography sx={{ maxWidth: "50%" }}>
         {JSON.stringify(userDetails, null, 2)}
       </Typography>
     </Box>

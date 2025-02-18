@@ -1,140 +1,136 @@
 import * as yup from "yup";
-import { emailRegex } from "../../../utils/constants";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import React, { useState } from "react";
 import { RegisterValues } from "../../../types/types";
+import { theme } from "../../../themes/theme";
+import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar";
+import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 
-const validationSchemaForRegister = yup.object({
-  name: yup
-    .string()
-    .required("Name is required")
-    .min(2, "Name must be at least 2 characters long")
-    .max(15, "Name must be at most 15 characters long"),
-  lastName: yup
-    .string()
-    .required("Lastname is required")
-    .min(2, "Lastname must be at least 2 characters long")
-    .max(25, "Lastname must be at most 25 characters long"),
-  age: yup
-    .number()
-    .required("Age is required")
-    .typeError("Age have to be a number")
-    .min(18, "You must be atleast 18 years old"),
+const registerSchema = yup.object({
   email: yup
     .string()
     .required("Email is required")
-    .matches(emailRegex, "Please provide valid email"),
+    .email("Please provide a valid email"),
   password: yup.string().required("You must provide your password"),
   repeatPassword: yup
     .string()
     .required("Please retype your password.")
     .oneOf([yup.ref("password")], "Your passwords do not match"),
-  city: yup.string().notRequired(),
 });
 
 export const Register = () => {
+  const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
   const [successMessage, setSuccessMessage] = useState("");
-  const methods = useForm<RegisterValues>({
-    mode: "onChange",
-    resolver: yupResolver(validationSchemaForRegister),
-    defaultValues: {
-      name: "",
-      lastName: "",
-      //age: 0,
-      email: "",
-      password: "",
-      repeatPassword: "",
-      city: "",
-    },
-  });
-
+  const [errorMessage, setErrorMessage] = useState("");
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = methods;
-  const onSubmit = (data: RegisterValues) => {
-    console.log(data);
-    setSuccessMessage("Registration succesful");
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterValues>({
+    mode: "onChange",
+    resolver: yupResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      repeatPassword: "",
+    },
+  });
+
+  const onSubmit = async (data: RegisterValues) => {
+    try {
+      const response = await fetch("http://localhost:4000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(result.message || "Registration failed");
+        return;
+      }
+
+      setSuccessMessage("Registration successful!");
+      setErrorMessage("");
+    } catch (error) {
+      console.error("Registration error:", error);
+      setErrorMessage("Something went wrong. Please try again later.");
+    }
   };
+
   return (
     <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       sx={{
-        backgroundColor: "#ffffff",
+        color: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.default,
         display: "flex",
         flexDirection: "column",
-        gap: "5px",
+        gap: "10px",
         padding: "20px",
-        borderRadius: "8px",
         boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
         maxWidth: "400px",
         margin: "auto",
       }}
     >
-      <Typography sx={{ color: "black" }}>
-        Please provide your details to register
-      </Typography>
-      <TextField
-        {...register("name")}
-        label="Name"
-        name="name"
-        error={!!errors.name}
-        helperText={errors.name?.message ?? ""}
+      <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
+      <LandingPageDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
       />
-      <TextField
-        {...register("lastName")}
-        label="LastName"
-        name="lastName"
-        error={!!errors.lastName}
-        helperText={errors.lastName?.message ?? ""}
-      />
-      <TextField
-        {...register("age")}
-        label="Age"
-        name="age"
-        type="number"
-        error={!!errors.age}
-        helperText={errors.age?.message ?? ""}
-      />
+      <Typography>Register with your email</Typography>
+
       <TextField
         {...register("email")}
         label="Email"
-        name="email"
         error={!!errors.email}
-        helperText={errors.email?.message ?? ""}
+        helperText={errors.email?.message}
       />
       <TextField
         {...register("password")}
         label="Password"
-        name="password"
         type="password"
         error={!!errors.password}
-        helperText={errors.password?.message ?? ""}
+        helperText={errors.password?.message}
       />
       <TextField
         {...register("repeatPassword")}
-        label="RepeatPassword"
-        name="repeatPassword"
+        label="Repeat Password"
         type="password"
         error={!!errors.repeatPassword}
-        helperText={errors.repeatPassword?.message ?? ""}
+        helperText={errors.repeatPassword?.message}
       />
-      <TextField
-        {...register("city")}
-        label="City (Optional)"
-        name="city"
-        error={!!errors.city}
-        helperText={errors.city?.message ?? ""}
-      />
-      <Button type="submit" variant="contained">
-        sign in
+
+      <Button
+        sx={{ background: theme.palette.secondary.light }}
+        type="submit"
+        variant="contained"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Registering..." : "Register"}
       </Button>
+
       {successMessage && (
-        <Typography sx={{ color: "black" }}>{successMessage}</Typography>
+        <Typography variant="h6" sx={{ color: theme.palette.success.main }}>
+          {successMessage}
+        </Typography>
+      )}
+      {errorMessage && (
+        <Typography variant="h6" sx={{ color: theme.palette.error.main }}>
+          {errorMessage}
+        </Typography>
       )}
     </Box>
   );

@@ -1,11 +1,7 @@
 export type RegisterValues = {
-  name: string;
-  lastName: string;
-  age: number;
   email: string;
   password: string;
   repeatPassword: string;
-  city?: string | null;
 };
 export type LoginValues = Pick<RegisterValues, "email" | "password">;
 
@@ -32,3 +28,5 @@ export type Step2Values = Pick<
 export type Step3Values = Pick<UserDetails, "bankName" | "accountNumber">;
 
 export type FormData = Step1Values | Step2Values | Step3Values;
+
+export type ActiveViewType = "Overview" | "Transactions" | "Payment" | "Report";
