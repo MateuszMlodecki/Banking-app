@@ -8,12 +8,11 @@ import { theme } from "../../themes/theme";
 
 export const Dashboard: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [activeView, setActiveView] =
-    React.useState<ActiveViewType>("Overview");
-
   const handleDrawerToggle = () => {
     setMobileOpen((prev) => !prev);
   };
+  const [activeView, setActiveView] =
+    React.useState<ActiveViewType>("Overview");
 
   const handleMenuItemClick = (view: ActiveViewType) => {
     setActiveView(view);

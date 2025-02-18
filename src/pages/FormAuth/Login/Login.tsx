@@ -1,21 +1,16 @@
+import React from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  CssBaseline,
-  AppBar,
-  Toolbar,
-} from "@mui/material";
+import { Box, Button, TextField, Typography, CssBaseline } from "@mui/material";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { emailRegex } from "../../../utils/constants";
 import { LoginValues } from "../../../types/types";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../../themes/theme";
+import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar";
+import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 
-const validationSchema = yup.object({
+const loginSchema = yup.object({
   email: yup
     .string()
     .required("Email is required")
@@ -24,9 +19,14 @@ const validationSchema = yup.object({
 });
 
 export const Login = () => {
+  const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
   const methods = useForm<LoginValues>({
     mode: "all",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -55,20 +55,11 @@ export const Login = () => {
       }}
     >
       <CssBaseline />
-      <AppBar position="static" sx={{ background: theme.palette.primary.dark }}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{
-              flexGrow: 1,
-              color: theme.palette.primary.contrastText,
-              fontWeight: "bold",
-            }}
-          >
-            BankingApp
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
+      <LandingPageDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}

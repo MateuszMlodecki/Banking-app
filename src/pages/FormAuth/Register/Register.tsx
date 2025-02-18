@@ -2,11 +2,13 @@ import * as yup from "yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import React, { useState } from "react";
 import { RegisterValues } from "../../../types/types";
 import { theme } from "../../../themes/theme";
+import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar";
+import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 
-const validationSchemaForRegister = yup.object({
+const registerSchema = yup.object({
   email: yup
     .string()
     .required("Email is required")
@@ -19,6 +21,10 @@ const validationSchemaForRegister = yup.object({
 });
 
 export const Register = () => {
+  const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const {
@@ -27,7 +33,7 @@ export const Register = () => {
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
     mode: "onChange",
-    resolver: yupResolver(validationSchemaForRegister),
+    resolver: yupResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -79,6 +85,11 @@ export const Register = () => {
         margin: "auto",
       }}
     >
+      <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
+      <LandingPageDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
       <Typography>Register with your email</Typography>
 
       <TextField
@@ -112,12 +123,12 @@ export const Register = () => {
       </Button>
 
       {successMessage && (
-        <Typography sx={{ color: "green", fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ color: theme.palette.success.main }}>
           {successMessage}
         </Typography>
       )}
       {errorMessage && (
-        <Typography sx={{ color: "red", fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ color: theme.palette.error.main }}>
           {errorMessage}
         </Typography>
       )}

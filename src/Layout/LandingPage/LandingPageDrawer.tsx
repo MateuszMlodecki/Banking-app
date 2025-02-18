@@ -27,7 +27,7 @@ export const LandingPageDrawer: React.FC<NavigationDrawerProps> = ({
   const navigate = useNavigate();
   const navRoutes: Record<string, string> = {
     "Sign In": "/Login",
-    "Sign Up": "/Stepper",
+    "Sign Up": "/Register",
   };
 
   return (
