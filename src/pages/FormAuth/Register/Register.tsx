@@ -1,4 +1,3 @@
-import * as yup from "yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,24 +6,15 @@ import { RegisterValues } from "../../../types/types";
 import { theme } from "../../../themes/theme";
 import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar";
 import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
-
-const registerSchema = yup.object({
-  email: yup
-    .string()
-    .required("Email is required")
-    .email("Please provide a valid email"),
-  password: yup.string().required("You must provide your password"),
-  repeatPassword: yup
-    .string()
-    .required("Please retype your password.")
-    .oneOf([yup.ref("password")], "Your passwords do not match"),
-});
+import { registerSchema } from "../../../utils/AuthSchemas";
+import { useNavigate } from "react-router-dom";
 
 export const Register = () => {
   const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+  const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const {
@@ -61,8 +51,9 @@ export const Register = () => {
         return;
       }
 
-      setSuccessMessage("Registration successful!");
+      setSuccessMessage("Registration successful! Moving to Login page.");
       setErrorMessage("");
+      setTimeout(() => navigate("/Login"), 3000);
     } catch (error) {
       console.error("Registration error:", error);
       setErrorMessage("Something went wrong. Please try again later.");
