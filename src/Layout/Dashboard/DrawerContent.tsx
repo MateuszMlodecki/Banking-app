@@ -17,7 +17,8 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import HelpIcon from "@mui/icons-material/Help";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PersonIcon from "@mui/icons-material/Person";
-import Logout from "@mui/icons-material/Logout";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 import { theme } from "../../themes/theme";
 
 type ActiveViewType = "Overview" | "Transactions" | "Payment" | "Report";
@@ -29,6 +30,12 @@ interface DrawerContentProps {
 export const DrawerContent: React.FC<DrawerContentProps> = ({
   handleMenuItemClick,
 }) => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   const menuList: { text: ActiveViewType; icon: JSX.Element }[] = [
     {
       text: "Overview",
@@ -53,6 +60,30 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
       icon: (
         <AssessmentIcon sx={{ color: theme.palette.primary.contrastText }} />
       ),
+    },
+  ];
+
+  const bottomMenu = [
+    // action:undefined narazie jako placeholder
+    {
+      text: "Help center",
+      icon: <HelpIcon sx={{ color: theme.palette.primary.contrastText }} />,
+      action: undefined,
+    },
+    {
+      text: "Settings",
+      icon: <SettingsIcon sx={{ color: theme.palette.primary.contrastText }} />,
+      action: undefined,
+    },
+    {
+      text: "Profile",
+      icon: <PersonIcon sx={{ color: theme.palette.primary.contrastText }} />,
+      action: undefined,
+    },
+    {
+      text: "Logout",
+      icon: <LogoutIcon sx={{ color: theme.palette.primary.contrastText }} />,
+      action: handleLogout,
     },
   ];
 
@@ -104,38 +135,9 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
       <Box>
         <Divider sx={{ borderColor: "#444", marginBottom: 2 }} />
         <List>
-          {[
-            {
-              text: "Help center",
-              icon: (
-                <HelpIcon sx={{ color: theme.palette.primary.contrastText }} />
-              ),
-            },
-            {
-              text: "Settings",
-              icon: (
-                <SettingsIcon
-                  sx={{ color: theme.palette.primary.contrastText }}
-                />
-              ),
-            },
-            {
-              text: "Profile",
-              icon: (
-                <PersonIcon
-                  sx={{ color: theme.palette.primary.contrastText }}
-                />
-              ),
-            },
-            {
-              text: "Logout",
-              icon: (
-                <Logout sx={{ color: theme.palette.primary.contrastText }} />
-              ),
-            },
-          ].map(({ text, icon }) => (
+          {bottomMenu.map(({ text, icon, action }) => (
             <ListItem key={text} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={action}>
                 <ListItemIcon>{icon}</ListItemIcon>
                 <ListItemText
                   primary={

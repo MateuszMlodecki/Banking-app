@@ -8,6 +8,7 @@ import { theme } from "../../../themes/theme";
 import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar";
 import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 import { loginSchema } from "../../../utils/AuthSchemas";
+import { AuthGuard } from "../../../components/AuthGuard";
 
 export const Login = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -63,6 +64,7 @@ export const Login = () => {
         backgroundColor: theme.palette.primary.dark,
       }}
     >
+      <AuthGuard redirectIfAuthenticated />
       <CssBaseline />
       <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
       <LandingPageDrawer

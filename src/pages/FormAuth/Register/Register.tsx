@@ -8,6 +8,7 @@ import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar
 import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 import { registerSchema } from "../../../utils/AuthSchemas";
 import { useNavigate } from "react-router-dom";
+import { AuthGuard } from "../../../components/AuthGuard";
 
 export const Register = () => {
   const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
@@ -76,6 +77,7 @@ export const Register = () => {
         margin: "auto",
       }}
     >
+      <AuthGuard redirectIfAuthenticated />
       <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
       <LandingPageDrawer
         mobileOpen={mobileOpen}

@@ -8,6 +8,7 @@ import { StepperParent } from "./pages/UserDetails/StepperParent";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./themes/theme";
 import { Dashboard } from "./Layout/Dashboard/Dashboard";
+import { AuthGuard } from "./components/AuthGuard";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/Dashboard",
-    element: <Dashboard />,
+    element: (
+      <AuthGuard>
+        <Dashboard />
+      </AuthGuard>
+    ),
   },
 ]);
 const App = () => {
