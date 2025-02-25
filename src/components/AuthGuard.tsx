@@ -1,52 +1,59 @@
-import { ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
-interface AuthGuardProps {
-  children?: ReactNode;
-  redirectIfAuthenticated?: boolean;
-}
+export const AuthGuard = () => {
+	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(true);
 
-export const AuthGuard = ({
-  children,
-  redirectIfAuthenticated = false,
-}: AuthGuardProps) => {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
+	useEffect(() => {
+		const checkToken = async () => {
+			try {
+				const token = localStorage.getItem("token");
+				const pathname = window.location.pathname.split("/")[1];
+				const isLendingPage = pathname === "";
+				const isLoginPage = pathname === "login";
+				const isRegisterPage = pathname === "register";
 
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = localStorage.getItem("token");
+				const isAuthPage = isLendingPage || isLoginPage || isRegisterPage;
 
-      if (!token) {
-        if (children) navigate("/login");
-        setIsLoading(false);
-        return;
-      }
+				if (!token && !isAuthPage) {
+					navigate("/login");
+					return;
+				}
 
-      try {
-        const response = await fetch("http://localhost:4000/protected", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+				if (token) {
+					const response = await fetch("http://localhost:4000/validate-token", {
+						headers: { Authorization: `Bearer ${token}` },
+					});
 
-        if (response.ok) {
-          if (redirectIfAuthenticated) navigate("/Dashboard");
-        } else {
-          localStorage.removeItem("token");
-          if (children) navigate("/login");
-        }
-      } catch (error) {
-        console.error("Token validation error:", error);
-        localStorage.removeItem("token");
-        if (children) navigate("/login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+					if (response.status === 200 && isAuthPage) {
+						navigate("/dashboard");
+						return;
+					}
 
-    checkToken();
-  }, [navigate, redirectIfAuthenticated, children]);
+					//pobieranie profilu
+					// jak bedzie obecny to po prostu return;
+					// jak nie bedzie profilu to przekieruj do /stepper'a
+					// mozesz dodac w localStorage cos w stylu onboardingCompleted: boolean
+					// jesli jest profil uzupelniony to zapisz to w localStorage, zeby nie robic w kolko zbednych requestow
+				}
+			} catch {
+				localStorage.removeItem("token");
+				navigate("/login");
+			} finally {
+				setIsLoading(false);
+			}
+		};
 
-  if (isLoading) return <p>Loading...</p>;
+		checkToken();
+	}, [navigate]);
 
-  return <>{children}</>;
+	if (isLoading) return <CircularProgress />;
+
+	return (
+		<>
+			<Outlet />
+		</>
+	);
 };
