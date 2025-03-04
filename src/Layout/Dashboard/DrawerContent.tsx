@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+	Alert,
 	Box,
 	Divider,
 	List,
@@ -21,15 +22,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../themes/theme";
 
-type ActiveViewType = "Overview" | "Transactions" | "Payment" | "Report";
-
-interface DrawerContentProps {
-	handleMenuItemClick: (view: ActiveViewType) => void;
-}
-
-export const DrawerContent: React.FC<DrawerContentProps> = ({
-	handleMenuItemClick,
-}) => {
+export const DrawerContent: React.FC = () => {
 	const navigate = useNavigate();
 	const [profile, setProfile] = useState<{
 		firstName: string;
@@ -42,10 +35,6 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 	const handleLogout = () => {
 		localStorage.removeItem("token");
 		navigate("/login");
-	};
-
-	const handleEditProfile = () => {
-		navigate("/stepper");
 	};
 
 	useEffect(() => {
@@ -80,22 +69,26 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 		fetchProfile();
 	}, []);
 
-	const menuList: { text: ActiveViewType; icon: JSX.Element }[] = [
+	const menuList: { text: string; icon: JSX.Element; path: string }[] = [
 		{
 			text: "Overview",
 			icon: <DashboardIcon />,
+			path: "/dashboard",
 		},
 		{
 			text: "Transactions",
 			icon: <AccountBalanceIcon />,
+			path: "/user/transactions",
 		},
 		{
 			text: "Payment",
 			icon: <PaymentIcon />,
+			path: "/user/payments",
 		},
 		{
 			text: "Report",
 			icon: <AssessmentIcon />,
+			path: "/user/report",
 		},
 	];
 
@@ -111,7 +104,7 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 		{
 			text: "Profile",
 			icon: <PersonIcon />,
-			action: handleEditProfile,
+			action: () => navigate("/profile"),
 		},
 		{
 			text: "Logout",
@@ -145,10 +138,18 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 					</Typography>
 				</Toolbar>
 				<Divider sx={{ borderColor: theme.palette.grey[800] }} />
+				{!!localStorage.getItem("onboardingCompleted") && (
+					<Alert severity="warning">
+						Please fill your profile to access your account functions
+					</Alert>
+				)}
 				<List>
-					{menuList.map(({ text, icon }) => (
+					{menuList.map(({ text, icon, path }) => (
 						<ListItem key={text} disablePadding>
-							<ListItemButton onClick={() => handleMenuItemClick(text)}>
+							<ListItemButton
+								disabled={!!localStorage.getItem("onboardingCompleted")}
+								onClick={() => navigate(path)}
+							>
 								<ListItemIcon
 									sx={{ color: theme.palette.primary.contrastText }}
 								>

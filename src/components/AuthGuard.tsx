@@ -28,7 +28,7 @@ export const AuthGuard = () => {
 					});
 
 					if (response.status === 200 && isAuthPage) {
-						navigate("/dashboard");
+						navigate("/user");
 						return;
 					}
 

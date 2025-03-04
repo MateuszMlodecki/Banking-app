@@ -9,6 +9,9 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./themes/theme";
 import { Dashboard } from "./Layout/Dashboard/Dashboard";
 import { AuthGuard } from "./components/AuthGuard";
+import { Transactions } from "./components/DashboardComponents/Transactions";
+import { Reports } from "./components/DashboardComponents/Report";
+import { Payment } from "./components/DashboardComponents/Payment";
 
 const router = createBrowserRouter([
 	{
@@ -27,11 +30,26 @@ const router = createBrowserRouter([
 				path: "/login",
 				element: <Login />,
 			},
+
 			{
-				path: "/stepper",
-				element: <StepperParent />,
+				path: "/user",
+				element: <Dashboard />,
+				children: [
+					//tu powinien byc drugi guard, ktory sprawdza czy onboardingCompleted jest true
+					//jesli nie to przekieruj na /user/profile
+					{ path: "/user/transactions", element: <Transactions /> },
+					{ path: "/user/reports", element: <Reports /> },
+					{ path: "/user/payments", element: <Payment /> },
+					{
+						path: "/user/profile",
+						element: <StepperParent />,
+					},
+				],
 			},
-			{ path: "/dashboard", element: <Dashboard /> },
+			{
+				path: "*",
+				element: <div>404</div>,
+			},
 		],
 	},
 ]);
