@@ -1,4 +1,4 @@
-import { createTheme, PaletteColorOptions } from "@mui/material";
+import { createTheme } from "@mui/material";
 
 // export { default as amber } from './amber';
 // export { default as blue } from './blue';
@@ -20,16 +20,6 @@ import { createTheme, PaletteColorOptions } from "@mui/material";
 // export { default as red } from './red';
 // export { default as teal } from './teal';
 // export { default as yellow } from './yellow';
-
-// deklarowanie modulow typescriptowych https://www.totaltypescript.com/books/total-typescript-essentials/modules-scripts-and-declaration-files
-declare module "@mui/material/styles" {
-  interface Palette {
-    tertiary: PaletteColorOptions;
-  }
-  interface PaletteOptions {
-    tertiary?: PaletteColorOptions;
-  }
-}
 
 export const theme = createTheme({
   palette: {

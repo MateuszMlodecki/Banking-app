@@ -8,39 +8,43 @@ import { StepperParent } from "./pages/UserDetails/StepperParent";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./themes/theme";
 import { Dashboard } from "./Layout/Dashboard/Dashboard";
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingPage />,
-  },
+import { AuthGuard } from "./components/AuthGuard";
 
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/stepper",
-    element: <StepperParent />,
-  },
-  {
-    path: "/Dashboard",
-    element: <Dashboard />,
-  },
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <AuthGuard />,
+		children: [
+			{
+				index: true,
+				element: <LandingPage />,
+			},
+			{
+				path: "/register",
+				element: <Register />,
+			},
+			{
+				path: "/login",
+				element: <Login />,
+			},
+			{
+				path: "/stepper",
+				element: <StepperParent />,
+			},
+			{ path: "/dashboard", element: <Dashboard /> },
+		],
+	},
 ]);
 const App = () => {
-  return (
-    <>
-      <ThemeProvider theme={theme}>
-        <UserDetailsProvider>
-          <RouterProvider router={router} />
-        </UserDetailsProvider>
-      </ThemeProvider>
-    </>
-  );
+	return (
+		<>
+			<ThemeProvider theme={theme}>
+				<UserDetailsProvider>
+					<RouterProvider router={router} />
+				</UserDetailsProvider>
+			</ThemeProvider>
+		</>
+	);
 };
 
 export default App;

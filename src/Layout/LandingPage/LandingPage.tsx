@@ -5,21 +5,21 @@ import { LandingPageDrawer } from "./LandingPageDrawer";
 import { MainContent } from "./MainContent";
 
 export const LandingPage: React.FC = () => {
-  const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
+	const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
+	const handleDrawerToggle = () => {
+		setMobileOpen((prevState) => !prevState);
+	};
 
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <CssBaseline />
-      <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
-      <LandingPageDrawer
-        mobileOpen={mobileOpen}
-        handleDrawerToggle={handleDrawerToggle}
-      />
-      <MainContent />
-    </Box>
-  );
+	return (
+		<Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+			<CssBaseline />
+			<LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
+			<LandingPageDrawer
+				mobileOpen={mobileOpen}
+				handleDrawerToggle={handleDrawerToggle}
+			/>
+			<MainContent />
+		</Box>
+	);
 };
