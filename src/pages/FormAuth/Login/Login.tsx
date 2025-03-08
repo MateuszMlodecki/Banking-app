@@ -59,7 +59,7 @@ export const Login = () => {
 			setSuccessMessage("Login successful!");
 
 			if (!onboardingCompleted) {
-				navigate("/profile");
+				navigate("/user/profile");
 			} else {
 				navigate("/user");
 			}
@@ -133,7 +133,7 @@ export const Login = () => {
 					variant="contained"
 					disabled={isSubmitting}
 					sx={{
-						backgroundColor: theme.palette.tertiary.main,
+						backgroundColor: theme.palette.primary.main,
 						"&:hover": { backgroundColor: theme.palette.secondary.dark },
 					}}
 				>

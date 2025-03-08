@@ -53,7 +53,7 @@ export const Register = () => {
 
 			setSuccessMessage("Registration successful! Moving to Login page.");
 			setErrorMessage("");
-			setTimeout(() => navigate("/Login"), 3000);
+			setTimeout(() => navigate("/Login"), 1000);
 		} catch (error) {
 			console.error("Registration error:", error);
 			setErrorMessage("Something went wrong. Please try again later.");

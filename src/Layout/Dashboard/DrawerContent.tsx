@@ -32,8 +32,12 @@ export const DrawerContent: React.FC = () => {
 		lastName: "",
 	});
 
+	const onboardingCompleted =
+		localStorage.getItem("onboardingCompleted") === "true";
+
 	const handleLogout = () => {
 		localStorage.removeItem("token");
+		localStorage.removeItem("onboardingCompleted");
 		navigate("/login");
 	};
 
@@ -70,47 +74,25 @@ export const DrawerContent: React.FC = () => {
 	}, []);
 
 	const menuList: { text: string; icon: JSX.Element; path: string }[] = [
-		{
-			text: "Overview",
-			icon: <DashboardIcon />,
-			path: "/dashboard",
-		},
+		{ text: "Overview", icon: <DashboardIcon />, path: "/user" },
 		{
 			text: "Transactions",
 			icon: <AccountBalanceIcon />,
 			path: "/user/transactions",
 		},
-		{
-			text: "Payment",
-			icon: <PaymentIcon />,
-			path: "/user/payments",
-		},
-		{
-			text: "Report",
-			icon: <AssessmentIcon />,
-			path: "/user/report",
-		},
+		{ text: "Payment", icon: <PaymentIcon />, path: "/user/payments" },
+		{ text: "Reports", icon: <AssessmentIcon />, path: "/user/reports" },
 	];
 
 	const bottomMenu = [
-		{
-			text: "Help center",
-			icon: <HelpIcon />,
-		},
-		{
-			text: "Settings",
-			icon: <SettingsIcon />,
-		},
+		{ text: "Help center", icon: <HelpIcon /> },
+		{ text: "Settings", icon: <SettingsIcon /> },
 		{
 			text: "Profile",
 			icon: <PersonIcon />,
-			action: () => navigate("/profile"),
+			action: () => navigate("/user/profile"),
 		},
-		{
-			text: "Logout",
-			icon: <LogoutIcon />,
-			action: handleLogout,
-		},
+		{ text: "Logout", icon: <LogoutIcon />, action: handleLogout },
 	];
 
 	return (
@@ -138,7 +120,7 @@ export const DrawerContent: React.FC = () => {
 					</Typography>
 				</Toolbar>
 				<Divider sx={{ borderColor: theme.palette.grey[800] }} />
-				{!!localStorage.getItem("onboardingCompleted") && (
+				{!onboardingCompleted && (
 					<Alert severity="warning">
 						Please fill your profile to access your account functions
 					</Alert>
@@ -147,7 +129,7 @@ export const DrawerContent: React.FC = () => {
 					{menuList.map(({ text, icon, path }) => (
 						<ListItem key={text} disablePadding>
 							<ListItemButton
-								disabled={!!localStorage.getItem("onboardingCompleted")}
+								disabled={!onboardingCompleted}
 								onClick={() => navigate(path)}
 							>
 								<ListItemIcon
