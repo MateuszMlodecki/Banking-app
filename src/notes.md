@@ -85,3 +85,14 @@ na kolejnej lekcji:
 
 - axios + jwt/autentykacja
 - node i express
+
+Praca domowa 10.03
+
+1. Poprawic PR
+2. Przeronic fetch na axios
+3. Zaczac ekran platnosci
+   - ekran wysylania przelewu jakw mBank
+   - najpierw basic front
+   - potem basic backend
+   - udoskonalenie walidacji
+   - udoskonalenie funkcjonalnosci

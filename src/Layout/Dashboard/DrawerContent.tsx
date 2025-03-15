@@ -21,6 +21,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../themes/theme";
+import { errorHandler } from "../../utils/errorHandler";
 
 export const DrawerContent: React.FC = () => {
 	const navigate = useNavigate();
@@ -65,7 +66,7 @@ export const DrawerContent: React.FC = () => {
 					const profileData = await response.json();
 					setProfile(profileData);
 				} catch (error) {
-					console.error("Error fetching profile:", error);
+					errorHandler(error);
 				}
 			}
 		};

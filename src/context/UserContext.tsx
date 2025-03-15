@@ -2,40 +2,40 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { UserDetails } from "../types/types";
 
 interface UserDetailsContextType {
-  userDetails: UserDetails;
-  setUserDetails: React.Dispatch<React.SetStateAction<UserDetails>>;
+	userDetails: UserDetails;
+	setUserDetails: React.Dispatch<React.SetStateAction<UserDetails>>;
 }
 
 const UserDetailsContext = createContext<UserDetailsContextType | undefined>(
-  undefined
+	undefined
 );
 
 export const useUserDetails = () => {
-  const context = useContext(UserDetailsContext);
-  if (!context) {
-    throw new Error("useUserContext musi być używane wewnątrz UserProvider");
-  }
-  return context;
+	const context = useContext(UserDetailsContext);
+	if (!context) {
+		throw new Error("useUserContext musi być używane wewnątrz UserProvider");
+	}
+	return context;
 };
 
 export const UserDetailsProvider: React.FC<{ children: ReactNode }> = ({
-  children,
+	children,
 }) => {
-  const [userDetails, setUserDetails] = useState<UserDetails>({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    streetName: "",
-    streetNumber: "",
-    flatNumber: "",
-    city: "",
-    bankName: "",
-    accountNumber: "",
-  });
+	const [userDetails, setUserDetails] = useState<UserDetails>({
+		firstName: "",
+		lastName: "",
+		dateOfBirth: "",
+		streetName: "",
+		streetNumber: "",
+		flatNumber: "",
+		city: "",
+		bankName: "",
+		accountNumber: "",
+	});
 
-  return (
-    <UserDetailsContext.Provider value={{ userDetails, setUserDetails }}>
-      {children}
-    </UserDetailsContext.Provider>
-  );
+	return (
+		<UserDetailsContext.Provider value={{ userDetails, setUserDetails }}>
+			{children}
+		</UserDetailsContext.Provider>
+	);
 };

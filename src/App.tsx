@@ -34,7 +34,7 @@ const router = createBrowserRouter([
 
 			{
 				path: "/user",
-				element: <Dashboard />,
+				element: <Dashboard />, // to powinien byc layout
 				children: [
 					{
 						path: "/user/profile",
@@ -43,6 +43,7 @@ const router = createBrowserRouter([
 					{
 						element: <OnboardingGuard />,
 						children: [
+							{ path: "/user/dashboard", element: <div> dashboarrd</div> },
 							{ path: "/user/transactions", element: <Transactions /> },
 							{ path: "/user/reports", element: <Reports /> },
 							{ path: "/user/payments", element: <Payment /> },

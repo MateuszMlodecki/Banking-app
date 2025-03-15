@@ -8,6 +8,7 @@ import { theme } from "../../../themes/theme";
 import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar";
 import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 import { loginSchema } from "../../../utils/AuthSchemas";
+import axios from "axios";
 
 export const Login = () => {
 	const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -33,15 +34,10 @@ export const Login = () => {
 		setSuccessMessage("");
 
 		try {
-			const response = await fetch("http://localhost:4000/login", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(data),
-			});
+			const response = await axios.post("/login", data);
+			const result = await response.data;
 
-			const result = await response.json();
-
-			if (!response.ok) {
+			if (!response.data) {
 				setErrorMessage(result.message || "Invalid credentials.");
 				return;
 			}
@@ -58,11 +54,7 @@ export const Login = () => {
 
 			setSuccessMessage("Login successful!");
 
-			if (!onboardingCompleted) {
-				navigate("/user/profile");
-			} else {
-				navigate("/user");
-			}
+			navigate("/user/dashboard");
 		} catch (error) {
 			console.error("Login error:", error);
 			setErrorMessage("An unexpected error occurred. Please try again.");

@@ -8,6 +8,7 @@ import { LandingPageAppBar } from "../../../Layout/LandingPage/LandingPageAppBar
 import { LandingPageDrawer } from "../../../Layout/LandingPage/LandingPageDrawer";
 import { registerSchema } from "../../../utils/AuthSchemas";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const Register = () => {
 	const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
@@ -33,20 +34,10 @@ export const Register = () => {
 
 	const onSubmit = async (data: RegisterValues) => {
 		try {
-			const response = await fetch("http://localhost:4000/register", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					email: data.email,
-					password: data.password,
-				}),
-			});
+			const response = await axios.post("/register", data);
+			const result = await response.data();
 
-			const result = await response.json();
-
-			if (!response.ok) {
+			if (!response.data) {
 				setErrorMessage(result.message || "Registration failed");
 				return;
 			}
