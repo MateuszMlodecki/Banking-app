@@ -27,23 +27,31 @@ export const OnboardingGuard = () => {
 				setLoading(false);
 				return;
 			}
-			await axios
-				.get<UserDetails>(`http://localhost:4000/user/profile/${userId}`)
-				.then(() => setIsOnboardingComplete(true))
-				.catch((error) => {
-					if (axios.isAxiosError(error)) {
-						if (error.response?.status === 404) {
-							setIsOnboardingComplete(false);
-							return;
-						}
+
+			try {
+				await axios.get<UserDetails>(
+					`http://localhost:4000/user/profile/${userId}`
+				);
+				setIsOnboardingComplete(true);
+			} catch (error) {
+				if (axios.isAxiosError(error)) {
+					if (error.response?.status === 404) {
+						setIsOnboardingComplete(false);
+					} else if (error.response?.status === 401) {
+						localStorage.removeItem("token");
+						localStorage.removeItem("userId");
+						setIsOnboardingComplete(false);
+					} else {
+						console.error("Unexpected error:", error);
+						setIsOnboardingComplete(false);
 					}
-					console.error("Unexpected error:", error);
-					localStorage.removeItem("token");
-					localStorage.removeItem("userId");
+				} else {
+					console.error("Unknown error:", error);
 					setIsOnboardingComplete(false);
-					setLoading(false);
-				})
-				.finally(() => setLoading(false));
+				}
+			} finally {
+				setLoading(false);
+			}
 		};
 
 		fetchUserDetails();

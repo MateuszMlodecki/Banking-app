@@ -35,16 +35,15 @@ export const Register = () => {
 	const onSubmit = async (data: RegisterValues) => {
 		try {
 			const response = await axios.post("/register", data);
-			const result = await response.data();
+			const result = response.data;
 
-			if (!response.data) {
+			if (!result) {
 				setErrorMessage(result.message || "Registration failed");
 				return;
 			}
 
 			setSuccessMessage("Registration successful! Moving to Login page.");
-			setErrorMessage("");
-			setTimeout(() => navigate("/Login"), 1000);
+			setTimeout(() => navigate("/login"), 1000);
 		} catch (error) {
 			console.error("Registration error:", error);
 			setErrorMessage("Something went wrong. Please try again later.");
