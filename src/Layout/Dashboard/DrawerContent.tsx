@@ -121,6 +121,25 @@ export const DrawerContent: React.FC = () => {
 					</Typography>
 				</Toolbar>
 				<Divider sx={{ borderColor: theme.palette.grey[800] }} />
+				<Box
+					sx={{
+						marginX: "auto",
+						padding: 2,
+						textAlign: "center",
+						color: theme.palette.primary.contrastText,
+					}}
+				>
+					<Typography
+						sx={{
+							background: theme.palette.secondary.main,
+							borderRadius: 1,
+							padding: 1,
+						}}
+					>
+						Balance: placeholder
+					</Typography>
+				</Box>
+				<Divider sx={{ borderColor: theme.palette.grey[800] }} />
 				{!onboardingCompleted && (
 					<Alert severity="warning">
 						Please fill your profile to access your account functions
