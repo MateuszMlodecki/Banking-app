@@ -54,14 +54,14 @@ export const Login = () => {
 			}
 			localStorage.setItem("token", token);
 			localStorage.setItem("userId", userId);
-			localStorage.setItem("onboardingCompleted", String(onboardingCompleted));
+			localStorage.setItem("onboardingCompleted", onboardingCompleted);
 
 			setSuccessMessage("Login successful!");
 
 			if (!onboardingCompleted) {
-				navigate("/stepper");
+				navigate("/user/profile");
 			} else {
-				navigate("/dashboard");
+				navigate("/user");
 			}
 		} catch (error) {
 			console.error("Login error:", error);
@@ -133,7 +133,7 @@ export const Login = () => {
 					variant="contained"
 					disabled={isSubmitting}
 					sx={{
-						backgroundColor: theme.palette.tertiary.main,
+						backgroundColor: theme.palette.primary.main,
 						"&:hover": { backgroundColor: theme.palette.secondary.dark },
 					}}
 				>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+	Alert,
 	Box,
 	Divider,
 	List,
@@ -21,15 +22,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../themes/theme";
 
-type ActiveViewType = "Overview" | "Transactions" | "Payment" | "Report";
-
-interface DrawerContentProps {
-	handleMenuItemClick: (view: ActiveViewType) => void;
-}
-
-export const DrawerContent: React.FC<DrawerContentProps> = ({
-	handleMenuItemClick,
-}) => {
+export const DrawerContent: React.FC = () => {
 	const navigate = useNavigate();
 	const [profile, setProfile] = useState<{
 		firstName: string;
@@ -39,13 +32,13 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 		lastName: "",
 	});
 
+	const onboardingCompleted =
+		localStorage.getItem("onboardingCompleted") === "true";
+
 	const handleLogout = () => {
 		localStorage.removeItem("token");
+		localStorage.removeItem("onboardingCompleted");
 		navigate("/login");
-	};
-
-	const handleEditProfile = () => {
-		navigate("/stepper");
 	};
 
 	useEffect(() => {
@@ -80,44 +73,26 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 		fetchProfile();
 	}, []);
 
-	const menuList: { text: ActiveViewType; icon: JSX.Element }[] = [
-		{
-			text: "Overview",
-			icon: <DashboardIcon />,
-		},
+	const menuList: { text: string; icon: JSX.Element; path: string }[] = [
+		{ text: "Overview", icon: <DashboardIcon />, path: "/user" },
 		{
 			text: "Transactions",
 			icon: <AccountBalanceIcon />,
+			path: "/user/transactions",
 		},
-		{
-			text: "Payment",
-			icon: <PaymentIcon />,
-		},
-		{
-			text: "Report",
-			icon: <AssessmentIcon />,
-		},
+		{ text: "Payment", icon: <PaymentIcon />, path: "/user/payments" },
+		{ text: "Reports", icon: <AssessmentIcon />, path: "/user/reports" },
 	];
 
 	const bottomMenu = [
-		{
-			text: "Help center",
-			icon: <HelpIcon />,
-		},
-		{
-			text: "Settings",
-			icon: <SettingsIcon />,
-		},
+		{ text: "Help center", icon: <HelpIcon /> },
+		{ text: "Settings", icon: <SettingsIcon /> },
 		{
 			text: "Profile",
 			icon: <PersonIcon />,
-			action: handleEditProfile,
+			action: () => navigate("/user/profile"),
 		},
-		{
-			text: "Logout",
-			icon: <LogoutIcon />,
-			action: handleLogout,
-		},
+		{ text: "Logout", icon: <LogoutIcon />, action: handleLogout },
 	];
 
 	return (
@@ -145,10 +120,18 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 					</Typography>
 				</Toolbar>
 				<Divider sx={{ borderColor: theme.palette.grey[800] }} />
+				{!onboardingCompleted && (
+					<Alert severity="warning">
+						Please fill your profile to access your account functions
+					</Alert>
+				)}
 				<List>
-					{menuList.map(({ text, icon }) => (
+					{menuList.map(({ text, icon, path }) => (
 						<ListItem key={text} disablePadding>
-							<ListItemButton onClick={() => handleMenuItemClick(text)}>
+							<ListItemButton
+								disabled={!onboardingCompleted}
+								onClick={() => navigate(path)}
+							>
 								<ListItemIcon
 									sx={{ color: theme.palette.primary.contrastText }}
 								>
