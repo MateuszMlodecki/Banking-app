@@ -7,7 +7,7 @@ import { UserDetailsProvider } from "./context/UserContext";
 import { StepperParent } from "./pages/UserDetails/StepperParent";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./themes/theme";
-import { Dashboard } from "./Layout/Dashboard/Dashboard";
+import { Dashboard } from "./Layout/UserLayout/Dashboard";
 import { AuthGuard } from "./components/AuthGuard";
 import { Transactions } from "./pages/UserPages/Transactions";
 import { Reports } from "./pages/UserPages/Report";

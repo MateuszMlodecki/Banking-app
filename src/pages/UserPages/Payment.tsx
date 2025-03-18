@@ -6,6 +6,14 @@ import { useEffect, useState } from "react";
 import { theme } from "../../themes/theme";
 import axios from "axios";
 
+/*
+- nie uzywasz react hook form, a powinienes
+- nie uzywasz axiosa
+- dayjs wydaje mi sie zbedny*
+- nie ma czegos takiego jak ProfileNumber, jest accountNumber, natomiast nie potrzebujesz go w tym komponencie,
+wystarczy, ze przy .post requescie wyslesz poprawne userId nadawcy (w params /user/:id/transaction)
+ */
+
 export const Payment = () => {
 	const [formData, setFormData] = useState({
 		receiver: "",
