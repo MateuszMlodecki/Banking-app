@@ -1,173 +1,209 @@
 import { Box, TextField, Typography, Button } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
-import { useEffect, useState } from "react";
-import { theme } from "../../themes/theme";
+import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+import { theme } from "../../themes/theme";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { errorHandler } from "../../utils/errorHandler";
+import { PaymentValueRegex } from "../../utils/constants";
 
-/*
-- nie uzywasz react hook form, a powinienes
-- nie uzywasz axiosa
-- dayjs wydaje mi sie zbedny*
-- nie ma czegos takiego jak ProfileNumber, jest accountNumber, natomiast nie potrzebujesz go w tym komponencie,
-wystarczy, ze przy .post requescie wyslesz poprawne userId nadawcy (w params /user/:id/transaction)
- */
+interface PaymentFormData {
+	receiver: string;
+	fromAccount: string;
+	toAccount: string;
+	amount: string;
+	date: string;
+	title: string;
+}
 
 export const Payment = () => {
-	const [formData, setFormData] = useState({
-		receiver: "",
-		fromAccount: "",
-		toAccount: "",
-		value: "",
-		date: dayjs() as Dayjs,
-		title: "",
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<PaymentFormData>({
+		defaultValues: {
+			receiver: "",
+			fromAccount: "",
+			toAccount: "",
+			amount: "",
+			date: new Date().toISOString().split("T")[0],
+			title: "",
+		},
 	});
-	const [message, setMessage] = useState("");
-	const [accountNumber, setAccountNumber] = useState("");
+	const [message, setMessage] = useState<string>("");
+	const navigate = useNavigate();
 
-	useEffect(() => {
-		const fetchProfileNumber = async () => {
-			const token = localStorage.getItem("token");
-			const userId = localStorage.getItem("userId");
+	const onSubmit = async (data: PaymentFormData) => {
+		const userId = localStorage.getItem("userId");
+		const token = localStorage.getItem("token");
 
-			if (token && userId) {
-				try {
-					const response = await fetch(
-						`http://localhost:4000/user/profile/${userId}`,
-						{
-							headers: {
-								authorization: `Bearer ${token}`,
-							},
-						}
-					);
-					if (!response.ok) {
-						console.log("Failed to fetch user data.");
-						return;
-					}
+		if (!userId || !token) {
+			setMessage("User not logged in. Please login again.");
+			return;
+		}
 
-					const profileData = await response.json();
-					setAccountNumber(profileData);
-					setFormData((prev) => ({
-						...prev,
-						fromAccount: profileData.accountNumber,
-					}));
-				} catch (error) {
-					console.log("Profile fetch error:", error);
-				}
-			}
-		};
-		fetchProfileNumber();
-	}, []);
-
-	const handleChange = (field: string, value: string | Dayjs) => {
-		setFormData((prev) => ({
-			...prev,
-			[field]: value ?? dayjs(),
-		}));
-	};
-
-	const handleSubmit = async () => {
 		try {
-			const transactionData = {
-				recipient: formData.receiver,
-				value: Number(formData.value),
-				date: formData.date.toISOString(),
-				title: formData.title,
-			};
-			console.log(transactionData);
-
 			const response = await axios.post(
-				"http://localhost:4000/transaction",
-				transactionData
+				`http://localhost:4000/user/${userId}/transaction`,
+				{
+					receiver: data.receiver,
+					amount: data.amount,
+					date: data.date,
+					title: data.title,
+					fromAccount: data.fromAccount,
+					toAccount: data.toAccount,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+				}
 			);
 
-			setMessage(response.data.message);
+			setMessage(response.data.message || "Transaction successful");
+			navigate("/user");
 		} catch (error) {
-			console.error("Payment error:", error);
-			setMessage("An unexpected error occurred. Please try again.");
+			errorHandler(error);
+			console.error("Transaction error:", error);
 		}
 	};
 
 	return (
-		<LocalizationProvider dateAdapter={AdapterDayjs}>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					gap: 2,
-					maxWidth: 400,
-					margin: "auto",
-				}}
-			>
-				<Typography variant="h5" sx={{ color: "text.primary" }}>
-					Payment
-				</Typography>
-				<TextField
-					label="Receiver"
-					fullWidth
-					value={formData.receiver}
-					onChange={(e) => handleChange("receiver", e.target.value)}
-				/>
-				<TextField
-					label="From Account"
-					fullWidth
-					value={formData.fromAccount}
-					onChange={(e) => handleChange("fromAccount", e.target.value)}
-				/>
-				<TextField
-					label="To Account"
-					fullWidth
-					value={formData.toAccount}
-					onChange={(e) => handleChange("toAccount", e.target.value)}
-				/>
-				<TextField
-					label="Amount"
-					fullWidth
-					type="number"
-					value={formData.value}
-					onChange={(e) => handleChange("value", e.target.value)}
-				/>
-				<DatePicker
-					format="DD-MM-YYYY"
-					label="Transfer Date"
-					value={formData.date}
-					onChange={(date) => handleChange("date", date ?? dayjs())}
-					shouldDisableDate={(date) => date.isBefore(dayjs(), "day")}
-					sx={{
-						".MuiDateCalendar-root": {
-							color: theme.palette.primary.contrastText,
-							borderRadius: "2px",
-							borderWidth: "1px",
-							border: "1px solid",
-						},
-					}}
-					slotProps={{
-						textField: {
-							fullWidth: true,
-							margin: "normal",
-						},
-					}}
-				/>
-				<TextField
-					label="Transfer Title"
-					fullWidth
-					value={formData.title}
-					onChange={(e) => handleChange("title", e.target.value)}
-				/>
-				<Button
-					sx={{ background: theme.palette.secondary.light }}
-					variant="contained"
-					onClick={handleSubmit}
-				>
-					Send Transfer
-				</Button>
-				{message && (
-					<Typography variant="h4" sx={{ color: theme.palette.error.main }}>
-						{message}
-					</Typography>
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				gap: 2,
+				maxWidth: 400,
+				margin: "auto",
+			}}
+		>
+			<Typography variant="h5" sx={{ color: "text.primary" }}>
+				Payment
+			</Typography>
+
+			<Controller
+				name="receiver"
+				control={control}
+				rules={{ required: "Receiver is required" }}
+				render={({ field }) => (
+					<TextField
+						label="Receiver"
+						fullWidth
+						{...field}
+						error={!!errors.receiver}
+						helperText={errors.receiver?.message}
+					/>
 				)}
-			</Box>
-		</LocalizationProvider>
+			/>
+
+			<Controller
+				name="fromAccount"
+				control={control}
+				rules={{ required: "From Account is required" }}
+				render={({ field }) => (
+					<TextField
+						label="From Account"
+						fullWidth
+						{...field}
+						error={!!errors.fromAccount}
+						helperText={errors.fromAccount?.message}
+					/>
+				)}
+			/>
+
+			<Controller
+				name="toAccount"
+				control={control}
+				rules={{ required: "To Account is required" }}
+				render={({ field }) => (
+					<TextField
+						label="To Account"
+						fullWidth
+						{...field}
+						error={!!errors.toAccount}
+						helperText={errors.toAccount?.message}
+					/>
+				)}
+			/>
+
+			<Controller
+				name="amount"
+				control={control}
+				rules={{
+					required: "Amount is required",
+					pattern: {
+						value: PaymentValueRegex,
+						message: "Enter a valid amount ( like 100 or 100.50)",
+					},
+				}}
+				render={({ field }) => (
+					<TextField
+						label="Amount"
+						fullWidth
+						type="number"
+						{...field}
+						error={!!errors.amount}
+						helperText={errors.amount?.message}
+					/>
+				)}
+			/>
+
+			<Controller
+				name="date"
+				control={control}
+				rules={{ required: "Date is required" }}
+				render={({ field }) => (
+					<TextField
+						label="Transfer Date"
+						type="date"
+						fullWidth
+						InputLabelProps={{ shrink: true }}
+						inputProps={{ min: new Date().toISOString().split("T")[0] }}
+						{...field}
+						error={!!errors.date}
+						helperText={errors.date?.message}
+					/>
+				)}
+			/>
+
+			<Controller
+				name="title"
+				control={control}
+				rules={{ required: "Transfer Title is required" }}
+				render={({ field }) => (
+					<TextField
+						label="Transfer Title"
+						fullWidth
+						{...field}
+						error={!!errors.title}
+						helperText={errors.title?.message}
+					/>
+				)}
+			/>
+
+			<Button
+				sx={{ background: theme.palette.secondary.light }}
+				variant="contained"
+				onClick={handleSubmit(onSubmit)}
+			>
+				Send Transfer
+			</Button>
+
+			{message && (
+				<Typography
+					variant="h4"
+					sx={{
+						color: message.includes("success")
+							? "green"
+							: theme.palette.error.main,
+					}}
+				>
+					{message}
+				</Typography>
+			)}
+		</Box>
 	);
 };

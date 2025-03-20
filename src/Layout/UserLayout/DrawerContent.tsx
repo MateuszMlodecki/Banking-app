@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
 	Alert,
 	Box,
+	CircularProgress,
 	Divider,
 	List,
 	ListItem,
@@ -22,6 +23,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../themes/theme";
 import { errorHandler } from "../../utils/errorHandler";
+import axios from "axios";
 
 export const DrawerContent: React.FC = () => {
 	const navigate = useNavigate();
@@ -32,6 +34,7 @@ export const DrawerContent: React.FC = () => {
 		firstName: "",
 		lastName: "",
 	});
+	const [balance, setBalance] = useState<number | null>(null);
 
 	const onboardingCompleted =
 		localStorage.getItem("onboardingCompleted") === "true";
@@ -49,28 +52,34 @@ export const DrawerContent: React.FC = () => {
 
 			if (token && userId) {
 				try {
-					const response = await fetch(
-						`http://localhost:4000/user/profile/${userId}`,
+					const profileResponse = await axios.get(
+						`http://localhost:4000//user/${userId}/profile`,
 						{
 							headers: {
 								Authorization: `Bearer ${token}`,
 							},
 						}
 					);
+					console.log("Profile data", profileResponse.data);
+					setProfile(profileResponse.data);
+				} catch (error) {
+					//errorHandler(error);
+					console.log(error);
+				}
 
-					if (!response.ok) {
-						console.error("Failed to fetch profile data.");
-						return;
-					}
-
-					const profileData = await response.json();
-					setProfile(profileData);
+				try {
+					const accountResponse = await axios.get(`/user/${userId}/account`, {
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					});
+					console.log("Account data:", accountResponse.data);
+					setBalance(accountResponse.data.balance);
 				} catch (error) {
 					errorHandler(error);
 				}
 			}
 		};
-
 		fetchProfile();
 	}, []);
 
@@ -136,7 +145,12 @@ export const DrawerContent: React.FC = () => {
 							padding: 1,
 						}}
 					>
-						Balance: placeholder
+						Balance:
+						{balance !== null ? (
+							` ${balance.toFixed(2)} $`
+						) : (
+							<CircularProgress />
+						)}
 					</Typography>
 				</Box>
 				<Divider sx={{ borderColor: theme.palette.grey[800] }} />

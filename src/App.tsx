@@ -7,7 +7,7 @@ import { UserDetailsProvider } from "./context/UserContext";
 import { StepperParent } from "./pages/UserDetails/StepperParent";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./themes/theme";
-import { Dashboard } from "./Layout/UserLayout/Dashboard";
+import { Layout } from "./Layout/UserLayout/Layout";
 import { AuthGuard } from "./components/AuthGuard";
 import { Transactions } from "./pages/UserPages/Transactions";
 import { Reports } from "./pages/UserPages/Report";
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
 
 			{
 				path: "/user",
-				element: <Dashboard />, // to powinien byc layout
+				element: <Layout />, // to powinien byc layout
 				children: [
 					{
 						path: "/user/profile",

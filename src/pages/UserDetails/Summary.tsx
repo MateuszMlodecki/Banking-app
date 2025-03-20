@@ -25,9 +25,33 @@ export const Summary: React.FC = () => {
 		}
 
 		try {
-			const response = await axios.post(
-				`http://localhost:4000/user/profile/${userId}`,
-				{ ...userDetails, onboardingCompleted: true },
+			const profileData = {
+				firstName: userDetails.firstName,
+				lastName: userDetails.lastName,
+				dateOfBirth: userDetails.dateOfBirth,
+				streetName: userDetails.streetName,
+				streetNumber: userDetails.streetNumber,
+				flatNumber: userDetails.flatNumber,
+				city: userDetails.city,
+			};
+			const profileResponse = await axios.post(
+				`http://localhost:4000/user/${userId}/profile`,
+				profileData,
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			const bankData = {
+				bankName: userDetails.bankName,
+				accountNumber: userDetails.accountNumber,
+			};
+
+			const bankResponse = await axios.post(
+				`http://localhost:4000/user/${userId}/account`,
+				bankData,
 				{
 					headers: {
 						"Content-Type": "application/json",
@@ -37,7 +61,9 @@ export const Summary: React.FC = () => {
 			);
 
 			localStorage.setItem("onboardingCompleted", "true");
-			setMessage(response.data.message);
+			setMessage(
+				`${profileResponse.data.message} ${bankResponse.data.message}`
+			);
 			navigate("/user");
 		} catch (error: unknown) {
 			errorHandler(error);
@@ -47,7 +73,7 @@ export const Summary: React.FC = () => {
 		}
 	};
 
-	console.log(userDetails);
+	console.log("Details", userDetails);
 
 	return (
 		<Box

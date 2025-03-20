@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, CssBaseline } from "@mui/material";
-import { DashboardAppBar } from "./DashboardAppBar";
+import { LayoutAppBar } from "./LayoutAppBar";
 import { DrawerComponent } from "./DrawerComponent";
-import { DashboardContent } from "./DashboardContent";
+import { LayoutContent } from "./LayoutContent";
 import { theme } from "../../themes/theme";
 
-export const Dashboard: React.FC = () => {
+export const Layout: React.FC = () => {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const handleDrawerToggle = () => {
 		setMobileOpen((prev) => !prev);
@@ -14,7 +14,7 @@ export const Dashboard: React.FC = () => {
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
 			<CssBaseline />
-			<DashboardAppBar handleDrawerToggle={handleDrawerToggle} />
+			<LayoutAppBar handleDrawerToggle={handleDrawerToggle} />
 			<DrawerComponent
 				mobileOpen={mobileOpen}
 				handleDrawerToggle={handleDrawerToggle}
@@ -29,7 +29,7 @@ export const Dashboard: React.FC = () => {
 					overflow: "hidden",
 				}}
 			>
-				<DashboardContent />
+				<LayoutContent />
 			</Box>
 		</Box>
 	);
