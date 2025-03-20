@@ -52,14 +52,11 @@ export const DrawerContent: React.FC = () => {
 
 			if (token && userId) {
 				try {
-					const profileResponse = await axios.get(
-						`http://localhost:4000//user/${userId}/profile`,
-						{
-							headers: {
-								Authorization: `Bearer ${token}`,
-							},
-						}
-					);
+					const profileResponse = await axios.get(`/user/${userId}/profile`, {
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					});
 					console.log("Profile data", profileResponse.data);
 					setProfile(profileResponse.data);
 				} catch (error) {
