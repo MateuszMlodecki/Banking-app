@@ -12,7 +12,7 @@ describe("Login page", () => {
     setup();
 
     const text = await screen.findByText(
-      "Please provide your details to authenticate"
+      "Please provide your details to authenticate",
     );
     expect(text).toBeDefined();
   });
@@ -66,7 +66,7 @@ describe("Login page", () => {
     await user.click(submitButton);
 
     const errorMessage = await screen.findByText(
-      "You must provide your password"
+      "You must provide your password",
     );
     expect(errorMessage).toBeDefined();
   });

@@ -120,6 +120,33 @@ export const theme = createTheme({
   },
 
   components: {
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#333333",
+          color: "#F7F5F2",
+        },
+      },
+    },
+
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: "#F7F5F2",
+          "&.Mui-selected": {
+            backgroundColor: "#690DAD",
+            color: "#fff",
+            "&:hover": {
+              backgroundColor: "#520A85",
+            },
+          },
+          "&.Mui-disabled": {
+            color: "#666",
+          },
+        },
+      },
+    },
+
     MuiButton: {
       styleOverrides: {
         root: {
@@ -128,23 +155,6 @@ export const theme = createTheme({
           width: "auto",
         },
       },
-    },
-    MuiTypography: {
-      defaultProps: {
-        variant: "body1",
-        color: "text.primary",
-      },
-      styleOverrides: {
-        body1: {
-          lineHeight: 1.6,
-        },
-        caption: {
-          color: "text.secondary",
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {},
     },
   },
 });

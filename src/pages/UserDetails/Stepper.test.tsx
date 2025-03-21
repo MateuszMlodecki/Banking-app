@@ -9,7 +9,7 @@ describe("User DetailsStepper", () => {
   };
 
   const completeFirstStep = async (
-    user: ReturnType<typeof userEvent.setup>
+    user: ReturnType<typeof userEvent.setup>,
   ) => {
     const firstNameInput = await screen.findByLabelText("firstName");
     const lastNameInput = await screen.findByLabelText("lastName");
@@ -24,7 +24,7 @@ describe("User DetailsStepper", () => {
   };
 
   const completeSecondStep = async (
-    user: ReturnType<typeof userEvent.setup>
+    user: ReturnType<typeof userEvent.setup>,
   ) => {
     await completeFirstStep(user);
     const adressInput = await screen.findByLabelText("Address");
@@ -37,7 +37,7 @@ describe("User DetailsStepper", () => {
     await user.click(submitButton);
   };
   const completeThirdStep = async (
-    user: ReturnType<typeof userEvent.setup>
+    user: ReturnType<typeof userEvent.setup>,
   ) => {
     await completeSecondStep(user);
     const bankNameInput = await screen.findByLabelText("Bank Name");
@@ -68,7 +68,7 @@ describe("User DetailsStepper", () => {
       await user.click(submitButton);
       const errorText = await screen.findByText(errorMessage);
       expect(errorText).toBeDefined();
-    }
+    },
   );
 
   it.each`
@@ -93,7 +93,7 @@ describe("User DetailsStepper", () => {
 
       const errorMessage = await screen.findByText(expectedError);
       expect(errorMessage).toBeDefined();
-    }
+    },
   );
 
   it.each`
@@ -114,7 +114,7 @@ describe("User DetailsStepper", () => {
       await user.click(submitButton);
       const errorMessage = await screen.findByText(expectedError);
       expect(errorMessage).toBeDefined();
-    }
+    },
   );
   it.each`
     inputName          | inputValue | expectedError
@@ -134,7 +134,7 @@ describe("User DetailsStepper", () => {
       await user.click(submitButton);
       const errorMessage = await screen.findByText(expectedError);
       expect(errorMessage).toBeDefined();
-    }
+    },
   );
   it("renders summary component when all steps are completed", async () => {
     setup();

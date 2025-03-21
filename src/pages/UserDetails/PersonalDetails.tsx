@@ -11,110 +11,110 @@ import dayjs, { Dayjs } from "dayjs";
 import { theme } from "../../themes/theme";
 
 export const PersonalDetails: React.FC<{
-	setIsStepValid: (isValid: boolean) => void;
-	onSubmit: (data: Step1Values) => void;
+  setIsStepValid: (isValid: boolean) => void;
+  onSubmit: (data: Step1Values) => void;
 }> = ({ setIsStepValid, onSubmit }) => {
-	const {
-		control,
-		handleSubmit,
-		formState: { errors, isValid },
-	} = useForm({
-		mode: "all",
-		resolver: yupResolver(validationSchemaStep1),
-		defaultValues: {
-			firstName: "",
-			lastName: "",
-			dateOfBirth: "",
-		},
-	});
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "all",
+    resolver: yupResolver(validationSchemaStep1),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+    },
+  });
 
-	useEffect(() => {
-		setIsStepValid(isValid);
-	}, [isValid]);
+  useEffect(() => {
+    setIsStepValid(isValid);
+  }, [isValid]);
 
-	return (
-		<LocalizationProvider dateAdapter={AdapterDayjs}>
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<Typography>Personal details</Typography>
-				<Controller
-					name="firstName"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							label="First Name"
-							fullWidth
-							error={!!errors.firstName}
-							helperText={errors.firstName?.message}
-						/>
-					)}
-				/>
-				<Controller
-					name="lastName"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							label="Last Name"
-							fullWidth
-							error={!!errors.lastName}
-							helperText={errors.lastName?.message}
-						/>
-					)}
-				/>
-				<Controller
-					name="dateOfBirth"
-					control={control}
-					render={({ field }) => (
-						<DatePicker
-							format="DD-MM-YYYY"
-							label="Date of Birth"
-							value={field.value ? dayjs(field.value, "DD-MM-YYYY") : null}
-							onChange={(date: Dayjs | null) => {
-								field.onChange(date ? date.format("DD-MM-YYYY") : "");
-							}}
-							sx={{
-								".MuiDateCalendar-root": {
-									color: theme.palette.primary.contrastText,
-									borderRadius: "2px",
-									borderWidth: "1px",
-									border: "1px solid",
-								},
-							}}
-							slotProps={{
-								textField: {
-									fullWidth: true,
-									margin: "normal",
-									error: !!errors.dateOfBirth,
-									helperText: errors.dateOfBirth?.message,
-								},
-							}}
-						/>
-					)}
-				/>
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Typography>Personal details</Typography>
+        <Controller
+          name="firstName"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="First Name"
+              fullWidth
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            />
+          )}
+        />
+        <Controller
+          name="lastName"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Last Name"
+              fullWidth
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            />
+          )}
+        />
+        <Controller
+          name="dateOfBirth"
+          control={control}
+          render={({ field }) => (
+            <DatePicker
+              format="DD-MM-YYYY"
+              label="Date of Birth"
+              value={field.value ? dayjs(field.value, "DD-MM-YYYY") : null}
+              onChange={(date: Dayjs | null) => {
+                field.onChange(date ? date.format("DD-MM-YYYY") : "");
+              }}
+              sx={{
+                ".MuiDateCalendar-root": {
+                  color: theme.palette.primary.contrastText,
+                  borderRadius: "2px",
+                  borderWidth: "1px",
+                  border: "1px solid",
+                },
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  margin: "normal",
+                  error: !!errors.dateOfBirth,
+                  helperText: errors.dateOfBirth?.message,
+                },
+              }}
+            />
+          )}
+        />
 
-				<Box
-					sx={{
-						display: "flex",
-						justifyContent: "center",
-					}}
-				>
-					<Button
-						sx={{
-							color: theme.palette.primary.contrastText,
-							backgroundColor: theme.palette.secondary.main,
-							"&.Mui-disabled": {
-								backgroundColor: theme.palette.grey[800],
-							},
-						}}
-						type="submit"
-						variant="contained"
-						disabled={!isValid}
-					>
-						Continue
-					</Button>
-				</Box>
-			</form>
-		</LocalizationProvider>
-	);
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            sx={{
+              color: theme.palette.primary.contrastText,
+              backgroundColor: theme.palette.secondary.main,
+              "&.Mui-disabled": {
+                backgroundColor: theme.palette.grey[800],
+              },
+            }}
+            type="submit"
+            variant="contained"
+            disabled={!isValid}
+          >
+            Continue
+          </Button>
+        </Box>
+      </form>
+    </LocalizationProvider>
+  );
 };
