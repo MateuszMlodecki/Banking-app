@@ -5,7 +5,7 @@ import { TextField, Typography, Button, Box } from "@mui/material";
 import { Step3Values } from "../../types/types";
 import { validationSchemaStep3 } from "../../utils/validationSchemaStepper";
 import { getBankNameFromAccountNumber } from "../../utils/bankAutoComplete";
-import { formatAccountNumber } from "../../utils/constants";
+import { formatAccountNumber } from "../../utils/formatAccountNumber";
 import { theme } from "../../themes/theme";
 
 export const BankDetails: React.FC<{

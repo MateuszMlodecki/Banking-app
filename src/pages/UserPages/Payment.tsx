@@ -36,12 +36,6 @@ export const Payment = () => {
 
 	const onSubmit = async (data: PaymentFormData) => {
 		const userId = localStorage.getItem("userId");
-		const token = localStorage.getItem("token");
-
-		if (!userId || !token) {
-			setMessage("User not logged in. Please login again.");
-			return;
-		}
 
 		try {
 			const response = await axios.post(
@@ -53,12 +47,6 @@ export const Payment = () => {
 					title: data.title,
 					fromAccount: data.fromAccount,
 					toAccount: data.toAccount,
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
 				}
 			);
 

@@ -11,7 +11,7 @@ describe("Register page", () => {
   it("renders component", async () => {
     setup();
     const text = await screen.findByText(
-      "Please provide your details to register"
+      "Please provide your details to register",
     );
     expect(text).toBeDefined();
   });
@@ -56,7 +56,7 @@ describe("Register page", () => {
       await user.click(submitButton);
       const errorText = await screen.findByText(errorMessage);
       expect(errorText);
-    }
+    },
   );
 
   it("show error message's when every field is empty", async () => {
@@ -68,15 +68,15 @@ describe("Register page", () => {
 
     const nameInputErrorMessage = await screen.findByText("Name is required");
     const lastNameInputErrorMessage = await screen.findByText(
-      "Lastname is required"
+      "Lastname is required",
     );
     //const ageInputErrorMessage = await screen.findByText("Age is required");
     const emailInputErrorMessage = await screen.findByText("Email is required");
     const passwordInputErrorMessage = await screen.findByText(
-      "You must provide your password"
+      "You must provide your password",
     );
     const repeatPasswordInputErrorMessage = await screen.findByText(
-      "Please retype your password."
+      "Please retype your password.",
     );
 
     expect(nameInputErrorMessage).toBeDefined();
@@ -110,7 +110,7 @@ describe("Register page", () => {
 
       const errorMessage = await screen.findByText(expectedError);
       expect(errorMessage).toBeDefined();
-    }
+    },
   );
 
   it("show error message's when Name and lastName is too short", async () => {
@@ -125,10 +125,10 @@ describe("Register page", () => {
     await user.click(submitButton);
 
     const nameInputErrorMessage = await screen.findByText(
-      "Name must be at least 2 characters long"
+      "Name must be at least 2 characters long",
     );
     const lastNameInputErrorMessage = await screen.findByText(
-      "Lastname must be at least 2 characters long"
+      "Lastname must be at least 2 characters long",
     );
     expect(nameInputErrorMessage).toBeDefined();
     expect(lastNameInputErrorMessage).toBeDefined();
@@ -148,10 +148,10 @@ describe("Register page", () => {
     await user.click(submitButton);
 
     const nameErrorMessage = await screen.findByText(
-      "Name must be at most 15 characters long"
+      "Name must be at most 15 characters long",
     );
     const lastNameInputErrorMessage = await screen.findByText(
-      "Lastname must be at most 25 characters long"
+      "Lastname must be at most 25 characters long",
     );
     expect(nameErrorMessage).toBeDefined();
     expect(lastNameInputErrorMessage).toBeDefined();
@@ -167,7 +167,7 @@ describe("Register page", () => {
     await user.click(submitButton);
 
     const ageInputErrorMessage = await screen.findByText(
-      "You must be atleast 18 years old"
+      "You must be atleast 18 years old",
     );
 
     expect(ageInputErrorMessage).toBeDefined();

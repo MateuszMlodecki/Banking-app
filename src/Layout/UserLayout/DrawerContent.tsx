@@ -52,11 +52,10 @@ export const DrawerContent: React.FC = () => {
 
 			if (token && userId) {
 				try {
-					const profileResponse = await axios.get(`/user/${userId}/profile`, {
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					});
+					const profileResponse = await axios.get(
+						`/user/${userId}/profile`,
+						{}
+					);
 					console.log("Profile data", profileResponse.data);
 					setProfile(profileResponse.data);
 				} catch (error) {
@@ -65,11 +64,7 @@ export const DrawerContent: React.FC = () => {
 				}
 
 				try {
-					const accountResponse = await axios.get(`/user/${userId}/account`, {
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					});
+					const accountResponse = await axios.get(`/user/${userId}/account`);
 					console.log("Account data:", accountResponse.data);
 					setBalance(accountResponse.data.balance);
 				} catch (error) {
@@ -143,10 +138,10 @@ export const DrawerContent: React.FC = () => {
 						}}
 					>
 						Balance:
-						{balance !== null ? (
-							` ${balance.toFixed(2)} $`
-						) : (
+						{balance === null ? (
 							<CircularProgress />
+						) : (
+							` ${balance.toFixed(2)} $`
 						)}
 					</Typography>
 				</Box>

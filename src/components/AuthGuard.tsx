@@ -1,6 +1,7 @@
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const AuthGuard = () => {
 	const navigate = useNavigate();
@@ -23,22 +24,16 @@ export const AuthGuard = () => {
 				}
 
 				if (token) {
-					const response = await fetch("http://localhost:4000/validate-token", {
-						headers: { Authorization: `Bearer ${token}` },
-					});
+					const response = await axios.get(
+						"http://localhost:4000/validate-token"
+					);
 
 					if (response.status === 200 && isAuthPage) {
 						navigate("/user");
 						return;
 					}
-
-					//pobieranie profilu
-					// jak bedzie obecny to po prostu return;
-					// jak nie bedzie profilu to przekieruj do /stepper'a
-					// mozesz dodac w localStorage cos w stylu onboardingCompleted: boolean
-					// jesli jest profil uzupelniony to zapisz to w localStorage, zeby nie robic w kolko zbednych requestow
 				}
-			} catch {
+			} catch (error) {
 				localStorage.removeItem("token");
 				navigate("/login");
 			} finally {

@@ -36,13 +36,7 @@ export const Summary: React.FC = () => {
 			};
 			const profileResponse = await axios.post(
 				`http://localhost:4000/user/${userId}/profile`,
-				profileData,
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-				}
+				profileData
 			);
 			const bankData = {
 				bankName: userDetails.bankName,

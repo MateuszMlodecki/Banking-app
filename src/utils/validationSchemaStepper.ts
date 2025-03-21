@@ -38,13 +38,13 @@ export const validationSchemaStep2 = Yup.object({
     .required("Street number is required")
     .matches(
       addressNumberRegex,
-      "Invalid street number format (e.g., 15, 15A, 15/17"
+      "Invalid street number format (e.g., 15, 15A, 15/17",
     ),
   flatNumber: Yup.string()
     .notRequired()
     .matches(
       addressNumberRegex,
-      "Invalid flat number format (e.g., 5, 5A, 5/1)"
+      "Invalid flat number format (e.g., 5, 5A, 5/1)",
     ),
   city: Yup.string()
     .required("City is requrired")

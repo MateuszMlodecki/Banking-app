@@ -13,7 +13,7 @@ const UserDetailsContext = createContext<UserDetailsContextType | undefined>(
 export const useUserDetails = () => {
 	const context = useContext(UserDetailsContext);
 	if (!context) {
-		throw new Error("useUserContext musi być używane wewnątrz UserProvider");
+		throw new Error("useUserDetails must be used within a UserProvider");
 	}
 	return context;
 };
