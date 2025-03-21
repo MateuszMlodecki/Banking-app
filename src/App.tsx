@@ -15,59 +15,59 @@ import { Payment } from "./pages/UserPages/Payment";
 import { OnboardingGuard } from "./components/onboardingGuard";
 
 const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <AuthGuard />,
-		children: [
-			{
-				index: true,
-				element: <LandingPage />,
-			},
-			{
-				path: "/register",
-				element: <Register />,
-			},
-			{
-				path: "/login",
-				element: <Login />,
-			},
+  {
+    path: "/",
+    element: <AuthGuard />,
+    children: [
+      {
+        index: true,
+        element: <LandingPage />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
 
-			{
-				path: "/user",
-				element: <Layout />,
-				children: [
-					{
-						path: "/user/profile",
-						element: <StepperParent />,
-					},
-					{
-						element: <OnboardingGuard />,
-						children: [
-							{ path: "/user/dashboard", element: <div> dashboarrd</div> },
-							{ path: "/user/transactions", element: <Transactions /> },
-							{ path: "/user/reports", element: <Reports /> },
-							{ path: "/user/payments", element: <Payment /> },
-						],
-					},
-				],
-			},
-			{
-				path: "*",
-				element: <div>404</div>,
-			},
-		],
-	},
+      {
+        path: "/user",
+        element: <Layout />,
+        children: [
+          {
+            path: "/user/profile",
+            element: <StepperParent />,
+          },
+          {
+            element: <OnboardingGuard />,
+            children: [
+              { path: "/user/dashboard", element: <div> dashboarrd</div> },
+              { path: "/user/transactions", element: <Transactions /> },
+              { path: "/user/reports", element: <Reports /> },
+              { path: "/user/payments", element: <Payment /> },
+            ],
+          },
+        ],
+      },
+      {
+        path: "*",
+        element: <div>404</div>,
+      },
+    ],
+  },
 ]);
 const App = () => {
-	return (
-		<>
-			<ThemeProvider theme={theme}>
-				<UserDetailsProvider>
-					<RouterProvider router={router} />
-				</UserDetailsProvider>
-			</ThemeProvider>
-		</>
-	);
+  return (
+    <>
+      <ThemeProvider theme={theme}>
+        <UserDetailsProvider>
+          <RouterProvider router={router} />
+        </UserDetailsProvider>
+      </ThemeProvider>
+    </>
+  );
 };
 
 export default App;
