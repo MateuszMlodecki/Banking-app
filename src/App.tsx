@@ -1,22 +1,22 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./App.css";
-import { Register } from "./pages/FormAuth/Register/Register";
-import { Login } from "./pages/FormAuth/Login/Login";
-import { LandingPage } from "./Layout/LandingPage/LandingPage";
-import { UserDetailsProvider } from "./context/UserContext";
-import { StepperParent } from "./pages/UserDetails/StepperParent";
-import { ThemeProvider } from "@mui/material";
-import { theme } from "./themes/theme";
-import { Layout } from "./Layout/UserLayout/Layout";
-import { AuthGuard } from "./components/AuthGuard";
-import { Transactions } from "./pages/UserPages/Transactions";
-import { Reports } from "./pages/UserPages/Report";
-import { Payment } from "./pages/UserPages/Payment";
-import { OnboardingGuard } from "./components/onboardingGuard";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import './App.css';
+import { Register } from './pages/FormAuth/Register/Register';
+import { Login } from './pages/FormAuth/Login/Login';
+import { LandingPage } from './Layout/LandingPage/LandingPage';
+import { UserDetailsProvider } from './context/UserContext';
+import { StepperParent } from './pages/UserDetails/StepperParent';
+import { ThemeProvider } from '@mui/material';
+import { theme } from './themes/theme';
+import { Layout } from './Layout/UserLayout/Layout';
+import { AuthGuard } from './components/AuthGuard';
+import { Transactions } from './pages/UserPages/Transactions';
+import { Reports } from './pages/UserPages/Report';
+import { Payment } from './pages/UserPages/Payment';
+import { OnboardingGuard } from './components/onboardingGuard';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <AuthGuard />,
     children: [
       {
@@ -24,35 +24,35 @@ const router = createBrowserRouter([
         element: <LandingPage />,
       },
       {
-        path: "/register",
+        path: '/register',
         element: <Register />,
       },
       {
-        path: "/login",
+        path: '/login',
         element: <Login />,
       },
 
       {
-        path: "/user",
+        path: '/user/:id',
         element: <Layout />,
         children: [
           {
-            path: "/user/profile",
+            path: '/user/:id/profile',
             element: <StepperParent />,
           },
           {
             element: <OnboardingGuard />,
             children: [
-              { path: "/user/dashboard", element: <div> dashboarrd</div> },
-              { path: "/user/transactions", element: <Transactions /> },
-              { path: "/user/reports", element: <Reports /> },
-              { path: "/user/payments", element: <Payment /> },
+              { path: '/user/:id/dashboard', element: <div> dashboarrd</div> },
+              { path: '/user/:id/transactions', element: <Transactions /> },
+              { path: '/user/:id/reports', element: <Reports /> },
+              { path: '/user/:id/payments', element: <Payment /> },
             ],
           },
         ],
       },
       {
-        path: "*",
+        path: '*',
         element: <div>404</div>,
       },
     ],

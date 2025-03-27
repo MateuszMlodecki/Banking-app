@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -11,19 +11,19 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-} from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import PaymentIcon from "@mui/icons-material/Payment";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import HelpIcon from "@mui/icons-material/Help";
-import SettingsIcon from "@mui/icons-material/Settings";
-import PersonIcon from "@mui/icons-material/Person";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { useNavigate } from "react-router-dom";
-import { theme } from "../../themes/theme";
-import { errorHandler } from "../../utils/errorHandler";
-import axios from "axios";
+} from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import PaymentIcon from '@mui/icons-material/Payment';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import HelpIcon from '@mui/icons-material/Help';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate, useParams } from 'react-router-dom';
+import { theme } from '../../themes/theme';
+import { errorHandler } from '../../utils/errorHandler';
+import axios from 'axios';
 
 export const DrawerContent: React.FC = () => {
   const navigate = useNavigate();
@@ -31,41 +31,36 @@ export const DrawerContent: React.FC = () => {
     firstName: string;
     lastName: string;
   }>({
-    firstName: "",
-    lastName: "",
+    firstName: '',
+    lastName: '',
   });
   const [balance, setBalance] = useState<number | null>(null);
 
-  const onboardingCompleted =
-    localStorage.getItem("onboardingCompleted") === "true";
+  const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("onboardingCompleted");
-    navigate("/login");
+    localStorage.removeItem('token');
+    localStorage.removeItem('onboardingCompleted');
+    navigate('/login');
   };
+  const { id: userId } = useParams();
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem('token');
 
       if (token && userId) {
         try {
-          const profileResponse = await axios.get(
-            `/user/${userId}/profile`,
-            {},
-          );
-          console.log("Profile data", profileResponse.data);
+          const profileResponse = await axios.get(`/user/${userId}/profile`, {});
+          console.log('Profile data', profileResponse.data);
           setProfile(profileResponse.data);
         } catch (error) {
-          //errorHandler(error);
-          console.log(error);
+          errorHandler(error);
         }
 
         try {
           const accountResponse = await axios.get(`/user/${userId}/account`);
-          console.log("Account data:", accountResponse.data);
+          console.log('Account data:', accountResponse.data);
           setBalance(accountResponse.data.balance);
         } catch (error) {
           errorHandler(error);
@@ -76,35 +71,35 @@ export const DrawerContent: React.FC = () => {
   }, []);
 
   const menuList: { text: string; icon: JSX.Element; path: string }[] = [
-    { text: "Overview", icon: <DashboardIcon />, path: "/user" },
+    { text: 'Overview', icon: <DashboardIcon />, path: `/user/${userId}` },
     {
-      text: "Transactions",
+      text: 'Transactions',
       icon: <AccountBalanceIcon />,
-      path: "/user/transactions",
+      path: `/user/${userId}/transactions`,
     },
-    { text: "Payment", icon: <PaymentIcon />, path: "/user/payments" },
-    { text: "Reports", icon: <AssessmentIcon />, path: "/user/reports" },
+    { text: 'Payment', icon: <PaymentIcon />, path: `/user/${userId}/payments` },
+    { text: 'Reports', icon: <AssessmentIcon />, path: `/user/${userId}/reports` },
   ];
 
   const bottomMenu = [
-    { text: "Help center", icon: <HelpIcon /> },
-    { text: "Settings", icon: <SettingsIcon /> },
+    { text: 'Help center', icon: <HelpIcon /> },
+    { text: 'Settings', icon: <SettingsIcon /> },
     {
-      text: "Profile",
+      text: 'Profile',
       icon: <PersonIcon />,
-      action: () => navigate("/user/profile"),
+      action: () => navigate(`/user/${userId}/profile`),
     },
-    { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
+    { text: 'Logout', icon: <LogoutIcon />, action: handleLogout },
   ];
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         color: theme.palette.primary.contrastText,
-        height: "100%",
+        height: '100%',
       }}
     >
       <Box>
@@ -112,9 +107,9 @@ export const DrawerContent: React.FC = () => {
           <Typography
             variant="h6"
             sx={{
-              marginX: "auto",
+              marginX: 'auto',
               padding: 2,
-              textAlign: "center",
+              textAlign: 'center',
               color: theme.palette.primary.contrastText,
             }}
           >
@@ -124,9 +119,9 @@ export const DrawerContent: React.FC = () => {
         <Divider sx={{ borderColor: theme.palette.grey[800] }} />
         <Box
           sx={{
-            marginX: "auto",
+            marginX: 'auto',
             padding: 2,
-            textAlign: "center",
+            textAlign: 'center',
             color: theme.palette.primary.contrastText,
           }}
         >
@@ -138,11 +133,7 @@ export const DrawerContent: React.FC = () => {
             }}
           >
             Balance:
-            {balance === null ? (
-              <CircularProgress />
-            ) : (
-              ` ${balance.toFixed(2)} $`
-            )}
+            {balance === null ? <CircularProgress /> : ` ${balance.toFixed(2)} $`}
           </Typography>
         </Box>
         <Divider sx={{ borderColor: theme.palette.grey[800] }} />
@@ -154,20 +145,13 @@ export const DrawerContent: React.FC = () => {
         <List>
           {menuList.map(({ text, icon, path }) => (
             <ListItem key={text} disablePadding>
-              <ListItemButton
-                disabled={!onboardingCompleted}
-                onClick={() => navigate(path)}
-              >
-                <ListItemIcon
-                  sx={{ color: theme.palette.primary.contrastText }}
-                >
+              <ListItemButton disabled={!onboardingCompleted} onClick={() => navigate(path)}>
+                <ListItemIcon sx={{ color: theme.palette.primary.contrastText }}>
                   {icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography
-                      sx={{ color: theme.palette.primary.contrastText }}
-                    >
+                    <Typography sx={{ color: theme.palette.primary.contrastText }}>
                       {text}
                     </Typography>
                   }
@@ -178,21 +162,17 @@ export const DrawerContent: React.FC = () => {
         </List>
       </Box>
       <Box>
-        <Divider sx={{ borderColor: "#444", marginBottom: 2 }} />
+        <Divider sx={{ borderColor: '#444', marginBottom: 2 }} />
         <List>
           {bottomMenu.map(({ text, icon, action }) => (
             <ListItem key={text} disablePadding>
               <ListItemButton onClick={action}>
-                <ListItemIcon
-                  sx={{ color: theme.palette.primary.contrastText }}
-                >
+                <ListItemIcon sx={{ color: theme.palette.primary.contrastText }}>
                   {icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography
-                      sx={{ color: theme.palette.primary.contrastText }}
-                    >
+                    <Typography sx={{ color: theme.palette.primary.contrastText }}>
                       {text}
                     </Typography>
                   }
