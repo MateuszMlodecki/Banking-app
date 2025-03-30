@@ -52,7 +52,6 @@ export const DrawerContent: React.FC = () => {
       if (token && userId) {
         try {
           const profileResponse = await axios.get(`http://localhost:4000/user/${userId}/profile`);
-          console.log('Profile data', profileResponse.data);
           setProfile(profileResponse.data);
         } catch (error) {
           errorHandler(error);
@@ -60,7 +59,6 @@ export const DrawerContent: React.FC = () => {
 
         try {
           const accountResponse = await axios.get(`http://localhost:4000/user/${userId}/account`);
-          console.log('Account data:', accountResponse.data);
           setBalance(accountResponse.data.balance);
         } catch (error) {
           errorHandler(error);

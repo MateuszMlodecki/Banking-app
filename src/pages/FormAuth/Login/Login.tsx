@@ -29,8 +29,6 @@ export const Login = () => {
 
   const handleDrawerToggle = () => setMobileOpen(prevState => !prevState);
   const onSubmit = async (data: LoginValues) => {
-    setSuccessAlert('Login successful!');
-
     try {
       const response = await axios.post('/login', data);
       const result = await response.data;
@@ -51,9 +49,8 @@ export const Login = () => {
 
       setSuccessAlert('Login successful!');
 
-      navigate(`/user/${userId}/profile`);
+      navigate(`/user/${userId}`);
     } catch (error) {
-      console.error('Login error:', error);
       setErrorAlert(new Error('An unexpected error occurred. Please try again.'));
     }
   };

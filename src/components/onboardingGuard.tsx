@@ -27,7 +27,7 @@ export const OnboardingGuard = () => {
       }
 
       try {
-        await axios.get<UserDetails>(`http://localhost:4000/user/profile/${userId}`);
+        await axios.get<UserDetails>(`http://localhost:4000/user/${userId}`);
         setIsOnboardingComplete(true);
       } catch (error) {
         setIsOnboardingComplete(false);
@@ -42,5 +42,5 @@ export const OnboardingGuard = () => {
 
   if (loading) return <CircularProgress />;
 
-  return isOnboardingComplete ? <Outlet /> : <Navigate to="/user/profile" />;
+  return isOnboardingComplete ? <Outlet /> : <Navigate to={`/user/${userId}/profile`} />;
 };

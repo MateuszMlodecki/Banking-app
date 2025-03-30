@@ -35,12 +35,10 @@ export const Summary: React.FC = () => {
         flatNumber: userDetails.flatNumber,
         city: userDetails.city,
       };
-      console.log(profileData, 'Profile data');
       const profileResponse = await axios.post(
         `http://localhost:4000/user/${userId}/profile`,
         profileData,
       );
-      console.log('Profile response', profileResponse);
 
       const bankData = {
         userId: userId,
