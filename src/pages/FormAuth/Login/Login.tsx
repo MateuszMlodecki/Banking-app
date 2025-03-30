@@ -10,6 +10,7 @@ import { LandingPageDrawer } from '../../../Layout/LandingPage/LandingPageDrawer
 import { loginSchema } from '../../../utils/AuthSchemas';
 import { useAlertContext } from '../../../context/AlertContext';
 import axios from 'axios';
+import { errorHandler } from '../../../utils/errorHandler';
 
 export const Login = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -33,7 +34,7 @@ export const Login = () => {
       const response = await axios.post('/login', data);
       const result = await response.data;
 
-      if (!response.data) {
+      if (!result) {
         setErrorAlert(result.message || 'Invalid credentials.');
         return;
       }
@@ -51,7 +52,8 @@ export const Login = () => {
 
       navigate(`/user/${userId}`);
     } catch (error) {
-      setErrorAlert(new Error('An unexpected error occurred. Please try again.'));
+      const message = errorHandler(error);
+      setErrorAlert(new Error(message));
     }
   };
 
