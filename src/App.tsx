@@ -38,7 +38,7 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
           {
-            path: '/user/:id/profile',
+            path: 'profile',
             element: <StepperParent />,
           },
           {

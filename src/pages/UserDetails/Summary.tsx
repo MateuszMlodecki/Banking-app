@@ -26,6 +26,7 @@ export const Summary: React.FC = () => {
 
     try {
       const profileData = {
+        userId: userId,
         firstName: userDetails.firstName,
         lastName: userDetails.lastName,
         dateOfBirth: userDetails.dateOfBirth,
@@ -34,11 +35,15 @@ export const Summary: React.FC = () => {
         flatNumber: userDetails.flatNumber,
         city: userDetails.city,
       };
+      console.log(profileData, 'Profile data');
       const profileResponse = await axios.post(
         `http://localhost:4000/user/${userId}/profile`,
         profileData,
       );
+      console.log('Profile response', profileResponse);
+
       const bankData = {
+        userId: userId,
         bankName: userDetails.bankName,
         accountNumber: userDetails.accountNumber,
       };
@@ -58,9 +63,6 @@ export const Summary: React.FC = () => {
       setLoading(false);
     }
   };
-
-  console.log('Details', userDetails);
-  console.log('Bankdata', userDetails.bankName, userDetails.accountNumber);
 
   return (
     <Box

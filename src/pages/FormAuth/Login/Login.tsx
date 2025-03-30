@@ -51,7 +51,7 @@ export const Login = () => {
 
       setSuccessAlert('Login successful!');
 
-      navigate(`/user/${userId}/dashboard`);
+      navigate(`/user/${userId}/profile`);
     } catch (error) {
       console.error('Login error:', error);
       setErrorAlert(new Error('An unexpected error occurred. Please try again.'));
