@@ -13,6 +13,7 @@ import { Transactions } from './pages/UserPages/Transactions';
 import { Reports } from './pages/UserPages/Report';
 import { Payment } from './pages/UserPages/Payment';
 import { OnboardingGuard } from './components/onboardingGuard';
+import { AlertProvider } from './context/AlertProvieder';
 
 const router = createBrowserRouter([
   {
@@ -62,9 +63,11 @@ const App = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <UserDetailsProvider>
-          <RouterProvider router={router} />
-        </UserDetailsProvider>
+        <AlertProvider>
+          <UserDetailsProvider>
+            <RouterProvider router={router} />
+          </UserDetailsProvider>
+        </AlertProvider>
       </ThemeProvider>
     </>
   );

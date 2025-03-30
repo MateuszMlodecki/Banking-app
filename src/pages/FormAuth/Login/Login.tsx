@@ -8,12 +8,12 @@ import { theme } from '../../../themes/theme';
 import { LandingPageAppBar } from '../../../Layout/LandingPage/LandingPageAppBar';
 import { LandingPageDrawer } from '../../../Layout/LandingPage/LandingPageDrawer';
 import { loginSchema } from '../../../utils/AuthSchemas';
+import { useAlertContext } from '../../../context/AlertContext';
 import axios from 'axios';
 
 export const Login = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const { setErrorAlert, setSuccessAlert } = useAlertContext();
 
   const navigate = useNavigate();
 
@@ -29,33 +29,32 @@ export const Login = () => {
 
   const handleDrawerToggle = () => setMobileOpen(prevState => !prevState);
   const onSubmit = async (data: LoginValues) => {
-    setErrorMessage('');
-    setSuccessMessage('');
+    setSuccessAlert('Login successful!');
 
     try {
       const response = await axios.post('/login', data);
       const result = await response.data;
 
       if (!response.data) {
-        setErrorMessage(result.message || 'Invalid credentials.');
+        setErrorAlert(result.message || 'Invalid credentials.');
         return;
       }
 
       const { token, userId, onboardingCompleted } = result;
 
       if (!token || !userId) {
-        setErrorMessage('Unexpected response from server. Please try again.');
+        setErrorAlert(new Error('Unexpected response from server. Please try again.'));
         return;
       }
       localStorage.setItem('token', token);
       localStorage.setItem('onboardingCompleted', onboardingCompleted);
 
-      setSuccessMessage('Login successful!');
+      setSuccessAlert('Login successful!');
 
       navigate(`/user/${userId}/dashboard`);
     } catch (error) {
       console.error('Login error:', error);
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      setErrorAlert(new Error('An unexpected error occurred. Please try again.'));
     }
   };
 
@@ -126,20 +125,6 @@ export const Login = () => {
         >
           {isSubmitting ? 'Logging in...' : 'Login'}
         </Button>
-
-        {successMessage && (
-          <Typography
-            variant="body1"
-            sx={{ color: theme.palette.success.main, textAlign: 'center' }}
-          >
-            {successMessage}
-          </Typography>
-        )}
-        {errorMessage && (
-          <Typography variant="body1" sx={{ color: theme.palette.error.main, textAlign: 'center' }}>
-            {errorMessage}
-          </Typography>
-        )}
       </Box>
     </Box>
   );

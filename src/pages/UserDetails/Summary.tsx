@@ -60,6 +60,7 @@ export const Summary: React.FC = () => {
   };
 
   console.log('Details', userDetails);
+  console.log('Bankdata', userDetails.bankName, userDetails.accountNumber);
 
   return (
     <Box
