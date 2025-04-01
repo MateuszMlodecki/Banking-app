@@ -50,7 +50,7 @@ export const Login = () => {
 
       setSuccessAlert('Login successful!');
 
-      navigate(`/user/${userId}`);
+      navigate(`/user/${userId}/dashboard`);
     } catch (error) {
       const message = errorHandler(error);
       setErrorAlert(new Error(message));

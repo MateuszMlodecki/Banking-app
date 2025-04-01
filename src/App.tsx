@@ -38,10 +38,11 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
           {
-            path: 'profile',
+            path: '/user/:id/profile',
             element: <StepperParent />,
           },
           {
+            path: '/user/:id',
             element: <OnboardingGuard />,
             children: [
               { path: '/user/:id/dashboard', element: <div> dashboarrd</div> },
