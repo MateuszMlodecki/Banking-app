@@ -1,31 +1,32 @@
-import React, { useState } from "react";
-import { useUserDetails } from "../../context/UserContext";
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { theme } from "../../themes/theme";
-import axios from "axios";
-import { errorHandler } from "../../utils/errorHandler";
+import React, { useState } from 'react';
+import { useUserDetails } from '../../context/UserContext';
+import { Box, Typography, Button, CircularProgress } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { theme } from '../../themes/theme';
+import axios from 'axios';
+import { errorHandler } from '../../utils/errorHandler';
 
 export const Summary: React.FC = () => {
   const { userDetails } = useUserDetails();
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { id: userId } = useParams();
 
   const handleSaveProfile = async () => {
-    setMessage("");
+    setMessage('');
     setLoading(true);
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
-    if (!userId || !token) {
-      setMessage("User not logged in. Please login again.");
+    if (!token) {
+      setMessage('User not logged in. Please login again.');
       setLoading(false);
       return;
     }
 
     try {
       const profileData = {
+        userId: userId,
         firstName: userDetails.firstName,
         lastName: userDetails.lastName,
         dateOfBirth: userDetails.dateOfBirth,
@@ -38,7 +39,9 @@ export const Summary: React.FC = () => {
         `http://localhost:4000/user/${userId}/profile`,
         profileData,
       );
+
       const bankData = {
+        userId: userId,
         bankName: userDetails.bankName,
         accountNumber: userDetails.accountNumber,
       };
@@ -46,36 +49,26 @@ export const Summary: React.FC = () => {
       const bankResponse = await axios.post(
         `http://localhost:4000/user/${userId}/account`,
         bankData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
       );
 
-      localStorage.setItem("onboardingCompleted", "true");
-      setMessage(
-        `${profileResponse.data.message} ${bankResponse.data.message}`,
-      );
-      navigate("/user");
+      localStorage.setItem('onboardingCompleted', 'true');
+      setMessage(`${profileResponse.data.message} ${bankResponse.data.message}`);
+      navigate(`/user/${userId}`);
     } catch (error: unknown) {
       errorHandler(error);
-      setMessage("Failed to save profile. Please try again later.");
+      setMessage('Failed to save profile. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-  console.log("Details", userDetails);
-
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "1rem",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '1rem',
       }}
     >
       <Box>
@@ -90,10 +83,10 @@ export const Summary: React.FC = () => {
         <Typography>Bank name: {userDetails.bankName}</Typography>
         <Typography>Account number: {userDetails.accountNumber}</Typography>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Button
           sx={{
-            width: "200px",
+            width: '200px',
             color: theme.palette.primary.contrastText,
             backgroundColor: theme.palette.secondary.main,
           }}
@@ -101,14 +94,14 @@ export const Summary: React.FC = () => {
           onClick={handleSaveProfile}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : "Save Profile"}
+          {loading ? <CircularProgress size={24} /> : 'Save Profile'}
         </Button>
       </Box>
 
       {message && (
         <Typography
           variant="body1"
-          sx={{ color: message.includes("success") ? "green" : "red" }}
+          sx={{ color: message.includes('success') ? 'green' : 'red' }}
           aria-live="polite"
         >
           {message}

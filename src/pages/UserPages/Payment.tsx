@@ -1,11 +1,11 @@
-import { Box, TextField, Typography, Button } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
-import { theme } from "../../themes/theme";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { errorHandler } from "../../utils/errorHandler";
-import { PaymentValueRegex } from "../../utils/constants";
+import { Box, TextField, Typography, Button } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import axios from 'axios';
+import { theme } from '../../themes/theme';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { errorHandler } from '../../utils/errorHandler';
+import { PaymentValueRegex } from '../../utils/constants';
 
 interface PaymentFormData {
   receiver: string;
@@ -23,59 +23,55 @@ export const Payment = () => {
     formState: { errors },
   } = useForm<PaymentFormData>({
     defaultValues: {
-      receiver: "",
-      fromAccount: "",
-      toAccount: "",
-      amount: "",
-      date: new Date().toISOString().split("T")[0],
-      title: "",
+      receiver: '',
+      fromAccount: '',
+      toAccount: '',
+      amount: '',
+      date: new Date().toISOString().split('T')[0],
+      title: '',
     },
   });
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
+  const { id: userId } = useParams();
 
   const onSubmit = async (data: PaymentFormData) => {
-    const userId = localStorage.getItem("userId");
-
     try {
-      const response = await axios.post(
-        `http://localhost:4000/user/${userId}/transaction`,
-        {
-          receiver: data.receiver,
-          amount: data.amount,
-          date: data.date,
-          title: data.title,
-          fromAccount: data.fromAccount,
-          toAccount: data.toAccount,
-        },
-      );
+      const response = await axios.post(`http://localhost:4000/user/${userId}/transaction`, {
+        receiver: data.receiver,
+        amount: data.amount,
+        date: data.date,
+        title: data.title,
+        fromAccount: data.fromAccount,
+        toAccount: data.toAccount,
+      });
 
-      setMessage(response.data.message || "Transaction successful");
-      navigate("/user");
+      setMessage(response.data.message || 'Transaction successful');
+      navigate('/user');
     } catch (error) {
       errorHandler(error);
-      console.error("Transaction error:", error);
+      console.error('Transaction error:', error);
     }
   };
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         gap: 2,
         maxWidth: 400,
-        margin: "auto",
+        margin: 'auto',
       }}
     >
-      <Typography variant="h5" sx={{ color: "text.primary" }}>
+      <Typography variant="h5" sx={{ color: 'text.primary' }}>
         Payment
       </Typography>
 
       <Controller
         name="receiver"
         control={control}
-        rules={{ required: "Receiver is required" }}
+        rules={{ required: 'Receiver is required' }}
         render={({ field }) => (
           <TextField
             label="Receiver"
@@ -90,7 +86,7 @@ export const Payment = () => {
       <Controller
         name="fromAccount"
         control={control}
-        rules={{ required: "From Account is required" }}
+        rules={{ required: 'From Account is required' }}
         render={({ field }) => (
           <TextField
             label="From Account"
@@ -105,7 +101,7 @@ export const Payment = () => {
       <Controller
         name="toAccount"
         control={control}
-        rules={{ required: "To Account is required" }}
+        rules={{ required: 'To Account is required' }}
         render={({ field }) => (
           <TextField
             label="To Account"
@@ -121,10 +117,10 @@ export const Payment = () => {
         name="amount"
         control={control}
         rules={{
-          required: "Amount is required",
+          required: 'Amount is required',
           pattern: {
             value: PaymentValueRegex,
-            message: "Enter a valid amount ( like 100 or 100.50)",
+            message: 'Enter a valid amount ( like 100 or 100.50)',
           },
         }}
         render={({ field }) => (
@@ -142,14 +138,14 @@ export const Payment = () => {
       <Controller
         name="date"
         control={control}
-        rules={{ required: "Date is required" }}
+        rules={{ required: 'Date is required' }}
         render={({ field }) => (
           <TextField
             label="Transfer Date"
             type="date"
             fullWidth
             InputLabelProps={{ shrink: true }}
-            inputProps={{ min: new Date().toISOString().split("T")[0] }}
+            inputProps={{ min: new Date().toISOString().split('T')[0] }}
             {...field}
             error={!!errors.date}
             helperText={errors.date?.message}
@@ -160,7 +156,7 @@ export const Payment = () => {
       <Controller
         name="title"
         control={control}
-        rules={{ required: "Transfer Title is required" }}
+        rules={{ required: 'Transfer Title is required' }}
         render={({ field }) => (
           <TextField
             label="Transfer Title"
@@ -184,9 +180,7 @@ export const Payment = () => {
         <Typography
           variant="h4"
           sx={{
-            color: message.includes("success")
-              ? "green"
-              : theme.palette.error.main,
+            color: message.includes('success') ? 'green' : theme.palette.error.main,
           }}
         >
           {message}

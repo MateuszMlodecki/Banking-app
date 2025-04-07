@@ -96,3 +96,18 @@ Praca domowa 10.03
    - potem basic backend
    - udoskonalenie walidacji
    - udoskonalenie funkcjonalnosci
+
+Praca domowa 27.03
+
+1. Poprawic przekierowania z user na user/:id
+2. Napisz AlertContext
+   - context dla calej apki, ktory w prosty sposob pozwoli nam wyswietlac info/success i error message
+   - mozesz uzyc Alert z MUI albo skorzystac z innej biblioteki
+   - do tworzenia message w Alertach uzyj errorHandlera
+     w efekcie obsluga bledow powinna wygladac mniej wiecej tak:
+     const {setErrorAlert, setSuccessAlert lub setAlert} = useAlertContext()
+     .catch(err=> {
+     setErrorAlert(err)
+     setAlert('error', err)
+     })
+     to powinno wystarczyc, zebys w kazdym miejscu aplikacji (komponencie) mogl obsluzyc w ten sam sposob bledy

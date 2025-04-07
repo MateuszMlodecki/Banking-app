@@ -1,7 +1,7 @@
-import React from "react";
-import { Box } from "@mui/material";
-import { drawerWidth } from "../../utils/constants";
-import { Outlet } from "react-router-dom";
+import React from 'react';
+import { Box } from '@mui/material';
+import { drawerWidth } from '../../utils/constants';
+import { Outlet } from 'react-router-dom';
 
 export const LayoutContent: React.FC = () => {
   return (

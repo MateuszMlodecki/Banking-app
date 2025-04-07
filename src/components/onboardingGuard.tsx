@@ -1,20 +1,21 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { UserDetails } from "../types/types";
-import { CircularProgress } from "@mui/material";
+import { Navigate, Outlet, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { UserDetails } from '../types/types';
+import { CircularProgress } from '@mui/material';
+import axios, { setAuthHeader } from '../axios-config';
 
 export const OnboardingGuard = () => {
-  const [isOnboardingComplete, setIsOnboardingComplete] =
-    useState<boolean>(false);
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+  const { id: userId } = useParams();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
-      const onboardingCompleted =
-        localStorage.getItem("onboardingCompleted") === "true";
+      const token = localStorage.getItem('token');
+      const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
+      if (token) {
+        setAuthHeader(token);
+      }
 
       if (onboardingCompleted && token && userId) {
         setIsOnboardingComplete(true);
@@ -29,26 +30,11 @@ export const OnboardingGuard = () => {
       }
 
       try {
-        await axios.get<UserDetails>(
-          `http://localhost:4000/user/profile/${userId}`,
-        );
+        await axios.get<UserDetails>(`http://localhost:4000/user/${userId}`);
         setIsOnboardingComplete(true);
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 404) {
-            setIsOnboardingComplete(false);
-          } else if (error.response?.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userId");
-            setIsOnboardingComplete(false);
-          } else {
-            console.error("Unexpected error:", error);
-            setIsOnboardingComplete(false);
-          }
-        } else {
-          console.error("Unknown error:", error);
-          setIsOnboardingComplete(false);
-        }
+        setIsOnboardingComplete(false);
+        // alert context
       } finally {
         setLoading(false);
       }
@@ -59,5 +45,5 @@ export const OnboardingGuard = () => {
 
   if (loading) return <CircularProgress />;
 
-  return isOnboardingComplete ? <Outlet /> : <Navigate to="/user/profile" />;
+  return isOnboardingComplete ? <Outlet /> : <Navigate to={`/user/${userId}/profile`} />;
 };
