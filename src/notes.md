@@ -111,3 +111,8 @@ Praca domowa 27.03
      setAlert('error', err)
      })
      to powinno wystarczyc, zebys w kazdym miejscu aplikacji (komponencie) mogl obsluzyc w ten sam sposob bledy
+
+Praca domowa 7.04
+
+1. Sprawdzic czy wykonuja sie poprawnie Payments
+2. Zrobic tabele transactions- uzyj MuiDataGrid

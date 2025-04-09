@@ -2,15 +2,16 @@ import { Box, TextField, Typography, Button } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { theme } from '../../themes/theme';
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { errorHandler } from '../../utils/errorHandler';
 import { PaymentValueRegex } from '../../utils/constants';
+import { useAlertContext } from '../../context/AlertContext';
 
 interface PaymentFormData {
-  receiver: string;
-  fromAccount: string;
-  toAccount: string;
+  id: string;
+  senderId: string;
+  senderEmail: string;
+  receiverEmail: string;
   amount: string;
   date: string;
   title: string;
@@ -20,36 +21,37 @@ export const Payment = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<PaymentFormData>({
     defaultValues: {
-      receiver: '',
-      fromAccount: '',
-      toAccount: '',
+      receiverEmail: '',
+      senderEmail: '',
+      senderId: '',
       amount: '',
       date: new Date().toISOString().split('T')[0],
       title: '',
     },
   });
-  const [message, setMessage] = useState<string>('');
+
+  const { setErrorAlert, setSuccessAlert } = useAlertContext();
   const navigate = useNavigate();
   const { id: userId } = useParams();
 
   const onSubmit = async (data: PaymentFormData) => {
     try {
-      const response = await axios.post(`http://localhost:4000/user/${userId}/transaction`, {
-        receiver: data.receiver,
+      const response = await axios.post(`/user/${userId}/transaction`, {
+        receiverEmail: data.receiverEmail,
+        senderId: data.senderId,
         amount: data.amount,
         date: data.date,
         title: data.title,
-        fromAccount: data.fromAccount,
-        toAccount: data.toAccount,
       });
 
-      setMessage(response.data.message || 'Transaction successful');
-      navigate('/user');
+      setSuccessAlert(response.data.message || 'Transaction successful');
+      navigate(`/user/${userId}/dashboard`);
     } catch (error) {
-      errorHandler(error);
+      const message = errorHandler(error);
+      setErrorAlert(new Error(message));
       console.error('Transaction error:', error);
     }
   };
@@ -69,46 +71,31 @@ export const Payment = () => {
       </Typography>
 
       <Controller
-        name="receiver"
+        name="receiverEmail"
         control={control}
         rules={{ required: 'Receiver is required' }}
         render={({ field }) => (
           <TextField
-            label="Receiver"
+            label="Receiver Email"
             fullWidth
             {...field}
-            error={!!errors.receiver}
-            helperText={errors.receiver?.message}
+            error={!!errors.receiverEmail}
+            helperText={errors.receiverEmail?.message}
           />
         )}
       />
 
       <Controller
-        name="fromAccount"
+        name="senderEmail"
         control={control}
-        rules={{ required: 'From Account is required' }}
+        rules={{ required: 'Sender Email is required' }}
         render={({ field }) => (
           <TextField
-            label="From Account"
+            label="Sender Email"
             fullWidth
             {...field}
-            error={!!errors.fromAccount}
-            helperText={errors.fromAccount?.message}
-          />
-        )}
-      />
-
-      <Controller
-        name="toAccount"
-        control={control}
-        rules={{ required: 'To Account is required' }}
-        render={({ field }) => (
-          <TextField
-            label="To Account"
-            fullWidth
-            {...field}
-            error={!!errors.toAccount}
-            helperText={errors.toAccount?.message}
+            error={!!errors.senderEmail}
+            helperText={errors.senderEmail?.message}
           />
         )}
       />
@@ -172,20 +159,10 @@ export const Payment = () => {
         sx={{ background: theme.palette.secondary.light }}
         variant="contained"
         onClick={handleSubmit(onSubmit)}
+        disabled={isSubmitting}
       >
-        Send Transfer
+        {isSubmitting ? 'Processing...' : 'Send Transfer'}
       </Button>
-
-      {message && (
-        <Typography
-          variant="h4"
-          sx={{
-            color: message.includes('success') ? 'green' : theme.palette.error.main,
-          }}
-        >
-          {message}
-        </Typography>
-      )}
     </Box>
   );
 };
