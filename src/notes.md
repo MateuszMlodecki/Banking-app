@@ -116,3 +116,20 @@ Praca domowa 7.04
 
 1. Sprawdzic czy wykonuja sie poprawnie Payments
 2. Zrobic tabele transactions- uzyj MuiDataGrid
+
+Praca domowa 14.04
+
+1. Dokonczyc loading context
+   - przenies nasz Loader do oddzielnego komponentu
+   - dopracuj ten efekt szkla
+   - spraw, zeby te wiadomosci jak sie zmieniaja (tekst pod spinnerem) znikal i pojawial sie plynnie
+   - ostyluj calosc, kolor spinnera, tekst itp, ma byc ladnie
+   - uzywac naszego LoadingContext wszedzie; zamiast customowych state'ow w komponentach
+   - potestowac
+2. Scalic AlertContext
+3. Poprawic Payment.tsx wedle komentarza
+   - pobierac userow z backendu
+   - pakowac ich do autocomplete
+   - wyswietlac email, ale do formularza podawac tylko id usera
+   - po wybrainu usera powinnismy wyswietlic jego numer konta
+   - dostosowac styl oraz flow tak, zeby przypominal mBank

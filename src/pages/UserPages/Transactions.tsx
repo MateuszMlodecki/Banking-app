@@ -1,10 +1,11 @@
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAlertContext } from '../../context/AlertContext';
 import { errorHandler } from '../../utils/errorHandler';
+import { useLoading } from '../../context/LoadingContext';
 
 interface Transaction {
   id: string;
@@ -18,14 +19,15 @@ interface Transaction {
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  //const [loading, setLoading] = useState<boolean>(true);
   const { id: userId } = useParams();
   const { setErrorAlert } = useAlertContext();
+  const { setLoading } = useLoading();
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const response = await axios.get(`/user/${userId}/transactions`);
         setTransactions(response.data);
       } catch (error) {
@@ -33,7 +35,7 @@ export const Transactions = () => {
         setErrorAlert(new Error(message));
         console.error('Error fetching transactions:', error);
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     };
 
@@ -80,18 +82,13 @@ export const Transactions = () => {
         Transaction History
       </Typography>
 
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <DataGrid
-          rows={transactions}
-          columns={columns}
-          pageSizeOptions={[10]}
-          disableRowSelectionOnClick
-          autoHeight
-          localeText={{ noRowsLabel: 'There is no transactions!' }}
-        />
-      )}
+      <DataGrid
+        rows={transactions}
+        columns={columns}
+        disableRowSelectionOnClick
+        autoHeight
+        localeText={{ noRowsLabel: 'There is no transactions!' }}
+      />
     </Box>
   );
 };
