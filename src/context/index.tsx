@@ -1,6 +1,6 @@
 import { UserDetailsProvider } from './UserContext';
 import { theme } from '../themes/theme';
-import { AlertProvider } from './AlertProvieder';
+import { AlertProvider } from './AlertContext';
 import { ThemeProvider } from '@mui/material';
 import { LoadingContextProvider } from './LoadingContext';
 import React from 'react';

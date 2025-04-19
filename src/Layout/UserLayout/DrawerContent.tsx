@@ -24,9 +24,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { theme } from '../../themes/theme';
 import { errorHandler } from '../../utils/errorHandler';
 import axios from 'axios';
+import { useLoading } from '../../context/LoadingContext';
 
 export const DrawerContent: React.FC = () => {
   const navigate = useNavigate();
+  const { id: userId } = useParams();
+  const { setLoading } = useLoading();
   const [profile, setProfile] = useState<{
     firstName: string;
     lastName: string;
@@ -35,38 +38,35 @@ export const DrawerContent: React.FC = () => {
     lastName: '',
   });
   const [balance, setBalance] = useState<number | null>(null);
-
   const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      if (token && userId) {
+        setLoading(true);
+        try {
+          const [profileResponse, accountResponse] = await Promise.all([
+            axios.get(`/user/${userId}/profile`),
+            axios.get(`/user/${userId}/account`),
+          ]);
+          setProfile(profileResponse.data);
+          setBalance(accountResponse.data.balance);
+        } catch (error) {
+          errorHandler(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, [userId, setLoading]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('onboardingCompleted');
     navigate('/login');
   };
-  const { id: userId } = useParams();
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
-
-      if (token && userId) {
-        try {
-          const profileResponse = await axios.get(`/user/${userId}/profile`);
-          setProfile(profileResponse.data);
-        } catch (error) {
-          errorHandler(error);
-        }
-
-        try {
-          const accountResponse = await axios.get(`/user/${userId}/account`);
-          setBalance(accountResponse.data.balance);
-        } catch (error) {
-          errorHandler(error);
-        }
-      }
-    };
-    fetchProfile();
-  }, [userId]);
 
   const menuList: { text: string; icon: JSX.Element; path: string }[] = [
     { text: 'Overview', icon: <DashboardIcon />, path: `/user/${userId}` },
