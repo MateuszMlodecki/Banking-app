@@ -1,4 +1,13 @@
-import { Box, TextField, Typography, Button, Paper, Divider, InputAdornment } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Typography,
+  Button,
+  Paper,
+  Divider,
+  InputAdornment,
+  Autocomplete,
+} from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { theme } from '../../themes/theme';
@@ -23,15 +32,26 @@ interface PaymentFormData {
   title: string;
 }
 
+interface User {
+  id: string;
+  name: string;
+  accountNumber: string;
+}
+
 export const Payment = () => {
   const [senderAccountNumber, setSenderAccountNumber] = useState<string>('');
   const [senderBalance, setSenderBalance] = useState<number>(0);
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [loading, setLoadingUsers] = useState<boolean>(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
+    setValue,
   } = useForm<PaymentFormData>({
     defaultValues: {
       receiverName: '',
@@ -43,6 +63,7 @@ export const Payment = () => {
   });
 
   const currentAmount = watch('amount');
+  const receiverAccountNumber = watch('receiverAccountNumber');
   const isAmountTooHigh = parseFloat(currentAmount || '0') > senderBalance;
 
   const { setErrorAlert, setSuccessAlert } = useAlertContext();
@@ -68,6 +89,56 @@ export const Payment = () => {
 
     fetchAccountData();
   }, [userId, setErrorAlert, setLoading]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoadingUsers(true);
+        const response = await axios.get('/users');
+        const filteredUsers = response.data.filter((user: User) => user.id !== userId);
+        setUsers(filteredUsers);
+      } catch (error) {
+        const message = errorHandler(error);
+        setErrorAlert(new Error(`Failed to fetch users: ${message}`));
+        console.error('Users fetch error:', error);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+  }, [userId, setErrorAlert]);
+
+  useEffect(() => {
+    if (receiverAccountNumber) {
+      const unformattedAccountNumber = receiverAccountNumber;
+      const matchingUser = users.find(
+        user =>
+          user.accountNumber === unformattedAccountNumber ||
+          user.accountNumber.replace(/\s/g, '') === unformattedAccountNumber,
+      );
+
+      if (matchingUser && matchingUser.id !== selectedUser?.id) {
+        setSelectedUser(matchingUser);
+        setValue('receiverName', matchingUser.name);
+      } else if (!matchingUser && selectedUser) {
+        setSelectedUser(null);
+      }
+    } else if (selectedUser) {
+      setSelectedUser(null);
+    }
+  }, [receiverAccountNumber, users, selectedUser, setValue]);
+
+  const handleUserChange = (newUser: User | null) => {
+    setSelectedUser(newUser);
+    if (newUser) {
+      setValue('receiverName', newUser.name);
+      setValue('receiverAccountNumber', formatAccountNumber(newUser.accountNumber));
+    } else {
+      setValue('receiverName', '');
+      setValue('receiverAccountNumber', '');
+    }
+  };
 
   const onSubmit = async (data: PaymentFormData) => {
     if (isAmountTooHigh) {
@@ -176,23 +247,27 @@ export const Payment = () => {
             Recipient Details
           </Typography>
 
-          <Controller
-            name="receiverName"
-            control={control}
-            rules={{ required: 'Recipient name is required' }}
-            render={({ field }) => (
+          <Autocomplete
+            options={users}
+            loading={loading}
+            getOptionLabel={option => `${option.name}`}
+            value={selectedUser}
+            onChange={(_, newValue) => handleUserChange(newValue)}
+            renderInput={params => (
               <TextField
-                label="Recipient Name"
+                {...params}
+                label="Select Recipient"
                 fullWidth
-                {...field}
-                error={!!errors.receiverName}
-                helperText={errors.receiverName?.message}
                 sx={{ mb: 2 }}
                 InputProps={{
+                  ...params.InputProps,
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <PersonIcon sx={{ color: theme.palette.primary.contrastText }} />
-                    </InputAdornment>
+                    <>
+                      <InputAdornment position="start">
+                        <PersonIcon sx={{ color: theme.palette.primary.contrastText }} />
+                      </InputAdornment>
+                      {params.InputProps.startAdornment}
+                    </>
                   ),
                 }}
               />
@@ -272,7 +347,7 @@ export const Payment = () => {
                         <PaymentIcon sx={{ color: theme.palette.primary.contrastText }} />
                       </InputAdornment>
                     ),
-                    endAdornment: <InputAdornment position="end">PLN</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">$</InputAdornment>,
                   }}
                 />
               )}

@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useAlertContext } from '../../context/AlertContext';
 import { errorHandler } from '../../utils/errorHandler';
 import { useLoading } from '../../context/LoadingContext';
-import dayjs from 'dayjs';
 
 interface Transaction {
   title: string;
@@ -20,14 +19,12 @@ const columns: GridColDef[] = [
     field: 'date',
     headerName: 'Date',
     width: 200,
-    valueFormatter: ({ value }) => dayjs(value as string).format('DD.MM.YYYY'),
   },
   {
     field: 'title',
     headerName: 'Title',
     width: 400,
   },
-
   {
     field: 'amount',
     headerName: 'Amount ($)',
@@ -57,6 +54,7 @@ const columns: GridColDef[] = [
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const { id: userId } = useParams();
   const { setErrorAlert } = useAlertContext();
   const { setLoading } = useLoading();
@@ -66,10 +64,14 @@ export const Transactions = () => {
       setLoading(true);
       try {
         const response = await axios.get(`/user/${userId}/transactions`);
+        if (!Array.isArray(response.data)) {
+          throw new Error('Invalid response format');
+        }
         setTransactions(response.data);
-        console.log(response.data);
+        setError(null);
       } catch (error) {
         const message = errorHandler(error);
+        setError(message);
         setErrorAlert(new Error(message));
         console.error('Error fetching transactions:', error);
       } finally {
@@ -77,8 +79,21 @@ export const Transactions = () => {
       }
     };
 
-    fetchTransactions();
+    if (userId) {
+      fetchTransactions();
+    }
   }, [userId, setErrorAlert, setLoading]);
+
+  if (error) {
+    return (
+      <Box sx={{ width: '100%', maxWidth: '1000px', margin: 'auto', mt: 3 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Transaction History
+        </Typography>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ width: '100%', maxWidth: '1000px', margin: 'auto', mt: 3 }}>
@@ -87,11 +102,14 @@ export const Transactions = () => {
       </Typography>
 
       <DataGrid
-        rows={transactions.map((transaction, index) => ({ id: index, ...transaction }))}
+        rows={transactions.map((transaction, index) => ({
+          id: `${transaction.date}-${transaction.title}-${index}`,
+          ...transaction,
+        }))}
         columns={columns}
         disableRowSelectionOnClick
         autoHeight
-        localeText={{ noRowsLabel: 'There is no transactions!' }}
+        localeText={{ noRowsLabel: 'There are no transactions!' }}
       />
     </Box>
   );
