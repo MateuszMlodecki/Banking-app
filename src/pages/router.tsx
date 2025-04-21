@@ -1,0 +1,59 @@
+// import { createBrowserRouter } from 'react-router-dom';
+// import './App.css';
+// import { Register } from './pages/FormAuth/Register/Register';
+// import { Login } from './pages/FormAuth/Login/Login';
+// import { LandingPage } from './Layout/LandingPage/LandingPage';
+// import { StepperParent } from './pages/UserDetails/StepperParent';
+// import { Layout } from './Layout/UserLayout/Layout';
+// import { AuthGuard } from './components/AuthGuard';
+// import { Transactions } from './pages/UserPages/Transactions';
+// import { Reports } from './pages/UserPages/Report';
+// import { Payment } from './pages/UserPages/Payment';
+// import { OnboardingGuard } from './components/onboardingGuard';
+// import { Suspense } from 'react';
+// import { ContextProvider } from './context/index';
+// export const router = createBrowserRouter([
+//   {
+//     path: '/',
+//     element: <AuthGuard />,
+//     children: [
+//       {
+//         index: true,
+//         element: <LandingPage />,
+//       },
+//       {
+//         path: '/register',
+//         element: <Register />,
+//       },
+//       {
+//         path: '/login',
+//         element: <Login />,
+//       },
+
+//       {
+//         path: '/user/:id',
+//         element: <Layout />,
+//         children: [
+//           {
+//             path: '/user/:id/profile',
+//             element: <StepperParent />,
+//           },
+//           {
+//             path: '/user/:id',
+//             element: <OnboardingGuard />,
+//             children: [
+//               { path: '/user/:id/dashboard', element: <div> dashboarrd</div> },
+//               { path: '/user/:id/transactions', element: <Transactions /> },
+//               { path: '/user/:id/reports', element: <Reports /> },
+//               { path: '/user/:id/payments', element: <Payment /> },
+//             ],
+//           },
+//         ],
+//       },
+//       {
+//         path: '*',
+//         element: <div>404</div>,
+//       },
+//     ],
+//   },
+// ]);

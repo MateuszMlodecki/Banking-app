@@ -215,12 +215,14 @@ export const Payment = () => {
             fullWidth
             value={senderAccountNumber}
             disabled
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AccountBalanceIcon sx={{ color: theme.palette.primary.contrastText }} />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AccountBalanceIcon sx={{ color: theme.palette.primary.contrastText }} />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
           <Typography

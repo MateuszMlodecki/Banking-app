@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { errorHandler } from '../utils/errorHandler';
 import { AlertType } from '../types/types';
-import { AlertDisplay } from '../components/AlertDisplay';
+import { AlertDisplay } from '../components/ContextComponents/AlertDisplay';
 
 export interface AlertContextType {
   setAlert: (type: AlertType, message: string | Error) => void;

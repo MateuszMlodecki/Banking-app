@@ -63,12 +63,9 @@ export const Transactions = () => {
     const fetchTransactions = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/user/${userId}/transactions`);
-        if (!Array.isArray(response.data)) {
-          throw new Error('Invalid response format');
-        }
+        const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);
+
         setTransactions(response.data);
-        setError(null);
       } catch (error) {
         const message = errorHandler(error);
         setError(message);
@@ -90,7 +87,7 @@ export const Transactions = () => {
         <Typography variant="h5" sx={{ mb: 2 }}>
           Transaction History
         </Typography>
-        <Typography color="error">{error}</Typography>
+        {error && <Typography color="error">{error}</Typography>}
       </Box>
     );
   }
@@ -109,7 +106,7 @@ export const Transactions = () => {
         columns={columns}
         disableRowSelectionOnClick
         autoHeight
-        localeText={{ noRowsLabel: 'There are no transactions!' }}
+        localeText={{ noRowsLabel: 'There is no transactions!' }}
       />
     </Box>
   );
