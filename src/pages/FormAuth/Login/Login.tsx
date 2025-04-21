@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, TextField, Typography, CssBaseline } from '@mui/material';
+import { Box, Button, Typography, CssBaseline } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { LoginValues } from '../../../types/types';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { loginSchema } from '../../../utils/AuthSchemas';
 import { useAlertContext } from '../../../context/AlertContext';
 import axios from 'axios';
 import { errorHandler } from '../../../utils/errorHandler';
+import { FormTextfield } from 'components';
 
 export const Login = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -19,9 +20,9 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<LoginValues>({
     mode: 'all',
     resolver: yupResolver(loginSchema),
@@ -96,20 +97,17 @@ export const Login = () => {
           Please provide your details to authenticate
         </Typography>
 
-        <TextField
-          {...register('email')}
+        <FormTextfield
+          control={control}
+          name="email"
           label="Email"
-          error={!!errors.email}
-          helperText={errors.email?.message ?? ''}
           sx={{ backgroundColor: theme.palette.primary.dark }}
         />
-
-        <TextField
-          {...register('password')}
+        <FormTextfield
+          control={control}
+          name="password"
           label="Password"
           type="password"
-          error={!!errors.password}
-          helperText={errors.password?.message ?? ''}
           sx={{ backgroundColor: theme.palette.primary.dark }}
         />
 

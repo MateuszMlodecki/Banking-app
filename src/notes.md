@@ -111,3 +111,36 @@ Praca domowa 27.03
      setAlert('error', err)
      })
      to powinno wystarczyc, zebys w kazdym miejscu aplikacji (komponencie) mogl obsluzyc w ten sam sposob bledy
+
+Praca domowa 7.04
+
+1. Sprawdzic czy wykonuja sie poprawnie Payments
+2. Zrobic tabele transactions- uzyj MuiDataGrid
+
+Praca domowa 14.04
+
+1. Dokonczyc loading context
+   - przenies nasz Loader do oddzielnego komponentu
+   - dopracuj ten efekt szkla
+   - spraw, zeby te wiadomosci jak sie zmieniaja (tekst pod spinnerem) znikal i pojawial sie plynnie
+   - ostyluj calosc, kolor spinnera, tekst itp, ma byc ladnie
+   - uzywac naszego LoadingContext wszedzie; zamiast customowych state'ow w komponentach
+   - potestowac
+2. Scalic AlertContext
+3. Poprawic Payment.tsx wedle komentarza
+
+   - pobierac userow z backendu
+   - pakowac ich do autocomplete
+   - wyswietlac email, ale do formularza podawac tylko id usera
+   - po wybrainu usera powinnismy wyswietlic jego numer konta
+   - dostosowac styl oraz flow tak, zeby przypominal mBank
+
+   Praca domowa 21.04
+
+4. Przerobic importy na bezposrednie (components zamiast ../../../components)
+5. Przerobic router tak, zeby uzywal lazy loading'u
+6. Zrobic reuzywalny Select/Autocomplete na wzor FormTextfield
+7. Zamienic wszystkie inputy na FormTextfield i FormSelect
+
+Rob to po kolei, na oddzielnych branchach;
+z punktu 1 i 4 nie rob PRki dla mnie; Zrob PR sprawdz ja sobie sam i jak jest ok to merguj

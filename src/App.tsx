@@ -3,17 +3,16 @@ import './App.css';
 import { Register } from './pages/FormAuth/Register/Register';
 import { Login } from './pages/FormAuth/Login/Login';
 import { LandingPage } from './Layout/LandingPage/LandingPage';
-import { UserDetailsProvider } from './context/UserContext';
 import { StepperParent } from './pages/UserDetails/StepperParent';
-import { ThemeProvider } from '@mui/material';
-import { theme } from './themes/theme';
 import { Layout } from './Layout/UserLayout/Layout';
 import { AuthGuard } from './components/AuthGuard';
 import { Transactions } from './pages/UserPages/Transactions';
 import { Reports } from './pages/UserPages/Report';
 import { Payment } from './pages/UserPages/Payment';
 import { OnboardingGuard } from './components/onboardingGuard';
-import { AlertProvider } from './context/AlertProvieder';
+import { Suspense } from 'react';
+import { ContextProvider } from './context/index';
+//https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52/
 
 const router = createBrowserRouter([
   {
@@ -62,15 +61,11 @@ const router = createBrowserRouter([
 ]);
 const App = () => {
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <AlertProvider>
-          <UserDetailsProvider>
-            <RouterProvider router={router} />
-          </UserDetailsProvider>
-        </AlertProvider>
-      </ThemeProvider>
-    </>
+    <Suspense fallback={<p>loading...</p>}>
+      <ContextProvider>
+        <RouterProvider router={router} />
+      </ContextProvider>
+    </Suspense>
   );
 };
 
