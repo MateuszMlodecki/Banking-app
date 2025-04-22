@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Snackbar } from '@mui/material';
-import { AlertType } from '../../types/types';
+import { AlertType } from 'types/types';
 
 interface AlertDisplayProps {
   open: boolean;

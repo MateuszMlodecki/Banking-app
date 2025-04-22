@@ -1,8 +1,8 @@
-import React from "react";
-import { Drawer } from "@mui/material";
-import { DrawerContent } from "./DrawerContent";
-import { theme } from "../../themes/theme";
-import { drawerWidth } from "../../utils/constants";
+import React from 'react';
+import { Drawer } from '@mui/material';
+import { DrawerContent } from 'Layout';
+import { theme } from 'themes';
+import { drawerWidth } from 'utils';
 
 interface DrawerComponentProps {
   mobileOpen: boolean;
@@ -23,13 +23,13 @@ export const DrawerComponent: React.FC<DrawerComponentProps> = ({
           keepMounted: true,
         }}
         sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
             width: drawerWidth,
             backgroundColor: theme.palette.primary.dark,
             color: theme.palette.primary.contrastText,
-            borderRight: "2px solid",
+            borderRight: '2px solid',
             borderColor: theme.palette.grey[800],
           },
         }}
@@ -39,13 +39,13 @@ export const DrawerComponent: React.FC<DrawerComponentProps> = ({
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: "none", sm: "block" },
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
+          display: { xs: 'none', sm: 'block' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
             width: drawerWidth,
             backgroundColor: theme.palette.primary.dark,
             color: theme.palette.primary.contrastText,
-            borderRight: "2px solid",
+            borderRight: '2px solid',
             borderColor: theme.palette.grey[800],
           },
         }}

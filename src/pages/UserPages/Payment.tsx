@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
   TextField,
@@ -8,21 +11,15 @@ import {
   InputAdornment,
   Autocomplete,
 } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import axios from 'axios';
-import { theme } from '../../themes/theme';
-import { useNavigate, useParams } from 'react-router-dom';
-import { errorHandler } from '../../utils/errorHandler';
-import { PaymentValueRegex } from '../../utils/constants';
-import { useAlertContext } from '../../context/AlertContext';
-import { useEffect, useState } from 'react';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import PersonIcon from '@mui/icons-material/Person';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PersonIcon from '@mui/icons-material/Person';
 import SubjectIcon from '@mui/icons-material/Subject';
 import PaymentIcon from '@mui/icons-material/Payment';
-import { useLoading } from '../../context/LoadingContext';
-import { formatAccountNumber } from '../../utils/formatAccountNumber';
+import { errorHandler, PaymentValueRegex, formatAccountNumber } from 'utils';
+import { useAlertContext, useLoading } from 'context';
+import { theme } from 'themes';
+import axios from 'axios';
 
 interface PaymentFormData {
   receiverName: string;

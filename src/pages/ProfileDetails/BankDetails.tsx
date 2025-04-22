@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { TextField, Typography, Button, Box } from "@mui/material";
-import { Step3Values } from "../../types/types";
-import { validationSchemaStep3 } from "../../utils/validationSchemaStepper";
-import { getBankNameFromAccountNumber } from "../../utils/bankAutoComplete";
-import { formatAccountNumber } from "../../utils/formatAccountNumber";
-import { theme } from "../../themes/theme";
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { TextField, Typography, Button, Box } from '@mui/material';
+import { Step3Values } from 'types/types';
+import { getBankNameFromAccountNumber, formatAccountNumber, validationSchemaStep3 } from 'utils';
+import { theme } from 'themes';
 
 export const BankDetails: React.FC<{
   setIsStepValid: (isValid: boolean) => void;
@@ -18,11 +16,11 @@ export const BankDetails: React.FC<{
     setValue,
     formState: { errors, isValid },
   } = useForm({
-    mode: "all",
+    mode: 'all',
     resolver: yupResolver(validationSchemaStep3),
     defaultValues: {
-      accountNumber: "",
-      bankName: "",
+      accountNumber: '',
+      bankName: '',
     },
   });
 
@@ -44,11 +42,11 @@ export const BankDetails: React.FC<{
             fullWidth
             error={!!errors.accountNumber}
             helperText={errors.accountNumber?.message}
-            onChange={(e) => {
+            onChange={e => {
               const formattedData = formatAccountNumber(e.target.value);
               onChange(formattedData);
               const bankName = getBankNameFromAccountNumber(formattedData);
-              setValue("bankName", bankName || "");
+              setValue('bankName', bankName || '');
             }}
           />
         )}
@@ -65,14 +63,14 @@ export const BankDetails: React.FC<{
             helperText={errors.bankName?.message}
             margin="normal"
             InputProps={{ readOnly: true }}
-            style={{ pointerEvents: "none" }}
+            style={{ pointerEvents: 'none' }}
           />
         )}
       />
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
         <Button

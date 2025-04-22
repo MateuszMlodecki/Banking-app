@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { TextField, Typography, Button, Box } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Step1Values } from "../../types/types";
-import { validationSchemaStep1 } from "../../utils/validationSchemaStepper";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
-import { theme } from "../../themes/theme";
+import React, { useEffect } from 'react';
+import { TextField, Typography, Button, Box } from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Step1Values } from 'types/types';
+import { validationSchemaStep1 } from 'utils';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { theme } from 'themes';
 
 export const PersonalDetails: React.FC<{
   setIsStepValid: (isValid: boolean) => void;
@@ -19,12 +19,12 @@ export const PersonalDetails: React.FC<{
     handleSubmit,
     formState: { errors, isValid },
   } = useForm({
-    mode: "all",
+    mode: 'all',
     resolver: yupResolver(validationSchemaStep1),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      dateOfBirth: "",
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
     },
   });
 
@@ -69,22 +69,22 @@ export const PersonalDetails: React.FC<{
             <DatePicker
               format="DD-MM-YYYY"
               label="Date of Birth"
-              value={field.value ? dayjs(field.value, "DD-MM-YYYY") : null}
+              value={field.value ? dayjs(field.value, 'DD-MM-YYYY') : null}
               onChange={(date: Dayjs | null) => {
-                field.onChange(date ? date.format("DD-MM-YYYY") : "");
+                field.onChange(date ? date.format('DD-MM-YYYY') : '');
               }}
               sx={{
-                ".MuiDateCalendar-root": {
+                '.MuiDateCalendar-root': {
                   color: theme.palette.primary.contrastText,
-                  borderRadius: "2px",
-                  borderWidth: "1px",
-                  border: "1px solid",
+                  borderRadius: '2px',
+                  borderWidth: '1px',
+                  border: '1px solid',
                 },
               }}
               slotProps={{
                 textField: {
                   fullWidth: true,
-                  margin: "normal",
+                  margin: 'normal',
                   error: !!errors.dateOfBirth,
                   helperText: errors.dateOfBirth?.message,
                 },
@@ -95,15 +95,15 @@ export const PersonalDetails: React.FC<{
 
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           <Button
             sx={{
               color: theme.palette.primary.contrastText,
               backgroundColor: theme.palette.secondary.main,
-              "&.Mui-disabled": {
+              '&.Mui-disabled': {
                 backgroundColor: theme.palette.grey[800],
               },
             }}

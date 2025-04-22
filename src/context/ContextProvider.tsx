@@ -1,8 +1,6 @@
-import { UserDetailsProvider } from './UserContext';
-import { theme } from '../themes/theme';
-import { AlertProvider } from './AlertContext';
+import { theme } from 'themes';
+import { AlertProvider, UserDetailsProvider, LoadingContextProvider } from 'context';
 import { ThemeProvider } from '@mui/material';
-import { LoadingContextProvider } from './LoadingContext';
 import React from 'react';
 
 export const ContextProvider = ({ children }: { children: React.ReactNode }) => {

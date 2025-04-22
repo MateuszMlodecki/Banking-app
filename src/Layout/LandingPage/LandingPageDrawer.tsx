@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Drawer,
   Box,
@@ -8,12 +8,12 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { theme } from "../../themes/theme";
-import { drawerWidth } from "../../utils/constants";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { theme } from 'themes';
+import { drawerWidth } from 'utils';
 
-const navItems = ["Sign In", "Sign Up"];
+const navItems = ['Sign In', 'Sign Up'];
 
 interface NavigationDrawerProps {
   mobileOpen: boolean;
@@ -26,8 +26,8 @@ export const LandingPageDrawer: React.FC<NavigationDrawerProps> = ({
 }) => {
   const navigate = useNavigate();
   const navRoutes: Record<string, string> = {
-    "Sign In": "/Login",
-    "Sign Up": "/Register",
+    'Sign In': '/Login',
+    'Sign Up': '/Register',
   };
 
   return (
@@ -39,12 +39,12 @@ export const LandingPageDrawer: React.FC<NavigationDrawerProps> = ({
         keepMounted: true,
       }}
       sx={{
-        display: { xs: "block", sm: "none" },
-        "& .MuiDrawer-paper": {
-          boxSizing: "border-box",
+        display: { xs: 'block', sm: 'none' },
+        '& .MuiDrawer-paper': {
+          boxSizing: 'border-box',
           width: drawerWidth,
           backgroundColor: theme.palette.primary.dark,
-          borderRight: "2px solid",
+          borderRight: '2px solid',
           borderColor: theme.palette.grey[800],
         },
       }}
@@ -52,7 +52,7 @@ export const LandingPageDrawer: React.FC<NavigationDrawerProps> = ({
       <Box
         onClick={handleDrawerToggle}
         sx={{
-          textAlign: "center",
+          textAlign: 'center',
         }}
       >
         <Typography variant="h6" sx={{ my: 2 }}>
@@ -60,16 +60,12 @@ export const LandingPageDrawer: React.FC<NavigationDrawerProps> = ({
         </Typography>
         <Divider sx={{ borderColor: theme.palette.grey[800] }} />
         <List>
-          {navItems.map((item) => (
-            <ListItem
-              key={item}
-              disablePadding
-              onClick={() => navigate(navRoutes[item] || "/")}
-            >
+          {navItems.map(item => (
+            <ListItem key={item} disablePadding onClick={() => navigate(navRoutes[item] || '/')}>
               <ListItemButton
                 sx={{
-                  textAlign: "center",
-                  "&:hover": { backgroundColor: theme.palette.primary.dark },
+                  textAlign: 'center',
+                  '&:hover': { backgroundColor: theme.palette.primary.dark },
                 }}
               >
                 <ListItemText primary={<Typography>{item}</Typography>} />

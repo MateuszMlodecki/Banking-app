@@ -1,17 +1,18 @@
 import { CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 export const AuthGuard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkToken = async () => {
       try {
         const token = localStorage.getItem('token');
-        const pathname = window.location.pathname.split('/')[1];
+        const pathname = location.pathname.split('/')[1];
         const isLendingPage = pathname === '';
         const isLoginPage = pathname === 'login';
         const isRegisterPage = pathname === 'register';
@@ -24,7 +25,7 @@ export const AuthGuard = () => {
         }
 
         if (token) {
-          const response = await axios.get('http://localhost:4000/validate-token');
+          const response = await axios.get('/validate-token');
 
           if (response.status === 200 && isAuthPage) {
             navigate('/user');
@@ -40,13 +41,9 @@ export const AuthGuard = () => {
     };
 
     checkToken();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   if (isLoading) return <CircularProgress />;
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 };

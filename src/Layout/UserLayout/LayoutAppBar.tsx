@@ -1,16 +1,14 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { drawerWidth } from "../../utils/constants";
-import { theme } from "../../themes/theme";
+import React from 'react';
+import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { drawerWidth } from 'utils';
+import { theme } from 'themes';
 
 interface AppBarComponentProps {
   handleDrawerToggle: () => void;
 }
 
-export const LayoutAppBar: React.FC<AppBarComponentProps> = ({
-  handleDrawerToggle,
-}) => {
+export const LayoutAppBar: React.FC<AppBarComponentProps> = ({ handleDrawerToggle }) => {
   return (
     <AppBar
       position="fixed"
@@ -26,11 +24,11 @@ export const LayoutAppBar: React.FC<AppBarComponentProps> = ({
           onClick={handleDrawerToggle}
           sx={{
             mr: 2,
-            display: { sm: "none" },
+            display: { sm: 'none' },
             background: theme.palette.primary.dark,
-            borderRadius: "50%",
-            padding: "8px",
-            "&:hover": { background: theme.palette.grey[800] },
+            borderRadius: '50%',
+            padding: '8px',
+            '&:hover': { background: theme.palette.grey[800] },
           }}
         >
           <MenuIcon />
@@ -40,11 +38,11 @@ export const LayoutAppBar: React.FC<AppBarComponentProps> = ({
           noWrap
           component="div"
           sx={{
-            display: "flex",
-            flexDirection: { xs: "row-reverse", sm: "row" },
+            display: 'flex',
+            flexDirection: { xs: 'row-reverse', sm: 'row' },
             flexGrow: 1,
             color: theme.palette.primary.contrastText,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             marginLeft: { sm: drawerWidth },
           }}
         >

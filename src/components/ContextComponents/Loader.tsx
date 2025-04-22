@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Tooltip, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import { theme } from '../../themes/theme';
+import { theme } from 'themes';
 
 interface LoaderProps {
   isLoading: boolean;

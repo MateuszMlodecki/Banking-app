@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { TextField, Typography, Button, Box } from "@mui/material";
-import { Step2Values } from "../../types/types";
-import { validationSchemaStep2 } from "../../utils/validationSchemaStepper";
-import { theme } from "../../themes/theme";
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { TextField, Typography, Button, Box } from '@mui/material';
+import { Step2Values } from 'types/types';
+import { validationSchemaStep2 } from 'utils';
+import { theme } from 'themes';
 
 export const AddressInfo: React.FC<{
   setIsStepValid: (isValid: boolean) => void;
@@ -15,13 +15,13 @@ export const AddressInfo: React.FC<{
     handleSubmit,
     formState: { errors, isValid },
   } = useForm({
-    mode: "all",
+    mode: 'all',
     resolver: yupResolver(validationSchemaStep2),
     defaultValues: {
-      streetName: "",
-      streetNumber: "",
-      flatNumber: "",
-      city: "",
+      streetName: '',
+      streetNumber: '',
+      flatNumber: '',
+      city: '',
     },
   });
 
@@ -86,8 +86,8 @@ export const AddressInfo: React.FC<{
       />
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
         <Button

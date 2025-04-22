@@ -3,7 +3,7 @@ import './App.css';
 import { Register } from './pages/FormAuth/Register/Register';
 import { Login } from './pages/FormAuth/Login/Login';
 import { LandingPage } from './Layout/LandingPage/LandingPage';
-import { StepperParent } from './pages/UserDetails/StepperParent';
+import { StepperParent } from './pages/ProfileDetails/StepperParent';
 import { Layout } from './Layout/UserLayout/Layout';
 import { AuthGuard } from './components/AuthGuard';
 import { Transactions } from './pages/UserPages/Transactions';
@@ -11,7 +11,7 @@ import { Reports } from './pages/UserPages/Report';
 import { Payment } from './pages/UserPages/Payment';
 import { OnboardingGuard } from './components/onboardingGuard';
 import { Suspense } from 'react';
-import { ContextProvider } from './context/index';
+import { ContextProvider } from './context/ContextProvider';
 //https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52/
 
 const router = createBrowserRouter([

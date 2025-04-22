@@ -2,13 +2,12 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React from 'react';
-import { RegisterValues } from '../../../types/types';
-import { theme } from '../../../themes/theme';
-import { LandingPageAppBar } from '../../../Layout/LandingPage/LandingPageAppBar';
-import { LandingPageDrawer } from '../../../Layout/LandingPage/LandingPageDrawer';
-import { registerSchema } from '../../../utils/AuthSchemas';
+import { RegisterValues } from 'types/types';
+import { theme } from 'themes';
+import { LandingPageAppBar, LandingPageDrawer } from 'Layout';
+import { registerSchema } from 'utils';
 import { useNavigate } from 'react-router-dom';
-import { useAlertContext } from '../../../context/AlertContext';
+import { useAlertContext } from 'context';
 import axios from 'axios';
 
 export const Register = () => {

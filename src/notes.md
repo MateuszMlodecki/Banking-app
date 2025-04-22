@@ -135,12 +135,12 @@ Praca domowa 14.04
    - po wybrainu usera powinnismy wyswietlic jego numer konta
    - dostosowac styl oraz flow tak, zeby przypominal mBank
 
-   Praca domowa 21.04
+Praca domowa 21.04
 
-4. Przerobic importy na bezposrednie (components zamiast ../../../components)
-5. Przerobic router tak, zeby uzywal lazy loading'u
-6. Zrobic reuzywalny Select/Autocomplete na wzor FormTextfield
-7. Zamienic wszystkie inputy na FormTextfield i FormSelect
+1. Przerobic importy na bezposrednie (components zamiast ../../../components)
+2. Przerobic router tak, zeby uzywal lazy loading'u
+3. Zrobic reuzywalny Select/Autocomplete na wzor FormTextfield
+4. Zamienic wszystkie inputy na FormTextfield i FormSelect
 
 Rob to po kolei, na oddzielnych branchach;
 z punktu 1 i 4 nie rob PRki dla mnie; Zrob PR sprawdz ja sobie sam i jak jest ok to merguj

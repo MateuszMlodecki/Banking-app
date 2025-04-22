@@ -21,10 +21,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate, useParams } from 'react-router-dom';
-import { theme } from '../../themes/theme';
-import { errorHandler } from '../../utils/errorHandler';
+import { theme } from 'themes';
+import { errorHandler } from 'utils';
+import { useLoading } from 'context';
 import axios from 'axios';
-import { useLoading } from '../../context/LoadingContext';
 
 export const DrawerContent: React.FC = () => {
   const navigate = useNavigate();

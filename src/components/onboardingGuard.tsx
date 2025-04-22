@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { UserDetails } from '../types/types';
+import { UserDetails } from 'types/types';
 import { CircularProgress } from '@mui/material';
 import axios, { setAuthHeader } from '../axios-config';
 
