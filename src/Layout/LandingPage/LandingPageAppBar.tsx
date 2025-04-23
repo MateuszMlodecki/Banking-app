@@ -13,8 +13,8 @@ interface AppBarComponentProps {
 export const LandingPageAppBar: React.FC<AppBarComponentProps> = ({ handleDrawerToggle }) => {
   const navigate = useNavigate();
   const navRoutes: Record<string, string> = {
-    'Sign In': '/Login',
-    'Sign Up': '/Register',
+    'Sign In': '/login',
+    'Sign Up': '/register',
   };
 
   return (

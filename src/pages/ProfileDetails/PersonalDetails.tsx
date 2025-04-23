@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { TextField, Typography, Button, Box } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { Typography, Button, Box } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Step1Values } from 'types/types';
 import { validationSchemaStep1 } from 'utils';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { theme } from 'themes';
+import { FormTextfield } from 'components';
 
 export const PersonalDetails: React.FC<{
   setIsStepValid: (isValid: boolean) => void;
@@ -17,7 +18,7 @@ export const PersonalDetails: React.FC<{
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm({
     mode: 'all',
     resolver: yupResolver(validationSchemaStep1),
@@ -30,47 +31,36 @@ export const PersonalDetails: React.FC<{
 
   useEffect(() => {
     setIsStepValid(isValid);
-  }, [isValid]);
+  }, [isValid, setIsStepValid]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Typography>Personal details</Typography>
-        <Controller
-          name="firstName"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="First Name"
-              fullWidth
-              error={!!errors.firstName}
-              helperText={errors.firstName?.message}
-            />
-          )}
-        />
-        <Controller
-          name="lastName"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Last Name"
-              fullWidth
-              error={!!errors.lastName}
-              helperText={errors.lastName?.message}
-            />
-          )}
-        />
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px',
+        }}
+      >
+        <Typography variant="h5" sx={{ marginBottom: '10px' }}>
+          Personal details
+        </Typography>
+
+        <FormTextfield control={control} name="firstName" label="First Name" fullWidth />
+
+        <FormTextfield control={control} name="lastName" label="Last Name" fullWidth />
+
         <Controller
           name="dateOfBirth"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <DatePicker
               format="DD-MM-YYYY"
               label="Date of Birth"
               value={field.value ? dayjs(field.value, 'DD-MM-YYYY') : null}
-              onChange={(date: Dayjs | null) => {
+              onChange={date => {
                 field.onChange(date ? date.format('DD-MM-YYYY') : '');
               }}
               sx={{
@@ -85,8 +75,8 @@ export const PersonalDetails: React.FC<{
                 textField: {
                   fullWidth: true,
                   margin: 'normal',
-                  error: !!errors.dateOfBirth,
-                  helperText: errors.dateOfBirth?.message,
+                  error: !!error,
+                  helperText: error?.message ?? ' ',
                 },
               }}
             />
@@ -97,6 +87,7 @@ export const PersonalDetails: React.FC<{
           sx={{
             display: 'flex',
             justifyContent: 'center',
+            marginTop: '20px',
           }}
         >
           <Button
@@ -114,7 +105,7 @@ export const PersonalDetails: React.FC<{
             Continue
           </Button>
         </Box>
-      </form>
+      </Box>
     </LocalizationProvider>
   );
 };

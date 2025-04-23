@@ -1,36 +1,33 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import React from 'react';
+import { Box, Button, Typography, CssBaseline } from '@mui/material';
+import { useForm } from 'react-hook-form';
 import { RegisterValues } from 'types/types';
+import { useNavigate } from 'react-router-dom';
 import { theme } from 'themes';
 import { LandingPageAppBar, LandingPageDrawer } from 'Layout';
-import { registerSchema } from 'utils';
-import { useNavigate } from 'react-router-dom';
+import { registerSchema, errorHandler } from 'utils';
 import { useAlertContext } from 'context';
+import { FormTextfield } from 'components';
 import axios from 'axios';
 
 export const Register = () => {
-  const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
-  const handleDrawerToggle = () => {
-    setMobileOpen(prevState => !prevState);
-  };
-  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const { setErrorAlert, setSuccessAlert } = useAlertContext();
 
+  const navigate = useNavigate();
+
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<RegisterValues>({
-    mode: 'onChange',
+    mode: 'all',
     resolver: yupResolver(registerSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      repeatPassword: '',
-    },
+    defaultValues: { email: '', password: '', repeatPassword: '' },
   });
+
+  const handleDrawerToggle = () => setMobileOpen(prevState => !prevState);
 
   const onSubmit = async (data: RegisterValues) => {
     try {
@@ -42,62 +39,86 @@ export const Register = () => {
         return;
       }
 
-      setSuccessAlert('Registration sucessfull');
+      setSuccessAlert('Registration successful');
       setTimeout(() => navigate('/login'), 1000);
     } catch (error) {
-      setErrorAlert(new Error('Registration failed. Please try again.'));
+      const message = errorHandler(error);
+      setErrorAlert(new Error(message));
     }
   };
 
   return (
     <Box
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
       sx={{
-        color: theme.palette.primary.contrastText,
-        backgroundColor: theme.palette.background.default,
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px',
-        padding: '20px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        maxWidth: '400px',
-        margin: 'auto',
+        height: '100vh',
+        backgroundColor: theme.palette.primary.dark,
       }}
     >
+      <CssBaseline />
       <LandingPageAppBar handleDrawerToggle={handleDrawerToggle} />
       <LandingPageDrawer mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
-      <Typography>Register with your email</Typography>
 
-      <TextField
-        {...register('email')}
-        label="Email"
-        error={!!errors.email}
-        helperText={errors.email?.message}
-      />
-      <TextField
-        {...register('password')}
-        label="Password"
-        type="password"
-        error={!!errors.password}
-        helperText={errors.password?.message}
-      />
-      <TextField
-        {...register('repeatPassword')}
-        label="Repeat Password"
-        type="password"
-        error={!!errors.repeatPassword}
-        helperText={errors.repeatPassword?.message}
-      />
-
-      <Button
-        sx={{ background: theme.palette.secondary.light }}
-        type="submit"
-        variant="contained"
-        disabled={isSubmitting}
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{
+          backgroundColor: theme.palette.primary.dark,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px',
+          padding: '40px',
+          borderRadius: 1,
+          boxShadow: 3,
+          maxWidth: '400px',
+          margin: 'auto',
+          marginTop: '100px',
+        }}
       >
-        {isSubmitting ? 'Registering...' : 'Register'}
-      </Button>
+        <Typography
+          variant="h5"
+          sx={{
+            color: theme.palette.primary.contrastText,
+            textAlign: 'center',
+          }}
+        >
+          Create your account
+        </Typography>
+
+        <FormTextfield
+          control={control}
+          name="email"
+          label="Email"
+          sx={{ backgroundColor: theme.palette.primary.dark }}
+        />
+        <FormTextfield
+          control={control}
+          name="password"
+          label="Password"
+          type="password"
+          sx={{ backgroundColor: theme.palette.primary.dark }}
+        />
+        <FormTextfield
+          control={control}
+          name="repeatPassword"
+          label="Repeat Password"
+          type="password"
+          sx={{ backgroundColor: theme.palette.primary.dark }}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={isSubmitting}
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            '&:hover': { backgroundColor: theme.palette.secondary.dark },
+          }}
+        >
+          {isSubmitting ? 'Registering...' : 'Register'}
+        </Button>
+      </Box>
     </Box>
   );
 };

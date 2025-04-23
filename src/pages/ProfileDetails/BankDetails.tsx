@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextField, Typography, Button, Box } from '@mui/material';
 import { Step3Values } from 'types/types';
 import { getBankNameFromAccountNumber, formatAccountNumber, validationSchemaStep3 } from 'utils';
 import { theme } from 'themes';
+import { FormTextfield } from 'components';
 
 export const BankDetails: React.FC<{
   setIsStepValid: (isValid: boolean) => void;
@@ -14,7 +15,7 @@ export const BankDetails: React.FC<{
     control,
     handleSubmit,
     setValue,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm({
     mode: 'all',
     resolver: yupResolver(validationSchemaStep3),
@@ -29,19 +30,30 @@ export const BankDetails: React.FC<{
   }, [isValid, setIsStepValid]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Typography>Bank Details</Typography>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+      }}
+    >
+      <Typography variant="h5" sx={{ marginBottom: '10px' }}>
+        Bank Details
+      </Typography>
+
       <Controller
         name="accountNumber"
         control={control}
-        render={({ field: { onChange, value, ...field } }) => (
+        render={({ field: { onChange, value, ...field }, fieldState: { error } }) => (
           <TextField
             {...field}
-            value={value}
+            value={value != null ? value : ''}
             label="Account Number"
             fullWidth
-            error={!!errors.accountNumber}
-            helperText={errors.accountNumber?.message}
+            error={!!error}
+            helperText={error?.message ?? ' '}
             onChange={e => {
               const formattedData = formatAccountNumber(e.target.value);
               onChange(formattedData);
@@ -51,32 +63,30 @@ export const BankDetails: React.FC<{
           />
         )}
       />
-      <Controller
-        name="bankName"
+
+      <FormTextfield
         control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="Bank Name"
-            fullWidth
-            error={!!errors.bankName}
-            helperText={errors.bankName?.message}
-            margin="normal"
-            InputProps={{ readOnly: true }}
-            style={{ pointerEvents: 'none' }}
-          />
-        )}
+        name="bankName"
+        label="Bank Name"
+        fullWidth
+        InputProps={{ readOnly: true }}
+        sx={{ pointerEvents: 'none' }}
       />
+
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
+          marginTop: '20px',
         }}
       >
         <Button
           sx={{
             color: theme.palette.primary.contrastText,
             backgroundColor: theme.palette.secondary.main,
+            '&.Mui-disabled': {
+              backgroundColor: theme.palette.grey[800],
+            },
           }}
           type="submit"
           variant="contained"
@@ -85,6 +95,6 @@ export const BankDetails: React.FC<{
           Continue
         </Button>
       </Box>
-    </form>
+    </Box>
   );
 };

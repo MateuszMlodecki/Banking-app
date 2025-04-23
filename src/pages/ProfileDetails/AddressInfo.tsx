@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { TextField, Typography, Button, Box } from '@mui/material';
+import { Typography, Button, Box } from '@mui/material';
 import { Step2Values } from 'types/types';
 import { validationSchemaStep2 } from 'utils';
 import { theme } from 'themes';
+import { FormTextfield } from 'components';
 
 export const AddressInfo: React.FC<{
   setIsStepValid: (isValid: boolean) => void;
@@ -13,7 +14,7 @@ export const AddressInfo: React.FC<{
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm({
     mode: 'all',
     resolver: yupResolver(validationSchemaStep2),
@@ -30,70 +31,41 @@ export const AddressInfo: React.FC<{
   }, [isValid, setIsStepValid]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Typography>Address Information</Typography>
-      <Controller
-        name="streetName"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="Street Name"
-            fullWidth
-            error={!!errors.streetName}
-            helperText={errors.streetName?.message}
-          />
-        )}
-      />
-      <Controller
-        name="streetNumber"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="Street Number"
-            fullWidth
-            error={!!errors.streetNumber}
-            helperText={errors.streetNumber?.message}
-          />
-        )}
-      />
-      <Controller
-        name="flatNumber"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="Flat Number"
-            fullWidth
-            error={!!errors.flatNumber}
-            helperText={errors.flatNumber?.message}
-          />
-        )}
-      />
-      <Controller
-        name="city"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="City"
-            fullWidth
-            error={!!errors.city}
-            helperText={errors.city?.message}
-          />
-        )}
-      />
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+      }}
+    >
+      <Typography variant="h5" sx={{ marginBottom: '10px' }}>
+        Address Information
+      </Typography>
+
+      <FormTextfield control={control} name="streetName" label="Street Name" fullWidth />
+
+      <FormTextfield control={control} name="streetNumber" label="Street Number" fullWidth />
+
+      <FormTextfield control={control} name="flatNumber" label="Flat Number" fullWidth />
+
+      <FormTextfield control={control} name="city" label="City" fullWidth />
+
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
+          marginTop: '20px',
         }}
       >
         <Button
           sx={{
             color: theme.palette.primary.contrastText,
             backgroundColor: theme.palette.secondary.main,
+            '&.Mui-disabled': {
+              backgroundColor: theme.palette.grey[800],
+            },
           }}
           type="submit"
           variant="contained"
@@ -102,6 +74,6 @@ export const AddressInfo: React.FC<{
           Continue
         </Button>
       </Box>
-    </form>
+    </Box>
   );
 };

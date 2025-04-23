@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Stepper, Step, StepLabel, Button, Box } from '@mui/material';
+import { Stepper, Step, StepLabel, Button, Box, Paper } from '@mui/material';
 import { useUserDetails } from 'context';
 import { PersonalDetails } from './PersonalDetails';
 import { AddressInfo } from './AddressInfo';
@@ -67,49 +67,60 @@ export const StepperParent: React.FC = () => {
   ];
 
   return (
-    <Box
+    <Paper
+      elevation={3}
       sx={{
+        maxWidth: 600,
         width: '100%',
-        margin: '50px auto',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.palette.primary.dark,
-        padding: 3,
-        [theme.breakpoints.down('sm')]: {
-          maxWidth: '90%',
-          padding: 2,
-        },
+        margin: 'auto',
+        borderRadius: 2,
+        border: `1px solid ${theme.palette.primary.contrastText}`,
+        overflow: 'hidden',
       }}
     >
-      <Stepper activeStep={activeStep} sx={{ marginBottom: 3, width: '80%' }}>
-        {steps.map(step => (
-          <Step key={step.id}>
-            <StepLabel>{step.label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+      <Box
+        sx={{
+          width: '100%',
+          margin: '50px auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 3,
+          [theme.breakpoints.down('sm')]: {
+            maxWidth: '90%',
+            padding: 2,
+          },
+        }}
+      >
+        <Stepper activeStep={activeStep} sx={{ marginBottom: 3, width: '80%' }}>
+          {steps.map(step => (
+            <Step key={step.id}>
+              <StepLabel>{step.label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
 
-      <Box sx={{ width: '80%', maxWidth: '600px' }}>
-        {steps.map(({ id, component }) => activeStep === id && component)}
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            sx={{
-              color: theme.palette.primary.contrastText,
-              backgroundColor: theme.palette.grey[800],
-              '&.Mui-disabled': {
+        <Box sx={{ width: '80%', maxWidth: '600px' }}>
+          {steps.map(({ id, component }) => activeStep === id && component)}
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              sx={{
+                color: theme.palette.primary.contrastText,
                 backgroundColor: theme.palette.grey[800],
-                opacity: 0.5,
-              },
-            }}
-            onClick={handleBack}
-            disabled={activeStep === 0}
-          >
-            Back
-          </Button>
+                '&.Mui-disabled': {
+                  backgroundColor: theme.palette.grey[800],
+                  opacity: 0.5,
+                },
+              }}
+              onClick={handleBack}
+              disabled={activeStep === 0}
+            >
+              Back
+            </Button>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </Paper>
   );
 };
