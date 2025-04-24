@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, CssBaseline } from '@mui/material';
 import { LayoutContent, DrawerComponent, LayoutAppBar } from 'Layout';
 import { theme } from 'themes';
 
 export const Layout: React.FC = () => {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(prev => !prev);
   };

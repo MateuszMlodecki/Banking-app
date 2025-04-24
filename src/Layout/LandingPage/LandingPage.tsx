@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CssBaseline, Box } from '@mui/material';
 import { LandingPageAppBar, LandingPageDrawer, MainContent } from 'Layout';
 
 export const LandingPage: React.FC = () => {
-  const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
+  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(prevState => !prevState);
