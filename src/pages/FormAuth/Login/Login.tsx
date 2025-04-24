@@ -2,16 +2,14 @@ import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Typography, CssBaseline } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { LoginValues } from '../../../types/types';
+import { LoginValues } from 'types/types';
 import { useNavigate } from 'react-router-dom';
-import { theme } from '../../../themes/theme';
-import { LandingPageAppBar } from '../../../Layout/LandingPage/LandingPageAppBar';
-import { LandingPageDrawer } from '../../../Layout/LandingPage/LandingPageDrawer';
-import { loginSchema } from '../../../utils/AuthSchemas';
-import { useAlertContext } from '../../../context/AlertContext';
-import axios from 'axios';
-import { errorHandler } from '../../../utils/errorHandler';
+import { theme } from 'themes';
+import { LandingPageAppBar, LandingPageDrawer } from 'Layout';
+import { loginSchema, errorHandler } from 'utils';
+import { useAlertContext } from 'context';
 import { FormTextfield } from 'components';
+import axios from 'axios';
 
 export const Login = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);

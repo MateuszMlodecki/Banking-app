@@ -3,9 +3,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useAlertContext } from '../../context/AlertContext';
-import { errorHandler } from '../../utils/errorHandler';
-import { useLoading } from '../../context/LoadingContext';
+import { errorHandler } from 'utils';
+import { useLoading, useAlertContext } from 'context';
 
 interface Transaction {
   title: string;

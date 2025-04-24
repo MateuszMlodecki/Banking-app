@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { UserDetails } from '../types/types';
+import { UserDetails } from 'types/types';
 import { CircularProgress } from '@mui/material';
 import axios, { setAuthHeader } from '../axios-config';
 
@@ -30,7 +30,7 @@ export const OnboardingGuard = () => {
       }
 
       try {
-        await axios.get<UserDetails>(`http://localhost:4000/user/${userId}`);
+        await axios.get<UserDetails>(`/user/${userId}`);
         setIsOnboardingComplete(true);
       } catch (error) {
         setIsOnboardingComplete(false);

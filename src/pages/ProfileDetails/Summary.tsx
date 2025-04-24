@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useUserDetails } from '../../context/UserContext';
+import { useUserDetails } from 'context';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { theme } from '../../themes/theme';
+import { theme } from 'themes';
 import axios from 'axios';
-import { errorHandler } from '../../utils/errorHandler';
+import { errorHandler } from 'utils';
 
 export const Summary: React.FC = () => {
   const { userDetails } = useUserDetails();
@@ -35,10 +35,7 @@ export const Summary: React.FC = () => {
         flatNumber: userDetails.flatNumber,
         city: userDetails.city,
       };
-      const profileResponse = await axios.post(
-        `http://localhost:4000/user/${userId}/profile`,
-        profileData,
-      );
+      const profileResponse = await axios.post(`user/${userId}/profile`, profileData);
 
       const bankData = {
         userId: userId,
@@ -46,10 +43,7 @@ export const Summary: React.FC = () => {
         accountNumber: userDetails.accountNumber,
       };
 
-      const bankResponse = await axios.post(
-        `http://localhost:4000/user/${userId}/account`,
-        bankData,
-      );
+      const bankResponse = await axios.post(`/user/${userId}/account`, bankData);
 
       localStorage.setItem('onboardingCompleted', 'true');
       setMessage(`${profileResponse.data.message} ${bankResponse.data.message}`);
