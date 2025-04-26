@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
-import {
-  Box,
-  TextField,
-  Typography,
-  Button,
-  Paper,
-  Divider,
-  InputAdornment,
-  Autocomplete,
-} from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { Box, TextField, Typography, Button, Paper, Divider, InputAdornment } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PersonIcon from '@mui/icons-material/Person';
@@ -20,8 +11,10 @@ import { errorHandler, PaymentValueRegex, formatAccountNumber } from 'utils';
 import { useAlertContext, useLoading } from 'context';
 import { theme } from 'themes';
 import axios from 'axios';
+import { FormAutocomplete, FormTextfield } from 'components';
 
 interface PaymentFormData {
+  receiverUser: User | null;
   receiverName: string;
   receiverAccountNumber: string;
   amount: string;
@@ -38,19 +31,23 @@ interface User {
 export const Payment = () => {
   const [senderAccountNumber, setSenderAccountNumber] = useState<string>('');
   const [senderBalance, setSenderBalance] = useState<number>(0);
-
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [loading, setLoadingUsers] = useState<boolean>(false);
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+
+  const { setErrorAlert, setSuccessAlert } = useAlertContext();
+  const navigate = useNavigate();
+  const { id: userId } = useParams();
+  const { setLoading } = useLoading();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     watch,
     setValue,
   } = useForm<PaymentFormData>({
     defaultValues: {
+      receiverUser: null,
       receiverName: '',
       receiverAccountNumber: '',
       amount: '',
@@ -61,12 +58,8 @@ export const Payment = () => {
 
   const currentAmount = watch('amount');
   const receiverAccountNumber = watch('receiverAccountNumber');
+  const receiverUser = watch('receiverUser');
   const isAmountTooHigh = parseFloat(currentAmount || '0') > senderBalance;
-
-  const { setErrorAlert, setSuccessAlert } = useAlertContext();
-  const navigate = useNavigate();
-  const { id: userId } = useParams();
-  const { setLoading } = useLoading();
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -115,19 +108,14 @@ export const Payment = () => {
           user.accountNumber.replace(/\s/g, '') === unformattedAccountNumber,
       );
 
-      if (matchingUser && matchingUser.id !== selectedUser?.id) {
-        setSelectedUser(matchingUser);
+      if (matchingUser && (!receiverUser || receiverUser.id !== matchingUser.id)) {
+        setValue('receiverUser', matchingUser);
         setValue('receiverName', matchingUser.name);
-      } else if (!matchingUser && selectedUser) {
-        setSelectedUser(null);
       }
-    } else if (selectedUser) {
-      setSelectedUser(null);
     }
-  }, [receiverAccountNumber, users, selectedUser, setValue]);
+  }, [receiverAccountNumber, users, setValue, receiverUser]);
 
   const handleUserChange = (newUser: User | null) => {
-    setSelectedUser(newUser);
     if (newUser) {
       setValue('receiverName', newUser.name);
       setValue('receiverAccountNumber', formatAccountNumber(newUser.accountNumber));
@@ -246,36 +234,40 @@ export const Payment = () => {
             Recipient Details
           </Typography>
 
-          <Autocomplete
+          <FormAutocomplete<PaymentFormData, 'receiverUser', User>
+            control={control}
+            name="receiverUser"
             options={users}
-            loading={loading}
-            getOptionLabel={option => `${option.name}`}
-            value={selectedUser}
-            onChange={(_, newValue) => handleUserChange(newValue)}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label="Select Recipient"
-                fullWidth
-                sx={{ mb: 2 }}
-                InputProps={{
-                  ...params.InputProps,
+            loading={loadingUsers}
+            getOptionLabel={(option: User) => `${option.name}`}
+            isOptionEqualToValue={(option: User, value: User) => option.id === value.id}
+            label="Select recipient"
+            renderInputProps={{
+              fullWidth: true,
+              sx: { mb: 2 },
+              slotProps: {
+                input: {
                   startAdornment: (
-                    <>
-                      <InputAdornment position="start">
-                        <PersonIcon sx={{ color: theme.palette.primary.contrastText }} />
-                      </InputAdornment>
-                      {params.InputProps.startAdornment}
-                    </>
+                    <InputAdornment position="start">
+                      <PersonIcon sx={{ color: theme.palette.primary.contrastText }} />
+                    </InputAdornment>
                   ),
-                }}
-              />
-            )}
+                },
+              },
+            }}
+            onChangeExtra={(newValue: User | null) => handleUserChange(newValue)}
           />
 
-          <Controller
-            name="receiverAccountNumber"
+          <FormTextfield
             control={control}
+            name="receiverAccountNumber"
+            label="Recipient Account Number"
+            fullWidth
+            placeholder="00 0000 0000 0000 0000 0000 0000"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const formattedValue = formatAccountNumber(e.target.value);
+              setValue('receiverAccountNumber', formattedValue);
+            }}
             rules={{
               required: 'Account number is required',
               validate: value => {
@@ -283,27 +275,15 @@ export const Payment = () => {
                 return cleaned.length === 26 || 'Account number must be 26 digits';
               },
             }}
-            render={({ field }) => (
-              <TextField
-                label="Recipient Account Number"
-                fullWidth
-                placeholder=""
-                {...field}
-                onChange={e => {
-                  const formattedValue = formatAccountNumber(e.target.value);
-                  field.onChange(formattedValue);
-                }}
-                error={!!errors.receiverAccountNumber}
-                helperText={errors.receiverAccountNumber?.message}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccountBalanceIcon sx={{ color: theme.palette.primary.contrastText }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AccountBalanceIcon sx={{ color: theme.palette.primary.contrastText }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Box>
 
@@ -319,9 +299,11 @@ export const Payment = () => {
           </Typography>
 
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
-            <Controller
-              name="amount"
+            <FormTextfield
               control={control}
+              name="amount"
+              label="Amount"
+              fullWidth
               rules={{
                 required: 'Amount is required',
                 pattern: {
@@ -330,75 +312,53 @@ export const Payment = () => {
                 },
                 validate: value => parseFloat(value) <= senderBalance || 'Insufficient funds',
               }}
-              render={({ field }) => (
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  {...field}
-                  error={!!errors.amount || isAmountTooHigh}
-                  helperText={
-                    errors.amount?.message ||
-                    (isAmountTooHigh ? `Maximum available: ${senderBalance.toFixed(2)} $` : '')
-                  }
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PaymentIcon sx={{ color: theme.palette.primary.contrastText }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: <InputAdornment position="end">$</InputAdornment>,
-                  }}
-                />
-              )}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PaymentIcon sx={{ color: theme.palette.primary.contrastText }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: <InputAdornment position="end">$</InputAdornment>,
+                },
+              }}
             />
 
-            <Controller
-              name="date"
+            <FormTextfield
               control={control}
+              name="date"
+              label="Transfer Date"
+              type="date"
+              fullWidth
+              inputProps={{ min: new Date().toISOString().split('T')[0] }}
               rules={{ required: 'Date is required' }}
-              render={({ field }) => (
-                <TextField
-                  label="Transfer Date"
-                  type="date"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  inputProps={{ min: new Date().toISOString().split('T')[0] }}
-                  {...field}
-                  error={!!errors.date}
-                  helperText={errors.date?.message}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <CalendarTodayIcon sx={{ color: theme.palette.primary.contrastText }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              )}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CalendarTodayIcon sx={{ color: theme.palette.primary.contrastText }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
           </Box>
 
-          <Controller
-            name="title"
+          <FormTextfield
             control={control}
+            name="title"
+            label="Payment Title"
+            fullWidth
             rules={{ required: 'Transfer title is required' }}
-            render={({ field }) => (
-              <TextField
-                label="Payment Title"
-                fullWidth
-                rows={2}
-                {...field}
-                error={!!errors.title}
-                helperText={errors.title?.message}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SubjectIcon sx={{ color: theme.palette.primary.contrastText }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SubjectIcon sx={{ color: theme.palette.primary.contrastText }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Box>
 
