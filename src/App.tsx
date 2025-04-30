@@ -7,7 +7,7 @@ import './App.css';
 
 const App = () => {
   return (
-    <Suspense fallback={<Loader isLoading={true} />}>
+    <Suspense fallback={<Loader isLoading />}>
       <ContextProvider>
         <RouterProvider router={router} />
       </ContextProvider>

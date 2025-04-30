@@ -5,5 +5,5 @@ export { StepperParent } from './ProfileDetails/StepperParent';
 export { Overview } from './UserPages/Overview';
 export { Transactions } from './UserPages/Transactions';
 export { Reports } from './UserPages/Report';
-export { Payment } from './UserPages/Payment';
+export { Payment } from './Payment/Payment';
 export { PageNotFound } from './PageNotFound';

@@ -1,10 +1,9 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { CreditCard } from 'components/ContextComponents/OverviewComponents/CreditCard';
 
 export const Overview = () => {
   return (
-    <Box>
-      <Typography sx={{ color: 'text.primary' }}>Overview</Typography>
+    <Box sx={{ display: 'flex' }}>
       <CreditCard />
     </Box>
   );

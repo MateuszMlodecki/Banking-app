@@ -144,3 +144,12 @@ Praca domowa 21.04
 
 Rob to po kolei, na oddzielnych branchach;
 z punktu 1 i 4 nie rob PRki dla mnie; Zrob PR sprawdz ja sobie sam i jak jest ok to merguj
+
+Praca domowa 29.04
+
+1. Przerobić trzeci form
+2. Ogarnac yup resolver
+3. Sprawdzic npm creditcard
+
+
+Zrobic testy do platnosci

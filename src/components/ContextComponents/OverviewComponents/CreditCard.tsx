@@ -7,7 +7,8 @@ import { formatAccountNumber } from 'utils';
 import VisaLogo from 'assets/visa.svg';
 
 const CardContainer = styled(Box)(({ theme }) => ({
-  width: 400,
+  minWidth: 350,
+  maxWidth: 400,
   height: 250,
   borderRadius: 16,
   background: 'linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%)',
@@ -21,7 +22,8 @@ const CardContainer = styled(Box)(({ theme }) => ({
 
 const CardTop = styled(Box)({
   display: 'flex',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 });
 
 const CardMiddle = styled(Box)({
@@ -43,6 +45,7 @@ export const CreditCard = () => {
 
   const [accountNumber, setAccountNumber] = useState<string>('');
   const [cardHolder, setCardHolder] = useState<string>('');
+  const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +57,7 @@ export const CreditCard = () => {
         }
 
         const [accountResponse, profileResponse] = await Promise.all([
-          axios.get<{ accountNumber: string }>(`/user/${userId}/account`),
+          axios.get<{ accountNumber: string; balance: number }>(`/user/${userId}/account`),
           axios.get<{ firstName: string; lastName: string }>(`/user/${userId}/profile`),
         ]);
 
@@ -63,6 +66,7 @@ export const CreditCard = () => {
 
         setAccountNumber(formattedAccountNumber);
         setCardHolder(fullName);
+        setBalance(accountResponse.data.balance);
       } catch (err) {
         console.error(err);
         setError('Failed to load card data.');
@@ -93,6 +97,9 @@ export const CreditCard = () => {
   return (
     <CardContainer>
       <CardTop>
+        <Typography variant="h6" sx={{ fontSize: 16 }}>
+          Available founds {balance === null ? <CircularProgress /> : ` ${balance.toFixed(2)} $`}
+        </Typography>
         <img src={VisaLogo} alt="Visa" style={{ width: 60 }} />
       </CardTop>
 
@@ -109,7 +116,7 @@ export const CreditCard = () => {
           <Typography variant="subtitle2" sx={{ fontSize: 10 }}>
             Expires
           </Typography>
-          <Typography variant="body2">99/99</Typography>{' '}
+          <Typography variant="body2">99/99</Typography>
         </Box>
       </CardBottom>
     </CardContainer>
