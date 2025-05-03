@@ -1,12 +1,20 @@
 import { Box, InputAdornment, TextField, Typography, useTheme } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useAlertContext, useLoading } from 'context';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { errorHandler, formatAccountNumber } from 'utils';
 
-export const SenderAccountDetails = () => {
+type SenderAccountDetailsProps = {
+  setSenderAccountNumber: (account: string) => void;
+  setSenderBalance: (balance: number) => void;
+};
+
+export const SenderAccountDetails: FC<SenderAccountDetailsProps> = ({
+  setSenderAccountNumber,
+  setSenderBalance,
+}) => {
   const theme = useTheme();
   const { setLoading } = useLoading();
   const { id: userId } = useParams();
@@ -19,6 +27,8 @@ export const SenderAccountDetails = () => {
       await axios
         .get(`/user/${userId}/account`)
         .then(response => {
+          setSenderAccountNumber(formatAccountNumber(response.data.accountNumber));
+          setSenderBalance(response.data.balance);
           setUserDetails({
             accountNumber: formatAccountNumber(response.data.accountNumber),
             balance: response.data.balance.toFixed(2),

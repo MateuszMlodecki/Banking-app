@@ -2,17 +2,18 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Box, Typography, Button, Paper, Divider } from '@mui/material';
-import { errorHandler } from 'utils';
+import { errorHandler, paymentSchema } from 'utils';
 import { useAlertContext, useLoading } from 'context';
 import { theme } from 'themes';
 import axios from 'axios';
 import { SenderAccountDetails } from './components/SenderAccountDetails';
 import { RecipientDetailsForm } from './components/RecipientDetailsForm';
 import { PaymentDetails } from './components/PaymentDetails';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 export interface PaymentFormValues {
   receiverId: string;
-  receiverName: string;
+  receiverName?: string;
   receiverAccountNumber: string;
   amount: string;
   date: string;
@@ -43,6 +44,7 @@ export const Payment = () => {
       date: new Date().toISOString().split('T')[0],
       title: '',
     },
+    resolver: yupResolver(paymentSchema),
   });
 
   const currentAmount = watch('amount')?.replace(',', '.').trim();
@@ -60,13 +62,12 @@ export const Payment = () => {
       setLoading(true);
       const response = await axios.post(`/user/${userId}/transaction`, {
         senderAccountNumber: senderAccountNumber,
-        receiverName: data.receiverName,
+        receiverId: data.receiverId,
         receiverAccountNumber: data.receiverAccountNumber,
         amount: data.amount,
         date: data.date,
         title: data.title,
       });
-
       setSuccessAlert(response.data.message || 'Transaction successful');
       navigate(`/user/${userId}/dashboard`);
     } catch (error) {
@@ -112,7 +113,10 @@ export const Payment = () => {
           bgcolor: theme.palette.background.default,
         }}
       >
-        <SenderAccountDetails />
+        <SenderAccountDetails
+          setSenderAccountNumber={setSenderAccountNumber}
+          setSenderBalance={setSenderBalance}
+        />
 
         <Divider sx={{ my: 1 }} />
 

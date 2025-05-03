@@ -29,7 +29,6 @@ export const FormAutocomplete = <
 >({
   control,
   name,
-  rules,
   options,
   loading = false,
   label,
@@ -41,16 +40,16 @@ export const FormAutocomplete = <
   const {
     field: { value, onChange, onBlur, ref },
     fieldState: { invalid, error },
-  } = useController({ control, name, rules });
+  } = useController({ control, name });
 
   return (
     <Autocomplete
       {...autocompleteProps}
       options={options}
       loading={loading}
-      value={value}
-      onChange={onChange}
-      isOptionEqualToValue={option => option.value === value}
+      value={options.find(option => option.value === value)}
+      onChange={(_, newValue) => onChange(newValue?.value)}
+      isOptionEqualToValue={(option, value) => option.value === value?.value}
       getOptionLabel={option => option.label}
       renderInput={params => (
         <TextField

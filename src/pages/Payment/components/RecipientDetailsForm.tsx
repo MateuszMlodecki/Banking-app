@@ -92,6 +92,7 @@ export const RecipientDetailsForm: FC<RecipientDetailsFormProps> = ({
         label="Recipient Account Number"
         fullWidth
         placeholder="00 0000 0000 0000 0000 0000 0000"
+        disabled
         slotProps={{
           input: {
             startAdornment: (
