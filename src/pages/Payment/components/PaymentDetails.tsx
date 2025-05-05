@@ -41,7 +41,7 @@ export const PaymentDetails: FC<PaymentDetailsProps> = ({ control }) => {
             },
           }}
         />
-
+        {/*MUI DATE PICKER */}
         <FormTextfield
           control={control}
           name="date"

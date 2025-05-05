@@ -47,7 +47,7 @@ export const FormAutocomplete = <
       {...autocompleteProps}
       options={options}
       loading={loading}
-      value={options.find(option => option.value === value)}
+      value={options.find(option => option.value === value) || { label: '', value: '' }}
       onChange={(_, newValue) => onChange(newValue?.value)}
       isOptionEqualToValue={(option, value) => option.value === value?.value}
       getOptionLabel={option => option.label}

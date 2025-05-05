@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Box, Typography, Button, Paper, Divider } from '@mui/material';
@@ -10,6 +10,7 @@ import { SenderAccountDetails } from './components/SenderAccountDetails';
 import { RecipientDetailsForm } from './components/RecipientDetailsForm';
 import { PaymentDetails } from './components/PaymentDetails';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRequest } from 'utils/hooks/useRequest';
 
 export interface PaymentFormValues {
   receiverId: string;
@@ -21,20 +22,19 @@ export interface PaymentFormValues {
 }
 
 export const Payment = () => {
-  const [senderAccountNumber, setSenderAccountNumber] = useState<string>('');
   const [senderBalance, setSenderBalance] = useState<number>(0);
-
-  const { setErrorAlert, setSuccessAlert } = useAlertContext();
+  const { setSuccessAlert } = useAlertContext();
   const navigate = useNavigate();
-  const { id: userId } = useParams();
-  const { setLoading } = useLoading();
+  const { id: userId = '' } = useParams();
 
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors, isValid },
     watch,
     setValue,
+    setError,
+    clearErrors,
   } = useForm<PaymentFormValues>({
     defaultValues: {
       receiverId: '',
@@ -47,21 +47,25 @@ export const Payment = () => {
     resolver: yupResolver(paymentSchema),
   });
 
-  const currentAmount = watch('amount')?.replace(',', '.').trim();
-  const parsedAmount = Number(currentAmount);
+  const { request } = useRequest();
 
-  const isAmountTooHigh = !isNaN(parsedAmount) && parsedAmount > senderBalance;
+  const currentAmount = watch('amount');
 
-  const onSubmit = async (data: PaymentFormValues) => {
-    if (isAmountTooHigh) {
-      setErrorAlert(new Error('Insufficient funds'));
+  useEffect(() => {
+    const parsedAmount = Number(currentAmount?.replace(',', '.').trim());
+
+    if (!isNaN(parsedAmount) && parsedAmount > senderBalance) {
+      setError('amount', {
+        message: 'Insufficient balance',
+      });
       return;
     }
+    clearErrors('amount');
+  }, [currentAmount]);
 
-    try {
-      setLoading(true);
+  const onSubmit = async (data: PaymentFormValues) => {
+    await request(async () => {
       const response = await axios.post(`/user/${userId}/transaction`, {
-        senderAccountNumber: senderAccountNumber,
         receiverId: data.receiverId,
         receiverAccountNumber: data.receiverAccountNumber,
         amount: data.amount,
@@ -70,14 +74,10 @@ export const Payment = () => {
       });
       setSuccessAlert(response.data.message || 'Transaction successful');
       navigate(`/user/${userId}/dashboard`);
-    } catch (error) {
-      const message = errorHandler(error);
-      setErrorAlert(new Error(message));
-      console.error('Transaction error:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
+
+  console.log(errors);
 
   return (
     <Paper
@@ -113,10 +113,7 @@ export const Payment = () => {
           bgcolor: theme.palette.background.default,
         }}
       >
-        <SenderAccountDetails
-          setSenderAccountNumber={setSenderAccountNumber}
-          setSenderBalance={setSenderBalance}
-        />
+        <SenderAccountDetails userId={userId} setSenderBalance={setSenderBalance} />
 
         <Divider sx={{ my: 1 }} />
 
@@ -139,7 +136,7 @@ export const Payment = () => {
             sx={{ background: theme.palette.secondary.main }}
             variant="contained"
             onClick={handleSubmit(onSubmit)}
-            disabled={isSubmitting || isAmountTooHigh}
+            disabled={isSubmitting || Object.keys(errors).length > 0 || !isValid}
           >
             {isSubmitting ? 'Processing...' : 'Send Payment'}
           </Button>

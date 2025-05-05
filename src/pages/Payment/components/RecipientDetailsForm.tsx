@@ -39,7 +39,10 @@ export const RecipientDetailsForm: FC<RecipientDetailsFormProps> = ({
       try {
         setLoading(true);
         const response = await axios.get('/users');
-        const filteredUsers = response.data.filter((user: User) => user.id !== userId);
+        console.log(response.data);
+        const filteredUsers = response.data.filter(
+          (user: User) => user.id !== userId && user.name.toLowerCase() !== 'unknown user',
+        );
         setUsers(filteredUsers);
       } catch (error) {
         const message = errorHandler(error);
