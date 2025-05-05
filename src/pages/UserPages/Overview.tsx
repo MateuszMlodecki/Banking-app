@@ -1,9 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from '@mui/material';
+import { CardWithPackage } from 'components/OverviewComponents/CardWithPackage';
+import { CreditCard } from 'components/OverviewComponents/CreditCard';
 
 export const Overview = () => {
   return (
-    <Box>
-      <Typography sx={{ color: "text.primary" }}>Overview</Typography>
+    <Box sx={{ display: 'flex' }}>
+      <CreditCard />
+      <CardWithPackage />
     </Box>
   );
 };

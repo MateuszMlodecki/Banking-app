@@ -15,3 +15,4 @@ export {
   validationSchemaStep3,
 } from './validationSchemaStepper';
 export { formatAccountNumber } from './formatAccountNumber';
+export { paymentSchema } from './paymentSchema';

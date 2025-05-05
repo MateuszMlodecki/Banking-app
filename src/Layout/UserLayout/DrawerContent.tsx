@@ -69,7 +69,7 @@ export const DrawerContent: React.FC = () => {
   };
 
   const menuList: { text: string; icon: JSX.Element; path: string }[] = [
-    { text: 'Overview', icon: <DashboardIcon />, path: `/user/${userId}` },
+    { text: 'Overview', icon: <DashboardIcon />, path: `/user/${userId}/dashboard` },
     {
       text: 'Transactions',
       icon: <AccountBalanceIcon />,

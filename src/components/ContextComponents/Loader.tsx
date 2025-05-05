@@ -15,7 +15,7 @@ const LOADING_MESSAGES = [
 ];
 
 export const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
-  const [messageIndex, setMessageIndex] = useState(0);
+  const [_, setMessageIndex] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
 
   useEffect(() => {
