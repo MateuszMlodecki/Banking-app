@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import { CardWithPackage } from 'components/ContextComponents/OverviewComponents/CardWithPackage';
-import { CreditCard } from 'components/ContextComponents/OverviewComponents/CreditCard';
+import { CardWithPackage } from 'components/OverviewComponents/CardWithPackage';
+import { CreditCard } from 'components/OverviewComponents/CreditCard';
 
 export const Overview = () => {
   return (
