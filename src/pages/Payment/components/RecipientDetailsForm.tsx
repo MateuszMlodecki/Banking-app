@@ -6,8 +6,7 @@ import { Control, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { FC, useEffect, useState } from 'react';
 import { PaymentFormValues } from '../Payment';
 import axios from 'axios';
-import { useAlertContext, useLoading } from 'context';
-import { errorHandler } from 'utils';
+import { useRequest } from 'utils/hooks/useRequest';
 import { useParams } from 'react-router-dom';
 
 interface User {
@@ -29,28 +28,20 @@ export const RecipientDetailsForm: FC<RecipientDetailsFormProps> = ({
 }) => {
   const theme = useTheme();
   const [users, setUsers] = useState<User[]>([]);
-  const { setLoading, loading } = useLoading();
-  const { setErrorAlert } = useAlertContext();
   const { id: userId } = useParams();
   const receiverId = watch('receiverId');
+  const { request } = useRequest();
 
   useEffect(() => {
     const fetchUsers = async () => {
-      try {
-        setLoading(true);
+      if (!userId) return;
+      await request(async () => {
         const response = await axios.get('/users');
-        console.log(response.data);
         const filteredUsers = response.data.filter(
           (user: User) => user.id !== userId && user.name.toLowerCase() !== 'unknown user',
         );
         setUsers(filteredUsers);
-      } catch (error) {
-        const message = errorHandler(error);
-        setErrorAlert(new Error(`Failed to fetch users: ${message}`));
-        console.error('Users fetch error:', error);
-      } finally {
-        setLoading(false);
-      }
+      });
     };
     fetchUsers();
   }, [userId]);
@@ -74,7 +65,6 @@ export const RecipientDetailsForm: FC<RecipientDetailsFormProps> = ({
         control={control}
         name="receiverId"
         options={users.map(user => ({ label: user.name, value: user.id }))}
-        loading={loading}
         label="Select recipient"
         muiTextFieldProps={{
           slotProps: {

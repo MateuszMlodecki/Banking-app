@@ -3,9 +3,8 @@ import { Stepper, Step, StepLabel, Button, Box, Paper } from '@mui/material';
 import { useUserDetails } from 'context';
 import { PersonalDetails } from './PersonalDetails';
 import { AddressInfo } from './AddressInfo';
-import { BankDetails } from './BankDetails';
 import { Summary } from './Summary';
-import { Step1Values, Step2Values, Step3Values } from 'types/types';
+import { Step1Values, Step2Values } from 'types/types';
 import { theme } from 'themes';
 
 export const StepperParent: React.FC = () => {
@@ -23,8 +22,7 @@ export const StepperParent: React.FC = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
-  const handleFormSubmit = (data: Step1Values | Step2Values | Step3Values) => {
-    console.log('data submitted', data);
+  const handleFormSubmit = (data: Step1Values | Step2Values) => {
     setUserDetails(prev => ({ ...prev, ...data }));
     handleNext();
   };
@@ -52,18 +50,8 @@ export const StepperParent: React.FC = () => {
         />
       ),
     },
-    {
-      id: 2,
-      label: 'Bank Details',
-      component: (
-        <BankDetails
-          onSubmit={(data: Step3Values) => handleFormSubmit(data)}
-          setIsStepValid={setIsStepValid}
-          key={'bank-details'}
-        />
-      ),
-    },
-    { id: 3, label: 'Summary', component: <Summary key={'summary'} /> },
+
+    { id: 2, label: 'Summary', component: <Summary key={'summary'} /> },
   ];
 
   return (

@@ -6,15 +6,16 @@ import { RegisterValues } from 'types/types';
 import { useNavigate } from 'react-router-dom';
 import { theme } from 'themes';
 import { LandingPageAppBar, LandingPageDrawer } from 'Layout';
-import { registerSchema, errorHandler } from 'utils';
+import { registerSchema } from 'utils';
 import { useAlertContext } from 'context';
 import { FormTextfield } from 'components';
 import axios from 'axios';
+import { useRequest } from 'utils/hooks/useRequest';
 
 export const Register = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const { setErrorAlert, setSuccessAlert } = useAlertContext();
-
+  const { request } = useRequest();
   const navigate = useNavigate();
 
   const {
@@ -30,7 +31,7 @@ export const Register = () => {
   const handleDrawerToggle = () => setMobileOpen(prevState => !prevState);
 
   const onSubmit = async (data: RegisterValues) => {
-    try {
+    await request(async () => {
       const response = await axios.post('/register', data);
       const result = response.data;
 
@@ -41,10 +42,7 @@ export const Register = () => {
 
       setSuccessAlert('Registration successful');
       setTimeout(() => navigate('/login'), 1000);
-    } catch (error) {
-      const message = errorHandler(error);
-      setErrorAlert(new Error(message));
-    }
+    });
   };
 
   return (

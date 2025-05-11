@@ -3,8 +3,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { errorHandler } from 'utils';
-import { useLoading, useAlertContext } from 'context';
+import { useRequest } from 'utils/hooks/useRequest';
 
 interface Transaction {
   title: string;
@@ -53,43 +52,23 @@ const columns: GridColDef[] = [
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const { id: userId } = useParams();
-  const { setErrorAlert } = useAlertContext();
-  const { setLoading } = useLoading();
+  const { id: userId = '' } = useParams();
+  const { request } = useRequest();
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);
+    if (!userId) {
+      throw new Error('Missing user ID');
+    }
 
+    const fetchTransactions = async () => {
+      await request(async () => {
+        const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);
         setTransactions(response.data);
-      } catch (error) {
-        const message = errorHandler(error);
-        setError(message);
-        setErrorAlert(new Error(message));
-        console.error('Error fetching transactions:', error);
-      } finally {
-        setLoading(false);
-      }
+      });
     };
 
-    if (userId) {
-      fetchTransactions();
-    }
-  }, [userId, setErrorAlert, setLoading]);
-
-  if (error) {
-    return (
-      <Box sx={{ width: '100%', maxWidth: '1000px', margin: 'auto', mt: 3 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Transaction History
-        </Typography>
-        {error && <Typography color="error">{error}</Typography>}
-      </Box>
-    );
-  }
+    fetchTransactions();
+  }, [userId]);
 
   return (
     <Box sx={{ width: '100%', maxWidth: '1000px', margin: 'auto', mt: 3 }}>
@@ -105,7 +84,7 @@ export const Transactions = () => {
         columns={columns}
         disableRowSelectionOnClick
         autoHeight
-        localeText={{ noRowsLabel: 'There is no transactions!' }}
+        localeText={{ noRowsLabel: 'There are no transactions!' }}
       />
     </Box>
   );

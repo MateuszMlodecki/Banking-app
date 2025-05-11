@@ -1,46 +1,34 @@
 import { Box, InputAdornment, TextField, Typography, useTheme } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import React, { FC, useEffect, useState } from 'react';
-import { useAlertContext, useLoading } from 'context';
+import { useLoading } from 'context';
 import axios from 'axios';
-import { errorHandler, formatAccountNumber } from 'utils';
+import { formatAccountNumber } from 'utils';
+import { useRequest } from 'utils/hooks/useRequest';
 
 type SenderAccountDetailsProps = {
   setSenderBalance: React.Dispatch<React.SetStateAction<number>>;
   userId: string;
 };
 
-export const SenderAccountDetails: FC<SenderAccountDetailsProps> = ({
-  setSenderBalance,
-  userId,
-}) => {
+export const SenderAccountDetails: FC<SenderAccountDetailsProps> = ({ userId }) => {
   const theme = useTheme();
   const { setLoading } = useLoading();
-  const { setErrorAlert } = useAlertContext();
+  const { request } = useRequest();
 
   const [userDetails, setUserDetails] = useState<{ accountNumber: string; balance: number }>();
 
   useEffect(() => {
     const fetchAccountData = async () => {
-      await axios
-        .get(`/user/${userId}/account`)
-        .then(response => {
-          setSenderBalance(response.data.balance);
-          setUserDetails({
-            accountNumber: formatAccountNumber(response.data.accountNumber),
-            balance: response.data.balance.toFixed(2),
-          });
-        })
-        .catch(error => {
-          const message = errorHandler(error);
-          setErrorAlert(new Error(`Failed to fetch account information: ${message}`));
-          console.error('Account fetch error:', error);
-        })
-        .finally(() => {
-          setLoading(false);
+      await request(async () => {
+        setLoading(true);
+        const response = await axios.get(`/user/${userId}/account`);
+        setUserDetails({
+          accountNumber: formatAccountNumber(response.data.accountNumber),
+          balance: response.data.balance,
         });
+      });
     };
-
     fetchAccountData();
   }, [userId]);
 

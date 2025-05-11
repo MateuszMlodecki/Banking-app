@@ -6,6 +6,7 @@ export const useRequest = () => {
   const { setLoading } = useLoading();
 
   const request = async (callbackFunc: () => Promise<void>) => {
+    setLoading(true);
     try {
       await callbackFunc();
     } catch (error) {
