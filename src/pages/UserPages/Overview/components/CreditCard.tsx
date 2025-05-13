@@ -42,7 +42,7 @@ const CardBottom = styled(Box)({
 });
 
 export const CreditCard = () => {
-  const { id: userId } = useParams<{ id: string }>();
+  const { id: userId = '' } = useParams();
   const { request } = useRequest();
 
   const [accountNumber, setAccountNumber] = useState<string>('');
@@ -50,10 +50,6 @@ export const CreditCard = () => {
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!userId) {
-      throw new Error('Missing user ID');
-    }
-
     const fetchCardData = async () => {
       await request(async () => {
         const [accountResponse, profileResponse] = await Promise.all([

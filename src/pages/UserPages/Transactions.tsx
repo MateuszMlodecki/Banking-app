@@ -56,10 +56,6 @@ export const Transactions = () => {
   const { request } = useRequest();
 
   useEffect(() => {
-    if (!userId) {
-      throw new Error('Missing user ID');
-    }
-
     const fetchTransactions = async () => {
       await request(async () => {
         const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);

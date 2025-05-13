@@ -9,19 +9,12 @@ import { useRequest } from 'utils/hooks/useRequest';
 
 export const Summary: React.FC = () => {
   const { userDetails } = useUserDetails();
-  const { setSuccessAlert, setErrorAlert } = useAlertContext();
+  const { setSuccessAlert } = useAlertContext();
   const { request } = useRequest();
   const navigate = useNavigate();
   const { id: userId } = useParams();
 
   const handleSaveProfile = async () => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      setErrorAlert(new Error('User unauthorized please log in again'));
-      return;
-    }
-
     await request(async () => {
       const profileData = {
         userId: userId,
