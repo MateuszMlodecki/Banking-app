@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Box, Typography, Button, Paper, Divider } from '@mui/material';
-import { errorHandler, paymentSchema } from 'utils';
-import { useAlertContext, useLoading } from 'context';
+import { paymentSchema } from 'utils';
+import { useAlertContext } from 'context';
 import { theme } from 'themes';
 import axios from 'axios';
 import { SenderAccountDetails } from './components/SenderAccountDetails';
@@ -76,8 +76,6 @@ export const Payment = () => {
       navigate(`/user/${userId}/dashboard`);
     });
   };
-
-  console.log(errors);
 
   return (
     <Paper

@@ -16,6 +16,7 @@ const Transactions = lazy(() => import('Pages').then(module => ({ default: modul
 const Reports = lazy(() => import('Pages').then(module => ({ default: module.Reports })));
 const Payment = lazy(() => import('Pages').then(module => ({ default: module.Payment })));
 const PageNotFound = lazy(() => import('Pages').then(module => ({ default: module.PageNotFound })));
+const CardManagement = lazy(() => import('./UserPages/Cards/CardManagement/CardManagement'));
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
               { path: '/user/:id/transactions', element: <Transactions /> },
               { path: '/user/:id/reports', element: <Reports /> },
               { path: '/user/:id/payments', element: <Payment /> },
+              { path: '/user/:id/cards', element: <CardManagement /> },
             ],
           },
         ],

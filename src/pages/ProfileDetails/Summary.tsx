@@ -1,30 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useUserDetails } from 'context';
-import { Box, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { theme } from 'themes';
 import axios from 'axios';
-import { errorHandler } from 'utils';
+import { useAlertContext } from 'context';
+import { useRequest } from 'utils/hooks/useRequest';
 
 export const Summary: React.FC = () => {
   const { userDetails } = useUserDetails();
-  const [message, setMessage] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const { setSuccessAlert } = useAlertContext();
+  const { request } = useRequest();
   const navigate = useNavigate();
   const { id: userId } = useParams();
 
   const handleSaveProfile = async () => {
-    setMessage('');
-    setLoading(true);
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      setMessage('User not logged in. Please login again.');
-      setLoading(false);
-      return;
-    }
-
-    try {
+    await request(async () => {
       const profileData = {
         userId: userId,
         firstName: userDetails.firstName,
@@ -35,25 +26,11 @@ export const Summary: React.FC = () => {
         flatNumber: userDetails.flatNumber,
         city: userDetails.city,
       };
-      const profileResponse = await axios.post(`user/${userId}/profile`, profileData);
-
-      const bankData = {
-        userId: userId,
-        bankName: userDetails.bankName,
-        accountNumber: userDetails.accountNumber,
-      };
-
-      const bankResponse = await axios.post(`/user/${userId}/account`, bankData);
-
+      await axios.post(`user/${userId}/profile`, profileData);
       localStorage.setItem('onboardingCompleted', 'true');
-      setMessage(`${profileResponse.data.message} ${bankResponse.data.message}`);
-      navigate(`/user/${userId}`);
-    } catch (error: unknown) {
-      errorHandler(error);
-      setMessage('Failed to save profile. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
+      setSuccessAlert(`Profile saved successfully`);
+      navigate(`/user/${userId}/dashboard`);
+    });
   };
 
   return (
@@ -74,8 +51,6 @@ export const Summary: React.FC = () => {
         <Typography>Street number: {userDetails.streetNumber}</Typography>
         <Typography>Flat number: {userDetails.flatNumber}</Typography>
         <Typography>City: {userDetails.city}</Typography>
-        <Typography>Bank name: {userDetails.bankName}</Typography>
-        <Typography>Account number: {userDetails.accountNumber}</Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Button
@@ -86,21 +61,10 @@ export const Summary: React.FC = () => {
           }}
           variant="contained"
           onClick={handleSaveProfile}
-          disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : 'Save Profile'}
+          {'Save Profile'}
         </Button>
       </Box>
-
-      {message && (
-        <Typography
-          variant="body1"
-          sx={{ color: message.includes('success') ? 'green' : 'red' }}
-          aria-live="polite"
-        >
-          {message}
-        </Typography>
-      )}
     </Box>
   );
 };

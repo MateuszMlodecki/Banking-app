@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios-config';
 import { formatAccountNumber } from 'utils';
+import { useRequest } from 'utils/hooks/useRequest';
 import VisaLogo from 'assets/visa.svg';
 
 const CardContainer = styled(Box)(({ theme }) => ({
@@ -41,64 +42,35 @@ const CardBottom = styled(Box)({
 });
 
 export const CreditCard = () => {
-  const { id: userId } = useParams<{ id: string }>();
+  const { id: userId = '' } = useParams();
+  const { request } = useRequest();
 
   const [accountNumber, setAccountNumber] = useState<string>('');
   const [cardHolder, setCardHolder] = useState<string>('');
   const [balance, setBalance] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCardData = async () => {
-      try {
-        if (!userId) {
-          throw new Error('Missing user ID');
-        }
-
+      await request(async () => {
         const [accountResponse, profileResponse] = await Promise.all([
           axios.get<{ accountNumber: string; balance: number }>(`/user/${userId}/account`),
           axios.get<{ firstName: string; lastName: string }>(`/user/${userId}/profile`),
         ]);
 
-        const formattedAccountNumber = formatAccountNumber(accountResponse.data.accountNumber);
-        const fullName = `${profileResponse.data.firstName} ${profileResponse.data.lastName}`;
-
-        setAccountNumber(formattedAccountNumber);
-        setCardHolder(fullName);
+        setAccountNumber(formatAccountNumber(accountResponse.data.accountNumber));
+        setCardHolder(`${profileResponse.data.firstName} ${profileResponse.data.lastName}`);
         setBalance(accountResponse.data.balance);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load card data.');
-      } finally {
-        setLoading(false);
-      }
+      });
     };
 
     fetchCardData();
   }, [userId]);
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height={200}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height={200}>
-        <Typography color="error">{error}</Typography>
-      </Box>
-    );
-  }
-
   return (
     <CardContainer>
       <CardTop>
         <Typography variant="h6" sx={{ fontSize: 16 }}>
-          Available founds {balance === null ? <CircularProgress /> : ` ${balance.toFixed(2)} $`}
+          Available funds: {balance !== null ? `${balance.toFixed(2)} $` : '---'}
         </Typography>
         <img src={VisaLogo} alt="Visa" style={{ width: 60 }} />
       </CardTop>

@@ -22,18 +22,15 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate, useParams } from 'react-router-dom';
 import { theme } from 'themes';
-import { errorHandler } from 'utils';
-import { useLoading } from 'context';
 import axios from 'axios';
+import { useRequest } from 'utils/hooks/useRequest';
 
 export const DrawerContent: React.FC = () => {
   const navigate = useNavigate();
   const { id: userId } = useParams();
-  const { setLoading } = useLoading();
-  const [profile, setProfile] = useState<{
-    firstName: string;
-    lastName: string;
-  }>({
+  const { request } = useRequest();
+
+  const [profile, setProfile] = useState<{ firstName: string; lastName: string }>({
     firstName: '',
     lastName: '',
   });
@@ -42,25 +39,18 @@ export const DrawerContent: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      if (token && userId) {
-        setLoading(true);
-        try {
-          const [profileResponse, accountResponse] = await Promise.all([
-            axios.get(`/user/${userId}/profile`),
-            axios.get(`/user/${userId}/account`),
-          ]);
-          setProfile(profileResponse.data);
-          setBalance(accountResponse.data.balance);
-        } catch (error) {
-          errorHandler(error);
-        } finally {
-          setLoading(false);
-        }
-      }
+      if (!userId) return;
+      await request(async () => {
+        const [profileRes, accountRes] = await Promise.all([
+          axios.get(`/user/${userId}/profile`),
+          axios.get(`/user/${userId}/account`),
+        ]);
+        setProfile(profileRes.data);
+        setBalance(accountRes.data.balance);
+      });
     };
     fetchData();
-  }, [userId, setLoading]);
+  }, [userId]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -70,11 +60,7 @@ export const DrawerContent: React.FC = () => {
 
   const menuList: { text: string; icon: JSX.Element; path: string }[] = [
     { text: 'Overview', icon: <DashboardIcon />, path: `/user/${userId}/dashboard` },
-    {
-      text: 'Transactions',
-      icon: <AccountBalanceIcon />,
-      path: `/user/${userId}/transactions`,
-    },
+    { text: 'Transactions', icon: <AccountBalanceIcon />, path: `/user/${userId}/transactions` },
     { text: 'Payment', icon: <PaymentIcon />, path: `/user/${userId}/payments` },
     { text: 'Reports', icon: <AssessmentIcon />, path: `/user/${userId}/reports` },
   ];
@@ -85,9 +71,7 @@ export const DrawerContent: React.FC = () => {
     {
       text: 'Profile',
       icon: <PersonIcon />,
-      action: () => {
-        navigate(`/user/${userId}/profile`);
-      },
+      action: () => navigate(`/user/${userId}/profile`),
     },
     { text: 'Logout', icon: <LogoutIcon />, action: handleLogout },
   ];

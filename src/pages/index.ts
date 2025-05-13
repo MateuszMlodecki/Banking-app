@@ -2,7 +2,7 @@ export { router } from './router';
 export { Login } from './FormAuth/Login/Login';
 export { Register } from './FormAuth/Register/Register';
 export { StepperParent } from './ProfileDetails/StepperParent';
-export { Overview } from './UserPages/Overview';
+export { Overview } from './UserPages/Overview/Overview';
 export { Transactions } from './UserPages/Transactions';
 export { Reports } from './UserPages/Report';
 export { Payment } from './Payment/Payment';
