@@ -50,7 +50,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-export const Transactions = () => {
+const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const { id: userId = '' } = useParams();
   const { request } = useRequest();
@@ -85,3 +85,5 @@ export const Transactions = () => {
     </Box>
   );
 };
+
+export default Transactions;
