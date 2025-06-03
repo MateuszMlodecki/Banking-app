@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import StepperDialog from './components/StepperDialog';
 import { FC } from 'react';
 import { CardProvider } from 'Pages/UserPages/Cards/AddCard/CardProvider';
+import { AddDebitCardStepper } from './components/AddDebitCardStepper';
 
 type Props = {
   open: boolean;
@@ -14,7 +14,7 @@ export const AddDebitCardDialog: FC<Props> = ({ open, handleClose }) => {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Add New Card</DialogTitle>
         <DialogContent>
-          <StepperDialog />
+          <AddDebitCardStepper />
         </DialogContent>
       </Dialog>
     </CardProvider>

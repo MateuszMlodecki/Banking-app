@@ -1,64 +1,46 @@
-import { Box, Typography, Button, CircularProgress } from '@mui/material';
-import { useState } from 'react';
+import { Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useRequest } from 'utils/hooks/useRequest';
 import { useCardContext } from '../CardProvider';
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormWrapper } from './FormWrapper';
 
-const SummaryStep = () => {
-  const { cardData } = useCardContext();
-  const { id: userId } = useParams();
+const schema = yup.object({
+  confirmation: yup.boolean().oneOf([true], 'You must confirm that the data is correct').required(),
+});
+
+interface FormValues {
+  confirmation: boolean;
+}
+
+export const CardSummaryStep = () => {
+  const { cardData, setActiveStep } = useCardContext();
+  const { id: userId = '' } = useParams();
   const { request } = useRequest();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [orderError, setOrderError] = useState<string | null>(null);
 
-  const handleOrderCard = async () => {
-    if (!userId) {
-      setOrderError('User ID not found');
-      return;
-    }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(schema),
+    defaultValues: { confirmation: false },
+  });
 
-    setIsSubmitting(true);
-    setOrderError(null);
-
-    try {
-      await request(async () => {
-        const response = await axios.post(`/user/${userId}/cards/order`, {
-          type: cardData.type,
-          format: cardData.format,
-          subtype: cardData.subtype,
-          pin: cardData.pin,
-          shipping: cardData.shipping,
-          limits: cardData.limits,
-        });
-
-        console.log('Card ordered successfully:', response.data);
-        setOrderSuccess(true);
+  const onSubmit = (data: FormValues) => {
+    request(async () => {
+      await axios.post(`/user/${userId}/cards/order`, {
+        ...cardData,
       });
-    } catch (error) {
-      console.error('Error ordering card:', error);
-      setOrderError('Failed to order card. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+      setActiveStep(step => step + 1);
+    });
   };
 
-  if (orderSuccess) {
-    return (
-      <Box textAlign="center" py={4}>
-        <Typography variant="h5" color="success.main" gutterBottom>
-          Card Ordered Successfully!
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Your card has been ordered and will be processed soon.
-        </Typography>
-      </Box>
-    );
-  }
-
   return (
-    <Box>
+    <FormWrapper onSubmit={handleSubmit(onSubmit)}>
       <Typography variant="h6" gutterBottom>
         Order Summary
       </Typography>
@@ -98,27 +80,27 @@ const SummaryStep = () => {
         <Typography>ATM: ${cardData.limits.atm}</Typography>
       </Box>
 
-      {orderError && (
-        <Typography color="error" gutterBottom>
-          {orderError}
+      <Controller
+        name="confirmation"
+        control={control}
+        render={({ field }) => (
+          <FormControlLabel
+            control={
+              <Checkbox
+                {...field}
+                checked={field.value}
+                color={errors.confirmation ? 'error' : 'primary'}
+              />
+            }
+            label="I confirm that the data is correct"
+          />
+        )}
+      />
+      {errors.confirmation && (
+        <Typography variant="caption" color="error" sx={{ ml: 1 }}>
+          {errors.confirmation.message}
         </Typography>
       )}
-
-      <Box mt={4}>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          size="large"
-          onClick={handleOrderCard}
-          disabled={isSubmitting}
-          startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
-        >
-          {isSubmitting ? 'Ordering Card...' : 'Order Card'}
-        </Button>
-      </Box>
-    </Box>
+    </FormWrapper>
   );
 };
-
-export default SummaryStep;

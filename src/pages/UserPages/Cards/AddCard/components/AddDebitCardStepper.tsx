@@ -2,7 +2,7 @@ import React from 'react';
 import { Stepper, Step, StepLabel, Box } from '@mui/material';
 import { STEPS, useCardContext } from '../CardProvider';
 
-const StepperDialog: React.FC = () => {
+export const AddDebitCardStepper: React.FC = () => {
   const { activeStep } = useCardContext();
   return (
     <Box>
@@ -19,5 +19,3 @@ const StepperDialog: React.FC = () => {
     </Box>
   );
 };
-
-export default StepperDialog;

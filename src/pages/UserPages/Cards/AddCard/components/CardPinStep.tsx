@@ -17,14 +17,20 @@ const pinSchema = yup.object({
     .required('Confirm PIN is required'),
 });
 
+type FormValues = { pin: string; confirmPin: string };
+
 export const PinStep = () => {
-  const { cardData, setCardData, setActiveStep } = useCardContext();
-  const { control, handleSubmit } = useForm({
+  const {
+    cardData: { pin, confirmPin },
+    setCardData,
+    setActiveStep,
+  } = useCardContext();
+  const { control, handleSubmit } = useForm<FormValues>({
     resolver: yupResolver(pinSchema),
-    defaultValues: { pin: cardData.pin, confirmPin: cardData.confirmPin },
+    defaultValues: { pin, confirmPin },
   });
 
-  const onSubmit = (data: { pin: string; confirmPin: string }) => {
+  const onSubmit = (data: FormValues) => {
     setCardData(prev => ({ ...prev, ...data }));
     setActiveStep(step => step + 1);
   };

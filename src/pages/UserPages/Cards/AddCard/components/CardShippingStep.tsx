@@ -1,14 +1,12 @@
-import { useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Typography, Checkbox, FormControlLabel, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { FormTextfield } from 'components';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { useUserDetails } from 'context';
 import { useCardContext } from '../CardProvider';
 import { FormWrapper } from './FormWrapper';
 
-const shippingSchema = yup.object({
+const validationSchema = yup.object({
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
   streetName: yup.string().required('Street name is required'),
@@ -25,7 +23,7 @@ const shippingSchema = yup.object({
     .oneOf([true], 'You must confirm that the data is correct'),
 });
 
-interface ShippingFormData {
+interface FormValues {
   firstName: string;
   lastName: string;
   streetName: string;
@@ -37,53 +35,30 @@ interface ShippingFormData {
 }
 
 export const ShippingStep = () => {
-  const { userDetails } = useUserDetails();
   const { cardData, setCardData, setActiveStep } = useCardContext();
 
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
-  } = useForm<ShippingFormData>({
+  } = useForm<FormValues>({
     mode: 'all',
-    resolver: yupResolver(shippingSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      streetName: '',
-      streetNumber: '',
-      flatNumber: '',
-      city: '',
-      dateOfBirth: '',
-      confirmation: false,
+      firstName: cardData.shipping.firstName,
+      lastName: cardData.shipping.lastName,
+      streetName: cardData.shipping.streetName,
+      streetNumber: cardData.shipping.streetNumber,
+      flatNumber: cardData.shipping.flatNumber ?? '',
+      city: cardData.shipping.city,
+      dateOfBirth: cardData.shipping.dateOfBirth,
     },
   });
 
-  useEffect(() => {
-    if (!userDetails) return;
-
-    const formData = {
-      firstName: cardData.shipping?.firstName ?? userDetails.firstName,
-      lastName: cardData.shipping?.lastName ?? userDetails.lastName,
-      streetName: cardData.shipping?.streetName ?? userDetails.streetName,
-      streetNumber: cardData.shipping?.streetNumber ?? userDetails.streetNumber,
-      flatNumber: cardData.shipping?.flatNumber ?? userDetails.flatNumber ?? '',
-      city: cardData.shipping?.city ?? userDetails.city,
-      dateOfBirth: cardData.shipping?.dateOfBirth ?? userDetails.dateOfBirth,
-      confirmation: cardData.shipping?.confirmation ?? false,
-    };
-
-    reset(formData);
-  }, [userDetails, cardData.shipping, reset]);
-
-  const onSubmit = (data: ShippingFormData) => {
+  const onSubmit = (data: FormValues) => {
     setCardData(prev => ({
       ...prev,
-      shipping: {
-        ...data,
-        flatNumber: data.flatNumber || '',
-      },
+      shipping: data,
     }));
     setActiveStep(step => step + 1);
   };
@@ -163,30 +138,6 @@ export const ShippingStep = () => {
           disabled
           error={!!errors.dateOfBirth}
           helperText={errors.dateOfBirth?.message}
-        />
-
-        <Controller
-          name="confirmation"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Box>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    {...field}
-                    checked={field.value}
-                    color={fieldState.error ? 'error' : 'primary'}
-                  />
-                }
-                label="I confirm that the data is correct"
-              />
-              {fieldState.error && (
-                <Typography variant="caption" color="error" display="block" sx={{ ml: 4 }}>
-                  {fieldState.error.message}
-                </Typography>
-              )}
-            </Box>
-          )}
         />
       </Box>
     </FormWrapper>

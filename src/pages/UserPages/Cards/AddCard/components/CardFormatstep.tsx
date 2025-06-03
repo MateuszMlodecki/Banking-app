@@ -1,35 +1,41 @@
-import React, { useEffect } from 'react';
+import * as yup from 'yup';
 import { Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { FormWrapper } from './FormWrapper';
 import { FormAutocomplete } from 'components';
 import { useCardContext } from '../CardProvider';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-const allFormatOptions = [
+const ALL_FORMAT_OPTIONS = [
   { label: 'Virtual', value: 'virtual' },
   { label: 'Physical', value: 'physical' },
 ];
 
-export const CardFormatStep: React.FC = () => {
-  const { cardData, setCardData, setActiveStep } = useCardContext();
-  const isKids = cardData.type === 'kids';
-  const options = isKids ? [{ label: 'Physical', value: 'physical' }] : allFormatOptions;
+const validFormat = ALL_FORMAT_OPTIONS.map(option => option.value);
 
-  const { control, handleSubmit, setValue } = useForm<{ format: string }>({
-    defaultValues: { format: isKids ? 'physical' : cardData.format || 'virtual' },
+const cardDetailsSchema = yup.object({
+  format: yup.string().oneOf(validFormat).required('Card format is required'),
+});
+
+export const CardFormatStep = () => {
+  const { cardData, setCardData, setActiveStep } = useCardContext();
+  const { control, handleSubmit } = useForm({
+    resolver: yupResolver(cardDetailsSchema),
+    defaultValues: { format: cardData.format },
   });
 
-  useEffect(() => {
-    if (isKids) {
-      setValue('format', 'physical');
-      setCardData(prev => ({ ...prev, format: 'physical' }));
-    }
-  }, [isKids, setValue, setCardData]);
-
-  const onSubmit = (data: { format: string }) => {
-    setCardData(prev => ({ ...prev, format: data.format }));
+  const onSubmit = ({ format }: { format: string }) => {
+    setCardData(prev => ({ ...prev, format }));
     setActiveStep(step => step + 1);
   };
+
+  const isKids = cardData.type === 'kids';
+
+  const options = ALL_FORMAT_OPTIONS.map(option => ({
+    ...option,
+    disabled: isKids && option.value === 'virtual',
+    tooltip: isKids && option.value === 'virtual' ? 'Virtual card not available for Kids type' : '',
+  }));
 
   return (
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>

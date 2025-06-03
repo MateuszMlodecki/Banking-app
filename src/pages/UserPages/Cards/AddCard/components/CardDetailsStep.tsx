@@ -6,24 +6,30 @@ import { FormWrapper } from './FormWrapper';
 import { Typography } from '@mui/material';
 import { FormAutocomplete } from 'components';
 
-const cardDetailsOptions = [
+const CARD_DETAILS_OPTIONS = [
   { label: 'Visa', value: 'visa' },
   { label: 'MasterCard', value: 'mastercard' },
 ];
 
+const validSubtypes = CARD_DETAILS_OPTIONS.map(option => option.label);
+
 const cardDetailsSchema = yup.object({
-  cardSubtype: yup.string().required('Card subtype is required'),
+  subtype: yup.string().oneOf(validSubtypes).required('Card subtype is required'),
 });
 
 export const CardDetailsStep = () => {
-  const { cardData, setCardData, setActiveStep } = useCardContext();
+  const {
+    cardData: { subtype },
+    setCardData,
+    setActiveStep,
+  } = useCardContext();
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(cardDetailsSchema),
-    defaultValues: { cardSubtype: cardData.subtype },
+    defaultValues: { subtype },
   });
 
-  const onSubmit = ({ cardSubtype }: { cardSubtype: string }) => {
-    setCardData(prev => ({ ...prev, subtype: cardSubtype }));
+  const onSubmit = ({ subtype }: { subtype: string }) => {
+    setCardData(prev => ({ ...prev, subtype }));
     setActiveStep(step => step + 1);
   };
   return (
@@ -31,9 +37,9 @@ export const CardDetailsStep = () => {
       <Typography>Select Card Subtype</Typography>
       <FormAutocomplete
         control={control}
-        name="cardSubtype"
+        name="subtype"
         label="Card Subtype"
-        options={cardDetailsOptions}
+        options={CARD_DETAILS_OPTIONS}
       />
     </FormWrapper>
   );

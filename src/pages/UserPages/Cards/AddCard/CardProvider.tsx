@@ -6,8 +6,10 @@ import { CardTypeStep } from './components/CardTypeStep';
 import { CardDetailsStep } from './components/CardDetailsStep';
 import { PinStep } from './components/CardPinStep';
 import { ShippingStep } from './components/CardShippingStep';
-import CardSummaryStep from './components/CardSummaryStep';
-import { CardFormatStep } from './components/CardFormatstep';
+import { CardSummaryStep } from './components/CardSummaryStep';
+import { CardFormatStep } from './components/CardFormatStep';
+import { UserDetails } from 'types/types';
+import { OrderSuccessStep } from './components/OrderSuccessStep';
 
 export interface CardLimits {
   online: number;
@@ -20,15 +22,15 @@ export interface ShippingInfo {
   lastName: string;
   streetName: string;
   streetNumber: string;
-  flatNumber: string;
+  flatNumber?: string | null;
   city: string;
   dateOfBirth: string;
-  confirmation: boolean;
 }
 
+export type DebitCardType = 'credit' | 'debit' | 'kids';
 export interface CardData {
   format: string;
-  type: string;
+  type: DebitCardType;
   subtype: string;
   pin: string;
   confirmPin: string;
@@ -43,7 +45,7 @@ export interface CardContextType {
 }
 
 const defaultCardData: CardData = {
-  type: '',
+  type: '' as DebitCardType,
   format: '',
   subtype: '',
   pin: '',
@@ -56,7 +58,6 @@ const defaultCardData: CardData = {
     flatNumber: '',
     city: '',
     dateOfBirth: '',
-    confirmation: false,
   },
   limits: { online: 1000, inStore: 500, atm: 300 },
 };
@@ -68,6 +69,7 @@ export const STEPS = [
   { name: 'Set PIN', component: <PinStep />, id: 3 },
   { name: 'Shipping Info', component: <ShippingStep />, id: 4 },
   { name: 'Summary', component: <CardSummaryStep />, id: 5 },
+  { name: 'Order', component: <OrderSuccessStep />, id: 6 },
 ];
 
 export const CardContext = createContext<CardContextType | null>(null);
@@ -82,19 +84,12 @@ export const CardProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchData = async () => {
       await request(async () => {
-        const response = await axios.get(`/user/${userId}/profile`);
+        const response = await axios.get<UserDetails>(`/user/${userId}/profile`);
         const user = response.data;
         setCardData(prev => ({
           ...prev,
           shipping: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            streetName: user.streetName,
-            streetNumber: user.streetNumber,
-            flatNumber: user.flatNumber || '',
-            city: user.city,
-            dateOfBirth: user.dateOfBirth,
-            confirmation: user.confirmation || false,
+            ...user,
           },
         }));
       });

@@ -3,17 +3,17 @@ import { Typography } from '@mui/material';
 import { FormAutocomplete } from 'components';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { useCardContext } from '../CardProvider';
+import { DebitCardType, useCardContext } from '../CardProvider';
 import { FormWrapper } from './FormWrapper';
 
-const cardTypeOptions = [
+const CARD_TYPE_OPTIONS = [
   { label: 'Debit', value: 'debit' },
   { label: 'Credit', value: 'credit' },
   { label: 'Kids', value: 'kids' },
 ];
 
 const cardTypeSchema = yup.object({
-  cardType: yup.string().required('Card type is required'),
+  cardType: yup.string().oneOf(['debit', 'credit', 'kids']).required('Card type is required'),
 });
 
 export const CardTypeStep = () => {
@@ -23,7 +23,7 @@ export const CardTypeStep = () => {
     defaultValues: { cardType: cardData.type },
   });
 
-  const onSubmit = ({ cardType }: { cardType: string }) => {
+  const onSubmit = ({ cardType }: { cardType: DebitCardType }) => {
     setCardData(prev => ({ ...prev, type: cardType }));
     setActiveStep(step => step + 1);
   };
@@ -34,7 +34,7 @@ export const CardTypeStep = () => {
         control={control}
         name="cardType"
         label="Card Type"
-        options={cardTypeOptions}
+        options={CARD_TYPE_OPTIONS}
         getOptionDisabled={option => option.value === 'credit'}
       />
     </FormWrapper>
