@@ -21,7 +21,7 @@ export interface PaymentFormValues {
   title: string;
 }
 
-export const Payment = () => {
+const Payment = () => {
   const [senderBalance, setSenderBalance] = useState<number>(0);
   const { setSuccessAlert } = useAlertContext();
   const navigate = useNavigate();
@@ -143,3 +143,5 @@ export const Payment = () => {
     </Paper>
   );
 };
+
+export default Payment;

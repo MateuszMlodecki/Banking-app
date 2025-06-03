@@ -12,7 +12,7 @@ import { FormTextfield } from 'components';
 import axios from 'axios';
 import { useRequest } from 'utils/hooks/useRequest';
 
-export const Register = () => {
+const Register = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const { setErrorAlert, setSuccessAlert } = useAlertContext();
   const { request } = useRequest();
@@ -120,3 +120,5 @@ export const Register = () => {
     </Box>
   );
 };
+
+export default Register;

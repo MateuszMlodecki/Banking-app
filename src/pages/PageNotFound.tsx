@@ -2,7 +2,7 @@ import { Button, Typography, Container, Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-export const PageNotFound = () => {
+const PageNotFound = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -44,3 +44,5 @@ export const PageNotFound = () => {
     </Container>
   );
 };
+
+export default PageNotFound;

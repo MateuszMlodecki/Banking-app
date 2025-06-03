@@ -1,4 +1,3 @@
-export { LandingPage } from './LandingPage/LandingPage';
 export { LandingPageAppBar } from './LandingPage/LandingPageAppBar';
 export { LandingPageDrawer } from './LandingPage/LandingPageDrawer';
 export { MainContent } from './LandingPage/MainContent';

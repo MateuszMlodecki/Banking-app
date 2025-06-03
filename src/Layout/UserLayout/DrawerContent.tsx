@@ -19,6 +19,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import HelpIcon from '@mui/icons-material/Help';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
+import AddCardIcon from '@mui/icons-material/AddCard';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate, useParams } from 'react-router-dom';
 import { theme } from 'themes';
@@ -63,6 +64,7 @@ export const DrawerContent: React.FC = () => {
     { text: 'Transactions', icon: <AccountBalanceIcon />, path: `/user/${userId}/transactions` },
     { text: 'Payment', icon: <PaymentIcon />, path: `/user/${userId}/payments` },
     { text: 'Reports', icon: <AssessmentIcon />, path: `/user/${userId}/reports` },
+    { text: 'Card management', icon: <AddCardIcon />, path: `/user/${userId}/cards` },
   ];
 
   const bottomMenu = [

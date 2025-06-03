@@ -1,9 +1,11 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography } from '@mui/material';
 
-export const Reports = () => {
+const Reports = () => {
   return (
     <Box>
-      <Typography sx={{ color: "text.primary" }}>Report</Typography>
+      <Typography sx={{ color: 'text.primary' }}>Report</Typography>
     </Box>
   );
 };
+
+export default Reports;

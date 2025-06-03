@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { CssBaseline, Box } from '@mui/material';
 import { LandingPageAppBar, LandingPageDrawer, MainContent } from 'Layout';
-
-export const LandingPage: React.FC = () => {
+const LandingPage: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
 
   const handleDrawerToggle = () => {
@@ -18,3 +17,5 @@ export const LandingPage: React.FC = () => {
     </Box>
   );
 };
+
+export default LandingPage;
