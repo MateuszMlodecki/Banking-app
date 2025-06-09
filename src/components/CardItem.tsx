@@ -46,7 +46,7 @@ export type CardType = {
     inStore: number;
     atm: number;
   };
-  _id?: string;
+  _id: string;
   userId?: string;
   cardNumber: string;
   expiryDate: string;
@@ -60,13 +60,13 @@ export type UnlockCardData = {
   cvc: string;
 };
 
-interface CardItemProps {
+export type CardItemProps = {
   card: CardType;
   unlockedData?: UnlockCardData;
   onClick: (card: CardType) => void;
-}
+};
 
-const CardItem: FC<CardItemProps> = ({ card, unlockedData, onClick }) => {
+export const CardItem: FC<CardItemProps> = ({ card, unlockedData, onClick }) => {
   const cardKey = card._id || '';
 
   const displayNumber = unlockedData
@@ -121,5 +121,3 @@ const CardItem: FC<CardItemProps> = ({ card, unlockedData, onClick }) => {
     </CardContainer>
   );
 };
-
-export default CardItem;

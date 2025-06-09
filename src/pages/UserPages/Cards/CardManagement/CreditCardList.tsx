@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios-config';
-import { useLoading } from 'context';
-import CardItem, { CardType, UnlockCardData } from 'components/CardItem';
-import UnlockCardDialog from './UnlockCardDialog';
+import { CardItem, CardType, UnlockCardData } from 'components/CardItem';
+import { UnlockCardDialog } from './UnlockCardDialog';
 
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -13,7 +12,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EditIcon from '@mui/icons-material/Edit';
 
-import EditLimitsDialog from './EditLimitsDialog';
+import { EditLimitsDialog } from './EditLimitsDialog';
+import { useRequest } from 'utils/hooks/useRequest';
 
 export const CreditCardList = () => {
   const { id: userId = '' } = useParams();
@@ -23,69 +23,51 @@ export const CreditCardList = () => {
     [key: string]: UnlockCardData;
   }>({});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pinError, setPinError] = useState<string | undefined>();
-  const { loading, setLoading } = useLoading();
 
   const [limitDialogOpen, setLimitDialogOpen] = useState(false);
   const [limitCard, setLimitCard] = useState<CardType | null>(null);
+  const { request } = useRequest();
 
   useEffect(() => {
-    const fetchCards = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`/user/${userId}/cards`);
-        setCards(Array.isArray(response.data.cards) ? response.data.cards : []);
-      } catch (error) {
-        console.error('Error fetching cards:', error);
-        setCards([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (userId) {
-      fetchCards();
-    }
-  }, [userId, setLoading]);
+    request(async () => {
+      const { data } = await axios.get(`/user/${userId}/cards`);
+      setCards(data.cards);
+    });
+  }, [userId]);
 
   const handleCardClick = (card: CardType) => {
-    const cardKey = String(card._id);
+    const cardKey = card._id;
     if (unlockedCards[cardKey]) {
       return;
     }
     setSelectedCard(card);
     setDialogOpen(true);
-    setPinError(undefined);
   };
 
   const handleUnlock = async (pin: string) => {
-    if (!selectedCard || !userId) return;
-    try {
-      setLoading(true);
-      const response = await axios.post(`/user/${userId}/cards/${selectedCard._id}/unlock`, {
+    if (!selectedCard) return;
+
+    request(async () => {
+      const { data } = await axios.post(`/user/${userId}/cards/${selectedCard._id}/unlock`, {
         pin,
       });
-      const cardKey = String(selectedCard._id);
 
+      const cardKey = String(selectedCard._id);
       setUnlockedCards(prev => ({
         ...prev,
         [cardKey]: {
-          cardNumber: response.data.cardNumber,
-          cvc: response.data.cvc,
+          cardNumber: data.cardNumber,
+          cvc: data.cvc,
         },
       }));
-      setPinError(undefined);
+
       handleDialogClose();
-    } catch (err: unknown) {
-      setPinError('Wrong PIN');
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
     setSelectedCard(null);
-    setPinError(undefined);
   };
 
   const handleCopyNumber = (cardKey: string) => {
@@ -96,23 +78,17 @@ export const CreditCardList = () => {
       .catch(err => console.error('Failed to copy: ', err));
   };
 
-  const handleDeleteCard = async (cardKey: string) => {
-    if (!userId) return;
-    try {
-      setLoading(true);
+  const handleDeleteCard = (cardKey: string): Promise<void> => {
+    return request(async () => {
       await axios.delete(`/user/${userId}/cards/${cardKey}`);
-      setCards(prev => prev.filter(card => String(card._id) !== cardKey));
 
+      setCards(prev => prev.filter(card => card._id !== cardKey));
       setUnlockedCards(prev => {
         const copy = { ...prev };
         delete copy[cardKey];
         return copy;
       });
-    } catch (err) {
-      console.error('Error deleting card:', err);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const handleOpenLimitDialog = (card: CardType) => {
@@ -123,10 +99,6 @@ export const CreditCardList = () => {
     setLimitDialogOpen(false);
     setLimitCard(null);
   };
-
-  if (loading) {
-    return <Typography sx={{ mt: 4, textAlign: 'center' }}>Loading...</Typography>;
-  }
 
   if (!cards.length) {
     return (
@@ -218,12 +190,7 @@ export const CreditCardList = () => {
         })}
       </Box>
 
-      <UnlockCardDialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        onUnlock={handleUnlock}
-        error={pinError}
-      />
+      <UnlockCardDialog open={dialogOpen} onClose={handleDialogClose} onUnlock={handleUnlock} />
 
       {limitCard && (
         <EditLimitsDialog

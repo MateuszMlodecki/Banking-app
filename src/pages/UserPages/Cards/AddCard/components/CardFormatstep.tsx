@@ -34,7 +34,7 @@ export const CardFormatStep = () => {
   const options = ALL_FORMAT_OPTIONS.map(option => ({
     ...option,
     disabled: isKids && option.value === 'virtual',
-    tooltip: isKids && option.value === 'virtual' ? 'Virtual card not available for Kids type' : '',
+    tooltip: isKids && option.value === 'virtual' ? 'Virtual card not available for kids' : '',
   }));
 
   return (

@@ -16,7 +16,12 @@ interface UnlockCardDialogProps {
   error?: string;
 }
 
-const UnlockCardDialog: React.FC<UnlockCardDialogProps> = ({ open, onClose, onUnlock, error }) => {
+export const UnlockCardDialog: React.FC<UnlockCardDialogProps> = ({
+  open,
+  onClose,
+  onUnlock,
+  error,
+}) => {
   const [pin, setPin] = useState('');
 
   const handleUnlock = async () => {
@@ -58,5 +63,3 @@ const UnlockCardDialog: React.FC<UnlockCardDialogProps> = ({ open, onClose, onUn
     </Dialog>
   );
 };
-
-export default UnlockCardDialog;

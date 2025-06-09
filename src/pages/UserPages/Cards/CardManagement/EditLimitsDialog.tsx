@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -11,8 +11,11 @@ import {
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios-config';
-import { useLoading } from 'context';
 import { CardType } from 'components/CardItem';
+import { useRequest } from 'utils/hooks/useRequest';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 interface EditLimitsDialogProps {
   open: boolean;
@@ -20,124 +23,111 @@ interface EditLimitsDialogProps {
   card: CardType;
 }
 
-const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClose, card }) => {
-  const { id: userId = '' } = useParams();
-  const { loading, setLoading } = useLoading();
+const SLIDER_MIN = 0;
+const SLIDER_MAX = 10000;
+const SLIDER_STEP = 50;
 
-  const [onlineLimit, setOnlineLimit] = useState<number>(0);
-  const [inStoreLimit, setInStoreLimit] = useState<number>(0);
-  const [atmLimit, setAtmLimit] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
+const EditLimitsSchema = yup.object({
+  online: yup
+    .number()
+    .required('Required value')
+    .min(SLIDER_MIN, `Min ${SLIDER_MIN}$`)
+    .max(SLIDER_MAX, `Max ${SLIDER_MAX}$`),
+  inStore: yup
+    .number()
+    .required('Required value')
+    .min(SLIDER_MIN, `Min ${SLIDER_MIN}$`)
+    .max(SLIDER_MAX, `Max ${SLIDER_MAX}$`),
+  atm: yup
+    .number()
+    .required('Required value')
+    .min(SLIDER_MIN, `Min ${SLIDER_MIN}$`)
+    .max(SLIDER_MAX, `Max ${SLIDER_MAX}$`),
+});
 
-  useEffect(() => {
-    if (card.limits) {
-      setOnlineLimit(card.limits.online ?? 0);
-      setInStoreLimit(card.limits.inStore ?? 0);
-      setAtmLimit(card.limits.atm ?? 0);
-    } else {
-      setOnlineLimit(0);
-      setInStoreLimit(0);
-      setAtmLimit(0);
-    }
-    setError(null);
-  }, [card]);
+export const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClose, card }) => {
+  const { id: userId = '' } = useParams<{ id: string }>();
+  const { request } = useRequest();
 
-  const valueLabelFormat = (value: number) => `${value} $`;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<{ online: number; inStore: number; atm: number }>({
+    resolver: yupResolver(EditLimitsSchema),
+    mode: 'onChange',
+    defaultValues: {
+      online: 0,
+      inStore: 0,
+      atm: 0,
+    },
+  });
 
-  const SLIDER_MIN = 0;
-  const SLIDER_MAX = 10000;
-  const SLIDER_STEP = 50;
-
-  const handleSave = async () => {
-    if (!userId || !card._id) return;
-
-    if (onlineLimit < 0 || inStoreLimit < 0 || atmLimit < 0) {
-      setError("Limits can't be negative.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
+  const onSubmit = async (data: { online: number; inStore: number; atm: number }) => {
+    await request(async () => {
       await axios.put(`/user/${userId}/cards/${card._id}/limits`, {
         limits: {
-          online: onlineLimit,
-          inStore: inStoreLimit,
-          atm: atmLimit,
+          online: data.online,
+          inStore: data.inStore,
+          atm: data.atm,
         },
       });
-
       onClose();
-    } catch (err) {
-      console.error('Error updating limits:', err);
-      setError('An error occurred while updating limits. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    });
   };
+
+  const valueLabelFormat = (value: number) => `$${value}`;
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle>Edit card limits</DialogTitle>
-      <DialogContent>
-        <Box display="flex" flexDirection="column" gap={3} mt={1}>
-          <Box>
-            <Typography gutterBottom>Online transaction limit: {onlineLimit} $</Typography>
-            <Slider
-              value={onlineLimit}
-              onChange={(_, value) => setOnlineLimit(value as number)}
-              valueLabelDisplay="auto"
-              valueLabelFormat={valueLabelFormat}
-              min={SLIDER_MIN}
-              max={SLIDER_MAX}
-              step={SLIDER_STEP}
-            />
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogContent>
+          <Box display="flex" flexDirection="column" gap={3} mt={1}>
+            {(['online', 'inStore', 'atm'] as const).map(field => (
+              <Box key={field}>
+                <Controller
+                  name={field}
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <>
+                      <Typography gutterBottom>
+                        {field === 'online'
+                          ? `Online transaction limit: ${value} $`
+                          : field === 'inStore'
+                          ? `Store limit: ${value} $`
+                          : `ATM limit: ${value} $`}
+                      </Typography>
+                      <Slider
+                        value={value}
+                        onChange={(_, v) => onChange(v as number)}
+                        valueLabelDisplay="auto"
+                        valueLabelFormat={valueLabelFormat}
+                        min={SLIDER_MIN}
+                        max={SLIDER_MAX}
+                        step={SLIDER_STEP}
+                      />
+                    </>
+                  )}
+                />
+                {errors[field] && (
+                  <Typography variant="caption" color="error">
+                    {errors[field]?.message}
+                  </Typography>
+                )}
+              </Box>
+            ))}
           </Box>
+        </DialogContent>
 
-          <Box>
-            <Typography gutterBottom>Store limit: {inStoreLimit} $</Typography>
-            <Slider
-              value={inStoreLimit}
-              onChange={(_, value) => setInStoreLimit(value as number)}
-              valueLabelDisplay="auto"
-              valueLabelFormat={valueLabelFormat}
-              min={SLIDER_MIN}
-              max={SLIDER_MAX}
-              step={SLIDER_STEP}
-            />
-          </Box>
-
-          <Box>
-            <Typography gutterBottom>Atm limit: {atmLimit} $</Typography>
-            <Slider
-              value={atmLimit}
-              onChange={(_, value) => setAtmLimit(value as number)}
-              valueLabelDisplay="auto"
-              valueLabelFormat={valueLabelFormat}
-              min={SLIDER_MIN}
-              max={SLIDER_MAX}
-              step={SLIDER_STEP}
-            />
-          </Box>
-
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
-        </Box>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose} disabled={loading}>
-          Cancel
-        </Button>
-        <Button onClick={handleSave} variant="contained" disabled={loading}>
-          {loading ? 'Saveing...' : 'Save'}
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit" variant="contained" disabled={!isValid}>
+            Save
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };
-
-export default EditLimitsDialog;
