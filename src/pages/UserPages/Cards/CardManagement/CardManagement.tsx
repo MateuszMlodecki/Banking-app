@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { AddDebitCardDialog } from '../AddCard/AddDebitCardDialog';
 import { CreditCardList } from './CreditCardList';
+import { useRequest } from 'utils/hooks/useRequest';
 
 type Card = {
   id: string;
@@ -13,22 +14,15 @@ type Card = {
 const CardManagement: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
-  const { id } = useParams();
-
-  const handleOpen = () => setOpen(true);
+  const { userId } = useParams();
+  const { request } = useRequest();
 
   useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        const response = await axios.get(`/user/${id}/cards`);
-        setCards(Array.isArray(response.data.cards) ? response.data.cards : []);
-      } catch (error) {
-        console.error('Error fetching cards:', error);
-        setCards([]);
-      }
-    };
-    fetchCards();
-  }, [id]);
+    request(async () => {
+      const { data } = await axios.get(`/user/${userId}/cards`);
+      setCards(data.cards);
+    });
+  }, [userId, request]);
 
   return (
     <Box
@@ -40,7 +34,7 @@ const CardManagement: React.FC = () => {
       }}
     >
       <Typography variant="h2">Card Management</Typography>
-      <Button variant="contained" onClick={handleOpen}>
+      <Button variant="contained" onClick={setOpen(true)}>
         Add New Card
       </Button>
       {cards.length < 1 ? (
