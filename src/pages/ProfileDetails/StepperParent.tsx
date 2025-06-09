@@ -7,7 +7,7 @@ import { Summary } from './Summary';
 import { Step1Values, Step2Values } from 'types/types';
 import { theme } from 'themes';
 
-export const StepperParent: React.FC = () => {
+const StepperParent: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isStepValid, setIsStepValid] = useState(false);
   const { setUserDetails } = useUserDetails();
@@ -112,3 +112,5 @@ export const StepperParent: React.FC = () => {
     </Paper>
   );
 };
+
+export default StepperParent;

@@ -1,26 +1,29 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useRequest } from 'utils/hooks/useRequest';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { AddDebitCardDialog } from '../AddCard/AddDebitCardDialog';
+import { CreditCardList } from './CreditCardList';
+import { useRequest } from 'utils/hooks/useRequest';
 
 type Card = {
   id: string;
   cardNumber: string;
 };
 
-const CardManagement = () => {
+const CardManagement: React.FC = () => {
+  const [open, setOpen] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
+  const { userId } = useParams();
   const { request } = useRequest();
-  const navigate = useNavigate();
-  const { id } = useParams();
 
   useEffect(() => {
     request(async () => {
-      const response = await axios.get('/cards'); //na razie to moze rzucac errorem, najpierw zrob dodawanie a potem pobieranie
-      setCards(response.data);
+      const { data } = await axios.get(`/user/${userId}/cards`);
+      setCards(data.cards);
     });
-  }, []);
+  }, [userId, request]);
+
   return (
     <Box
       sx={{
@@ -31,20 +34,24 @@ const CardManagement = () => {
       }}
     >
       <Typography variant="h2">Card Management</Typography>
+      <Button variant="contained" onClick={setOpen(true)}>
+        Add New Card
+      </Button>
       {cards.length < 1 ? (
         <Box display="flex" flexDirection="column">
           <Typography variant="h6">No cards available</Typography>
           <Typography variant="caption">
             You can add a new card by clicking the button below.
           </Typography>
-          <Button variant="contained" onClick={() => navigate(`/user/${id}/cards/add`)}>
-            Add new card
-          </Button>
         </Box>
       ) : (
-        <p>todo</p>
+        <Box>
+          <CreditCardList />
+        </Box>
       )}
+      <AddDebitCardDialog open={open} handleClose={() => setOpen(false)} />
     </Box>
   );
 };
+
 export default CardManagement;

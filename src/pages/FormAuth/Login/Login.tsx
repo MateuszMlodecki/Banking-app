@@ -12,7 +12,7 @@ import { FormTextfield } from 'components';
 import axios from 'axios';
 import { useRequest } from 'utils/hooks/useRequest';
 
-export const Login = () => {
+const Login = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const { setErrorAlert, setSuccessAlert } = useAlertContext();
   const { request } = useRequest();
@@ -124,3 +124,5 @@ export const Login = () => {
     </Box>
   );
 };
+
+export default Login;
