@@ -34,7 +34,7 @@ const CardManagement: React.FC = () => {
       }}
     >
       <Typography variant="h2">Card Management</Typography>
-      <Button variant="contained" onClick={setOpen(true)}>
+      <Button variant="contained" onClick={() => setOpen(true)}>
         Add New Card
       </Button>
       {cards.length < 1 ? (
