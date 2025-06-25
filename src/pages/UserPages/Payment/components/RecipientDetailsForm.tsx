@@ -8,6 +8,7 @@ import { PaymentFormValues } from '../Payment';
 import axios from 'axios';
 import { useRequest } from 'utils/hooks/useRequest';
 import { useParams } from 'react-router-dom';
+import { formatAccountNumber } from 'utils';
 
 interface User {
   id: string;
@@ -47,7 +48,8 @@ export const RecipientDetailsForm: FC<RecipientDetailsFormProps> = ({
   }, [userId]);
 
   useEffect(() => {
-    const accountNumber = users.find(user => user.id === receiverId)?.accountNumber;
+    const rawAccountNumber = users.find(user => user.id === receiverId)?.accountNumber;
+    const accountNumber = rawAccountNumber ? formatAccountNumber(rawAccountNumber) : '';
     setValue('receiverAccountNumber', accountNumber || '');
   }, [receiverId, setValue, users]);
 

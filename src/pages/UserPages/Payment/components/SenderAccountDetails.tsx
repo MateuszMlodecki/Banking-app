@@ -1,7 +1,6 @@
 import { Box, InputAdornment, TextField, Typography, useTheme } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import React, { FC, useEffect, useState } from 'react';
-import { useLoading } from 'context';
 import axios from 'axios';
 import { formatAccountNumber } from 'utils';
 import { useRequest } from 'utils/hooks/useRequest';
@@ -11,9 +10,11 @@ type SenderAccountDetailsProps = {
   userId: string;
 };
 
-export const SenderAccountDetails: FC<SenderAccountDetailsProps> = ({ userId }) => {
+export const SenderAccountDetails: FC<SenderAccountDetailsProps> = ({
+  userId,
+  setSenderBalance,
+}) => {
   const theme = useTheme();
-  const { setLoading } = useLoading();
   const { request } = useRequest();
 
   const [userDetails, setUserDetails] = useState<{ accountNumber: string; balance: number }>();
@@ -21,12 +22,11 @@ export const SenderAccountDetails: FC<SenderAccountDetailsProps> = ({ userId }) 
   useEffect(() => {
     const fetchAccountData = async () => {
       await request(async () => {
-        setLoading(true);
         const response = await axios.get(`/user/${userId}/account`);
-        setUserDetails({
-          accountNumber: formatAccountNumber(response.data.accountNumber),
-          balance: response.data.balance,
-        });
+        const formattedAccount = formatAccountNumber(response.data.accountNumber);
+        const balance = response.data.balance;
+        setUserDetails({ accountNumber: formattedAccount, balance });
+        setSenderBalance(balance);
       });
     };
     fetchAccountData();

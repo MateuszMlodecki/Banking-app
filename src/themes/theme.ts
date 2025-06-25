@@ -120,29 +120,49 @@ export const theme = createTheme({
   },
 
   components: {
-    MuiPopover: {
+    MuiIconButton: {
       styleOverrides: {
-        paper: {
-          backgroundColor: '#333333',
+        root: {
           color: '#F7F5F2',
         },
       },
     },
 
-    MuiPickersDay: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            color: '#F7F5F2',
+          },
+          '& fieldset': {
+            borderColor: '#F7F5F2',
+          },
+          '&:hover fieldset': {
+            borderColor: '#F7F5F2',
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: '#F7F5F2',
+          },
+        },
+      },
+    },
+    MuiInputLabel: {
       styleOverrides: {
         root: {
           color: '#F7F5F2',
-          '&.Mui-selected': {
-            backgroundColor: '#690DAD',
-            color: '#fff',
-            '&:hover': {
-              backgroundColor: '#520A85',
-            },
+          '&.Mui-focused': {
+            color: '#F7F5F2',
+            borderColor: '#F7F5F2',
           },
-          '&.Mui-disabled': {
-            color: '#666',
-          },
+        },
+      },
+    },
+
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#333333',
+          color: '#F7F5F2',
         },
       },
     },
