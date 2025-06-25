@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -53,25 +53,28 @@ export const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClos
     control,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm<{ online: number; inStore: number; atm: number }>({
     resolver: yupResolver(EditLimitsSchema),
     mode: 'onChange',
     defaultValues: {
-      online: 0,
-      inStore: 0,
-      atm: 0,
+      online: card.limits.online,
+      inStore: card.limits.inStore,
+      atm: card.limits.atm,
     },
   });
 
+  useEffect(() => {
+    reset({
+      online: card.limits.online,
+      inStore: card.limits.inStore,
+      atm: card.limits.atm,
+    });
+  }, [card, reset]);
+
   const onSubmit = async (data: { online: number; inStore: number; atm: number }) => {
     await request(async () => {
-      await axios.put(`/user/${userId}/cards/${card._id}/limits`, {
-        limits: {
-          online: data.online,
-          inStore: data.inStore,
-          atm: data.atm,
-        },
-      });
+      await axios.put(`/user/${userId}/cards/${card._id}/limits`, { limits: data });
       onClose();
     });
   };
@@ -82,7 +85,7 @@ export const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClos
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle>Edit card limits</DialogTitle>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Box display="flex" flexDirection="column" gap={3} mt={1}>
             {(['online', 'inStore', 'atm'] as const).map(field => (
@@ -127,7 +130,7 @@ export const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClos
             Save
           </Button>
         </DialogActions>
-      </form>
+      </Box>
     </Dialog>
   );
 };

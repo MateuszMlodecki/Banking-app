@@ -7,8 +7,8 @@ import { Typography } from '@mui/material';
 import { FormAutocomplete } from 'components';
 
 const CARD_DETAILS_OPTIONS = [
-  { label: 'Visa', value: 'visa' },
-  { label: 'MasterCard', value: 'mastercard' },
+  { label: 'Visa', value: 'Visa' },
+  { label: 'MasterCard', value: 'Mastercard' },
 ];
 
 const validSubtypes = CARD_DETAILS_OPTIONS.map(option => option.label);
