@@ -1,10 +1,9 @@
-import { Box } from '@mui/material';
-import { CreditCard } from 'Pages/UserPages/Overview/components/AccountNumberDisplayer';
+import { Box, Typography } from '@mui/material';
 
 const Overview = () => {
   return (
     <Box sx={{ display: 'flex' }}>
-      <CreditCard />
+      <Typography>Overview placeholder</Typography>
     </Box>
   );
 };
