@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { Box, Typography, Button, Paper, Divider } from '@mui/material';
 import { paymentSchema } from 'utils';
 import { useAlertContext } from 'context';
@@ -49,19 +49,20 @@ const Payment = () => {
 
   const { request } = useRequest();
 
-  const currentAmount = watch('amount');
+  const currentAmount = useWatch({
+    control,
+    name: 'amount',
+    defaultValue: '',
+  });
 
   useEffect(() => {
-    const parsedAmount = Number(currentAmount?.replace(',', '.').trim());
-
+    const parsedAmount = Number(currentAmount.replace(',', '.').trim());
     if (!isNaN(parsedAmount) && parsedAmount > senderBalance) {
-      setError('amount', {
-        message: 'Insufficient balance',
-      });
+      setError('amount', { message: 'Insufficient balance' });
       return;
     }
     clearErrors('amount');
-  }, [currentAmount]);
+  }, [currentAmount, senderBalance, setError, clearErrors]);
 
   const onSubmit = async (data: PaymentFormValues) => {
     await request(async () => {
