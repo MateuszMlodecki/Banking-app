@@ -47,37 +47,25 @@ export type CardType = {
     atm: number;
   };
   _id: string;
-  userId?: string;
+  userId: string;
   cardNumber: string;
   expiryDate: string;
   type: string;
   subtype: string;
   status: string;
-};
-
-export type UnlockCardData = {
-  cardNumber: string;
   cvc: string;
 };
 
 export type CardItemProps = {
   card: CardType;
-  unlockedData?: UnlockCardData;
+  isUnlocked: boolean;
   onClick: (card: CardType) => void;
 };
 
-export const CardItem: FC<CardItemProps> = ({ card, unlockedData, onClick }) => {
+export const CardItem: FC<CardItemProps> = ({ card, isUnlocked = false, onClick }) => {
   const cardKey = card._id || '';
 
-  const displayNumber = unlockedData
-    ? unlockedData.cardNumber
-    : (() => {
-        const raw = card.cardNumber.replace(/-/g, '');
-        const first4 = raw.slice(0, 4);
-        const last4 = raw.slice(-4);
-        return `${first4}-****-****-${last4}`;
-      })();
-
+  const displayNumber = card.cardNumber;
   const logoSrc = card.subtype === 'mastercard' ? MasterCardLogo : VisaLogo;
 
   const label = {
@@ -85,36 +73,40 @@ export const CardItem: FC<CardItemProps> = ({ card, unlockedData, onClick }) => 
     debit: 'Debit',
     kids: 'Kids',
   }[card.type];
+
   return (
     <CardContainer onClick={() => onClick(card)} key={cardKey}>
       <CardTop>
         <Typography variant="h6" sx={{ fontSize: 16 }}>
           {label}
         </Typography>
-        <img src={logoSrc} style={{ width: 60 }} />
+        <img src={logoSrc} style={{ width: 60 }} alt={`${card.subtype} logo`} />
       </CardTop>
 
       <CardMiddle>{displayNumber}</CardMiddle>
 
       <CardBottom>
-        <Box>
-          <Typography variant="subtitle2" sx={{ fontSize: 10 }}>
-            Status
-          </Typography>
-          <Typography variant="body2">{card.status}</Typography>
-        </Box>
-        <Box>
-          <Typography variant="subtitle2" sx={{ fontSize: 10 }}>
-            Expires
-          </Typography>
-          <Typography variant="body2">{card.expiryDate}</Typography>
-        </Box>
-        {unlockedData && (
+        {isUnlocked && card.expiryDate && (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontSize: 10 }}>
+              Expires
+            </Typography>
+            <Typography variant="body2">{card.expiryDate}</Typography>
+          </Box>
+        )}
+        {isUnlocked && card.cvc && (
           <Box>
             <Typography variant="subtitle2" sx={{ fontSize: 10 }}>
               CVC
             </Typography>
-            <Typography variant="body2">{unlockedData.cvc}</Typography>
+            <Typography variant="body2">{card.cvc}</Typography>
+          </Box>
+        )}
+        {!isUnlocked && (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontSize: 10, opacity: 0.7 }}>
+              Unlock to see details
+            </Typography>
           </Box>
         )}
       </CardBottom>

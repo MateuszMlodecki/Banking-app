@@ -5,24 +5,21 @@ import { useParams } from 'react-router-dom';
 import { AddDebitCardDialog } from '../AddCard/AddDebitCardDialog';
 import { CreditCardList } from './CreditCardList';
 import { useRequest } from 'utils/hooks/useRequest';
-
-type Card = {
-  id: string;
-  cardNumber: string;
-};
+import { CardType } from 'components/CardItem';
 
 const CardManagement: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const [cards, setCards] = useState<Card[]>([]);
-  const { userId } = useParams();
+  const [cards, setCards] = useState<CardType[]>([]);
+  const { id: userId = '' } = useParams();
   const { request } = useRequest();
 
   useEffect(() => {
     request(async () => {
       const { data } = await axios.get(`/user/${userId}/cards`);
       setCards(data.cards);
+      console.log(data.cards);
     });
-  }, [userId, request]);
+  }, [userId]);
 
   return (
     <Box
@@ -30,14 +27,17 @@ const CardManagement: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        height: 'calc(100vh - 64px)',
+        flex: 1,
         gap: '1rem',
+        overflowY: 'auto',
       }}
     >
       <Typography variant="h2">Card Management</Typography>
       <Button variant="contained" onClick={() => setOpen(true)}>
         Add New Card
       </Button>
-      {cards.length < 1 ? (
+      {cards.length === 0 ? (
         <Box display="flex" flexDirection="column">
           <Typography variant="h6">No cards available</Typography>
           <Typography variant="caption">
@@ -45,9 +45,7 @@ const CardManagement: React.FC = () => {
           </Typography>
         </Box>
       ) : (
-        <Box>
-          <CreditCardList />
-        </Box>
+        <CreditCardList cards={cards} />
       )}
       <AddDebitCardDialog open={open} handleClose={() => setOpen(false)} />
     </Box>

@@ -159,3 +159,7 @@ Praca domowa 5.06
 2. Przerobic stepper z uzupelnieniem profilu
 3. Generowac Numer Konta zaraz przy rejestracji zamiast wpisywac z reki istniejacy
 4. Sprawdzic organizacje struktury folderow przeniesc do odpowiednich
+
+Praca domowa 16.06
+
+Dostosowac front do backendu

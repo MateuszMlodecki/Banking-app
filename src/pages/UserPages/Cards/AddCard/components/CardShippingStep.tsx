@@ -17,10 +17,7 @@ const validationSchema = yup.object({
     .string()
     .required('Date of birth is required')
     .matches(/^\d{2}-\d{2}-\d{4}$/, 'Date must be in DD-MM-YYYY format'),
-  confirmation: yup
-    .boolean()
-    .default(false)
-    .oneOf([true], 'You must confirm that the data is correct'),
+  confirmation: yup.boolean().default(false),
 });
 
 interface FormValues {

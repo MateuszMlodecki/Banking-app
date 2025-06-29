@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios-config';
-import { CardItem, CardType, UnlockCardData } from 'components/CardItem';
+import { CardItem, CardType } from 'components/CardItem';
 import { UnlockCardDialog } from './UnlockCardDialog';
 
 import SpeedDial from '@mui/material/SpeedDial';
@@ -15,25 +15,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import { EditLimitsDialog } from './EditLimitsDialog';
 import { useRequest } from 'utils/hooks/useRequest';
 
-export const CreditCardList = () => {
+export const CreditCardList: FC<{ cards: CardType[] }> = ({ cards }) => {
   const { id: userId = '' } = useParams();
-  const [cards, setCards] = useState<CardType[]>([]);
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
-  const [unlockedCards, setUnlockedCards] = useState<{
-    [key: string]: UnlockCardData;
-  }>({});
+  const [unlockedCards, setUnlockedCards] = useState<Record<string, CardType>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [limitDialogOpen, setLimitDialogOpen] = useState(false);
   const [limitCard, setLimitCard] = useState<CardType | null>(null);
   const { request } = useRequest();
-
-  useEffect(() => {
-    request(async () => {
-      const { data } = await axios.get(`/user/${userId}/cards`);
-      setCards(data.cards);
-    });
-  }, [userId]);
 
   const handleCardClick = (card: CardType) => {
     const cardKey = card._id;
@@ -44,21 +34,26 @@ export const CreditCardList = () => {
     setDialogOpen(true);
   };
 
-  const handleUnlock = async (pin: string) => {
+  const handleUnlock = async (password: string) => {
     if (!selectedCard) return;
 
     request(async () => {
-      const { data } = await axios.post(`/user/${userId}/cards/${selectedCard._id}/unlock`, {
-        pin,
-      });
+      const { data } = await axios.post<{
+        cardNumber: string;
+        cvc: string;
+        cardExpiry: string;
+      }>(`/user/${userId}/cards/${selectedCard._id}/unlock`, { password });
 
-      const cardKey = String(selectedCard._id);
+      const fullCard: CardType = {
+        ...selectedCard,
+        cardNumber: data.cardNumber,
+        cvc: data.cvc,
+        expiryDate: data.cardExpiry,
+      };
+
       setUnlockedCards(prev => ({
         ...prev,
-        [cardKey]: {
-          cardNumber: data.cardNumber,
-          cvc: data.cvc,
-        },
+        [selectedCard._id]: fullCard,
       }));
 
       handleDialogClose();
@@ -82,7 +77,7 @@ export const CreditCardList = () => {
     return request(async () => {
       await axios.delete(`/user/${userId}/cards/${cardKey}`);
 
-      setCards(prev => prev.filter(card => card._id !== cardKey));
+      //  setCards(prev => prev.filter(card => card._id !== cardKey));
       setUnlockedCards(prev => {
         const copy = { ...prev };
         delete copy[cardKey];
@@ -127,11 +122,7 @@ export const CreditCardList = () => {
               }}
             >
               <Box onClick={() => handleCardClick(card)}>
-                <CardItem
-                  card={card}
-                  unlockedData={unlockedData}
-                  onClick={() => handleCardClick(card)}
-                />
+                <CardItem card={card} isUnlocked={false} onClick={() => handleCardClick(card)} />
               </Box>
 
               {unlockedData && (

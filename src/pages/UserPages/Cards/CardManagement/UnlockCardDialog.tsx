@@ -7,6 +7,7 @@ import {
   Button,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 
 interface UnlockCardDialogProps {
@@ -23,6 +24,7 @@ export const UnlockCardDialog: React.FC<UnlockCardDialogProps> = ({
   error,
 }) => {
   const [pin, setPin] = useState('');
+  const theme = useTheme();
 
   const handleUnlock = async () => {
     if (!pin) return;
@@ -37,16 +39,16 @@ export const UnlockCardDialog: React.FC<UnlockCardDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Enter your PIN</DialogTitle>
+      <DialogTitle>Enter your PASSWORD</DialogTitle>
       <DialogContent>
         <TextField
-          label="PIN"
+          label="PASSWORD"
           type="password"
           value={pin}
           onChange={e => setPin(e.target.value)}
           fullWidth
           autoFocus
-          inputProps={{ maxLength: 6 }}
+          sx={{ color: theme.palette.primary.contrastText }}
         />
         {error && (
           <Typography color="error" mt={1}>
@@ -55,8 +57,14 @@ export const UnlockCardDialog: React.FC<UnlockCardDialogProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleUnlock}>
+        <Button variant="contained" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: theme.palette.secondary.main }}
+          onClick={handleUnlock}
+        >
           Reveal
         </Button>
       </DialogActions>
