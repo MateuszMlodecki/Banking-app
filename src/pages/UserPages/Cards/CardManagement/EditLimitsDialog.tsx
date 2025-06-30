@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -53,7 +53,6 @@ export const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClos
     control,
     handleSubmit,
     formState: { errors, isValid },
-    reset,
   } = useForm<{ online: number; inStore: number; atm: number }>({
     resolver: yupResolver(EditLimitsSchema),
     mode: 'onChange',
@@ -63,14 +62,6 @@ export const EditLimitsDialog: React.FC<EditLimitsDialogProps> = ({ open, onClos
       atm: card.limits.atm,
     },
   });
-
-  useEffect(() => {
-    reset({
-      online: card.limits.online,
-      inStore: card.limits.inStore,
-      atm: card.limits.atm,
-    });
-  }, [card, reset]);
 
   const onSubmit = async (data: { online: number; inStore: number; atm: number }) => {
     await request(async () => {

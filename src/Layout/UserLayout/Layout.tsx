@@ -21,7 +21,7 @@ export const Layout: React.FC = () => {
           p: 3,
           backgroundColor: theme.palette.primary.dark,
           marginTop: '64px',
-          overflow: 'hidden',
+          overflow: 'auto',
         }}
       >
         <LayoutContent />
