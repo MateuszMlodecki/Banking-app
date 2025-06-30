@@ -77,7 +77,6 @@ export const CreditCardList: FC<{ cards: CardType[] }> = ({ cards }) => {
     return request(async () => {
       await axios.delete(`/user/${userId}/cards/${cardKey}`);
 
-      //  setCards(prev => prev.filter(card => card._id !== cardKey));
       setUnlockedCards(prev => {
         const copy = { ...prev };
         delete copy[cardKey];
