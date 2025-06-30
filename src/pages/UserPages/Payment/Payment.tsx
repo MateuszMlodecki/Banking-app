@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box, Typography, Button, Paper, Divider } from '@mui/material';
-import { paymentSchema } from 'utils';
 import { useAlertContext } from 'context';
 import { theme } from 'themes';
 import axios from 'axios';
@@ -11,6 +10,10 @@ import { RecipientDetailsForm } from './components/RecipientDetailsForm';
 import { PaymentDetails } from './components/PaymentDetails';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRequest } from 'utils/hooks/useRequest';
+import * as yup from 'yup';
+import { RecurringPaymentDetails } from './components/RecurringPayment';
+
+//Przypominajnik (uwzglednic w backendzie przelew powtarzalny)
 
 export interface PaymentFormValues {
   receiverId: string;
@@ -27,14 +30,37 @@ const Payment = () => {
   const navigate = useNavigate();
   const { id: userId = '' } = useParams();
 
+  const getPaymentSchema = () => {
+    return yup.object().shape({
+      receiverId: yup.string().required('Receiver ID is required'),
+      receiverName: yup.string(),
+      receiverAccountNumber: yup.string().required('Account number is required'),
+      amount: yup
+        .string()
+        .required('Amount is required')
+        .test('sufficient-balance', 'Insufficient balance', function (value) {
+          if (!value) return true;
+          const parsedAmount = Number(value.replace(',', '.').trim());
+          if (isNaN(parsedAmount)) return true;
+          return parsedAmount <= senderBalance;
+        })
+        .test('positive-amount', 'Amount must be positive', function (value) {
+          if (!value) return true;
+          const parsedAmount = Number(value.replace(',', '.').trim());
+          if (isNaN(parsedAmount)) return false;
+          return parsedAmount > 0;
+        }),
+      date: yup.string().required('Date is required'),
+      title: yup.string().required('Title is required'),
+    });
+  };
+
   const {
     control,
     handleSubmit,
     formState: { isSubmitting, errors, isValid },
     watch,
     setValue,
-    setError,
-    clearErrors,
   } = useForm<PaymentFormValues>({
     defaultValues: {
       receiverId: '',
@@ -44,25 +70,11 @@ const Payment = () => {
       date: new Date().toISOString().split('T')[0],
       title: '',
     },
-    resolver: yupResolver(paymentSchema),
+    resolver: yupResolver(getPaymentSchema()),
+    mode: 'onChange',
   });
 
   const { request } = useRequest();
-
-  const currentAmount = useWatch({
-    control,
-    name: 'amount',
-    defaultValue: '',
-  });
-
-  useEffect(() => {
-    const parsedAmount = Number(currentAmount.replace(',', '.').trim());
-    if (!isNaN(parsedAmount) && parsedAmount > senderBalance) {
-      setError('amount', { message: 'Insufficient balance' });
-      return;
-    }
-    clearErrors('amount');
-  }, [currentAmount, senderBalance, setError, clearErrors]);
 
   const onSubmit = async (data: PaymentFormValues) => {
     await request(async () => {
@@ -122,6 +134,7 @@ const Payment = () => {
 
         <PaymentDetails control={control} />
 
+        <RecurringPaymentDetails control={control} />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, gap: 2 }}>
           <Button
             variant="outlined"
