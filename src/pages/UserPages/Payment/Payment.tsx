@@ -68,7 +68,6 @@ const Payment = () => {
     await request(async () => {
       const response = await axios.post(`/user/${userId}/transaction`, {
         receiverId: data.receiverId,
-        receiverAccountNumber: data.receiverAccountNumber,
         amount: data.amount,
         date: data.date,
         title: data.title,

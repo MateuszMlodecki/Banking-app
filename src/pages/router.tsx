@@ -11,7 +11,7 @@ const StepperParent = lazy(() => import('Pages/ProfileDetails/StepperParent'));
 
 const Overview = lazy(() => import('Pages/UserPages/Overview/Overview'));
 const Transactions = lazy(() => import('Pages/UserPages/Transactions'));
-const Reports = lazy(() => import('Pages/UserPages/Report'));
+const Reports = lazy(() => import('Pages/UserPages/Report/Report'));
 const Payment = lazy(() => import('Pages/UserPages/Payment/Payment'));
 const PageNotFound = lazy(() => import('Pages/PageNotFound'));
 

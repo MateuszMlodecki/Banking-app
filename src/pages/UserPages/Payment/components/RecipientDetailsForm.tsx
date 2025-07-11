@@ -50,7 +50,7 @@ export const RecipientDetailsForm: FC<RecipientDetailsFormProps> = ({
   useEffect(() => {
     const rawAccountNumber = users.find(user => user.id === receiverId)?.accountNumber;
     const accountNumber = rawAccountNumber ? formatAccountNumber(rawAccountNumber) : '';
-    setValue('receiverAccountNumber', accountNumber || '');
+    setValue('receiverAccountNumber', accountNumber);
   }, [receiverId, setValue, users]);
 
   return (
