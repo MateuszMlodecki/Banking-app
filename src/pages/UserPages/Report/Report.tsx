@@ -242,7 +242,17 @@ const Report = () => {
 
         <Paper sx={{ width: '100%' }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={activeTab} onChange={handleTabChange}>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              variant="fullWidth"
+              sx={{
+                '& .MuiTab-root': {
+                  flex: 1,
+                  maxWidth: 'none',
+                },
+              }}
+            >
               <Tab label="Yearly Overview" />
               <Tab label="Monthly Details" />
               <Tab label="Category Analysis" />
