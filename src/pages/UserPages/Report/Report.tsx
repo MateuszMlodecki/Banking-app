@@ -7,6 +7,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tabs,
+  Tab,
+  Paper,
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -43,6 +46,18 @@ interface CategoryReport {
   percentage: number;
 }
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+const TabPanel = ({ children, value, index }: TabPanelProps) => {
+  return (
+    <div hidden={value !== index}>{value === index && <Box sx={{ py: 3 }}>{children}</Box>}</div>
+  );
+};
+
 const categoryColumns: GridColDef[] = [
   {
     field: 'category',
@@ -70,50 +85,59 @@ const categoryColumns: GridColDef[] = [
 
 const Report = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [reports, setReports] = useState<Reports[]>([]);
-  const [monthyReports, setMonthyReports] = useState<Reports[]>([]);
-  // reports = {yearly: [], category: []}
+  const [yearReports, setYearReports] = useState<Reports[]>([]);
+  const [monthReports, setMonthReports] = useState<Reports[]>([]);
   const [categoryReports, setCategoryReports] = useState<CategoryReport[]>([]);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [reportType, setReportType] = useState<'expenses' | 'income'>('expenses');
+  const [activeTab, setActiveTab] = useState(0);
   const { id: userId = '' } = useParams();
   const { request } = useRequest();
 
-  console.log(selectedDate);
-  console.log(selectedMonth);
-  console.log(selectedDate);
   useEffect(() => {
-    const fetchData = async () => {
-      await Promise.all([
-        request(async () => {
-          const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);
-          setTransactions(response.data);
-        }),
-        request(async () => {
-          const response = await axios.get<{ reports: Reports[] }>(
-            `/user/${userId}/reports/year?year=${selectedYear}`,
-          );
-          setReports(response.data.reports);
-        }),
-        request(async () => {
-          const response = await axios.get<{ reports: Reports[] }>(
-            `/user/${userId}/reports/month?year=${selectedYear}&month=${selectedMonth}`,
-          );
-          setMonthyReports(response.data.reports);
-        }),
-      ]);
-    };
-
-    fetchData();
-  }, [userId, selectedYear, selectedMonth]);
+    fetchTransactions();
+  }, [userId]);
 
   useEffect(() => {
-    if (transactions.length > 0) {
+    if (activeTab === 0) {
+      fetchYearReport();
+    } else if (activeTab === 1) {
+      fetchMonthReport();
+    }
+  }, [userId, selectedYear, selectedMonth, activeTab]);
+
+  useEffect(() => {
+    if (transactions.length > 0 && activeTab === 2) {
       generateCategoryReports();
     }
-  }, [transactions, selectedYear, reportType]);
+  }, [transactions, selectedYear, reportType, activeTab]);
+
+  const fetchTransactions = async () => {
+    await request(async () => {
+      const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);
+      setTransactions(response.data);
+    });
+  };
+
+  const fetchYearReport = async () => {
+    await request(async () => {
+      const response = await axios.get<{ reports: Reports[] }>(
+        `/user/${userId}/reports/year?year=${selectedYear}`,
+      );
+      setYearReports(response.data.reports);
+    });
+  };
+
+  const fetchMonthReport = async () => {
+    await request(async () => {
+      const response = await axios.get<{ reports: Reports[] }>(
+        `/user/${userId}/reports/month?year=${selectedYear}&month=${selectedMonth}`,
+      );
+      setMonthReports(response.data.reports);
+    });
+  };
 
   const generateCategoryReports = () => {
     const categoryData: { [key: string]: { total: number; count: number } } = {};
@@ -156,8 +180,12 @@ const Report = () => {
     }
   };
 
-  const totalIncome = reports.reduce((sum, report) => sum + report.totalIncome, 0);
-  const totalExpenses = reports.reduce((sum, report) => sum + report.totalExpenses, 0);
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+
+  const totalIncome = yearReports.reduce((sum, report) => sum + report.totalIncome, 0);
+  const totalExpenses = yearReports.reduce((sum, report) => sum + report.totalExpenses, 0);
   const totalBalance = totalIncome - totalExpenses;
 
   return (
@@ -167,6 +195,7 @@ const Report = () => {
           Financial Reports
         </Typography>
 
+        {/* Summary Cards */}
         <Box
           sx={{
             display: 'flex',
@@ -212,58 +241,91 @@ const Report = () => {
           </Card>
         </Box>
 
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 2,
-            mb: 3,
-            flexWrap: 'wrap',
-            '& > *': { flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } },
-          }}
-        >
-          <DatePicker
-            label="Select Year"
-            value={selectedDate}
-            onChange={handleDateChange}
-            views={['year', 'month']}
-            sx={{ width: '100%' }}
-          />
-          <FormControl>
-            <InputLabel>Category Report Type</InputLabel>
-            <Select
-              value={reportType}
-              label="Category Report Type"
-              onChange={e => setReportType(e.target.value as 'expenses' | 'income')}
-            >
-              <MenuItem value="expenses">Expenses</MenuItem>
-              <MenuItem value="income">Income</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+        {/* Tabs */}
+        <Paper sx={{ width: '100%' }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={activeTab} onChange={handleTabChange}>
+              <Tab label="Yearly Overview" />
+              <Tab label="Monthly Details" />
+              <Tab label="Category Analysis" />
+            </Tabs>
+          </Box>
 
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            Monthly Analysis - {selectedYear}
-          </Typography>
-          <YearReport reports={reports} />
-          <MonthReport reports={monthyReports} />
-        </Box>
+          {/* Yearly Overview Tab */}
+          <TabPanel value={activeTab} index={0}>
+            <Box sx={{ mb: 3 }}>
+              <DatePicker
+                label="Select Year"
+                value={dayjs().year(selectedYear)}
+                onChange={handleDateChange}
+                views={['year']}
+                sx={{ width: { xs: '100%', md: '300px' } }}
+              />
+            </Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Monthly Breakdown - {selectedYear}
+            </Typography>
+            <YearReport reports={yearReports} />
+          </TabPanel>
 
-        <Box>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            {reportType === 'expenses' ? 'Expense' : 'Income'} Categories - {selectedYear}
-          </Typography>
-          <DataGrid
-            rows={categoryReports.map((report, index) => ({
-              id: `${report.category}-${index}`,
-              ...report,
-            }))}
-            columns={categoryColumns}
-            disableRowSelectionOnClick
-            autoHeight
-            localeText={{ noRowsLabel: `No ${reportType} data available for selected year!` }}
-          />
-        </Box>
+          {/* Monthly Details Tab */}
+          <TabPanel value={activeTab} index={1}>
+            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+              <DatePicker
+                label="Select Month & Year"
+                value={selectedDate}
+                onChange={handleDateChange}
+                views={['year', 'month']}
+                sx={{ width: { xs: '100%', md: '300px' } }}
+              />
+            </Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Daily Breakdown -{' '}
+              {dayjs()
+                .month(selectedMonth - 1)
+                .format('MMMM')}{' '}
+              {selectedYear}
+            </Typography>
+            <MonthReport reports={monthReports} />
+          </TabPanel>
+
+          {/* Category Analysis Tab */}
+          <TabPanel value={activeTab} index={2}>
+            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+              <DatePicker
+                label="Select Year"
+                value={dayjs().year(selectedYear)}
+                onChange={handleDateChange}
+                views={['year']}
+                sx={{ width: { xs: '100%', md: '300px' } }}
+              />
+              <FormControl sx={{ width: { xs: '100%', md: '300px' } }}>
+                <InputLabel>Report Type</InputLabel>
+                <Select
+                  value={reportType}
+                  label="Report Type"
+                  onChange={e => setReportType(e.target.value as 'expenses' | 'income')}
+                >
+                  <MenuItem value="expenses">Expenses</MenuItem>
+                  <MenuItem value="income">Income</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              {reportType === 'expenses' ? 'Expense' : 'Income'} Categories - {selectedYear}
+            </Typography>
+            <DataGrid
+              rows={categoryReports.map((report, index) => ({
+                id: `${report.category}-${index}`,
+                ...report,
+              }))}
+              columns={categoryColumns}
+              disableRowSelectionOnClick
+              autoHeight
+              localeText={{ noRowsLabel: `No ${reportType} data available for selected year!` }}
+            />
+          </TabPanel>
+        </Paper>
       </Box>
     </LocalizationProvider>
   );
