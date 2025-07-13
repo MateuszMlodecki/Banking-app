@@ -260,7 +260,13 @@ const Report = () => {
           </Box>
 
           <TabPanel value={activeTab} index={0}>
-            <Box sx={{ mb: 3 }}>
+            <Box
+              sx={{
+                mb: 3,
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
               <DatePicker
                 label="Select Year"
                 value={dayjs().year(selectedYear)}
@@ -269,14 +275,22 @@ const Report = () => {
                 sx={{ width: { xs: '100%', md: '300px' } }}
               />
             </Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
               Monthly Breakdown - {selectedYear}
             </Typography>
             <YearReport reports={yearReports} />
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                mb: 3,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
               <DatePicker
                 label="Select Month & Year"
                 value={selectedDate}
@@ -285,18 +299,26 @@ const Report = () => {
                 sx={{ width: { xs: '100%', md: '300px' } }}
               />
             </Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Daily Breakdown -{' '}
+            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+              Daily Breakdown -
               {dayjs()
                 .month(selectedMonth - 1)
-                .format('MMMM')}{' '}
+                .format('MMMM')}
               {selectedYear}
             </Typography>
             <MonthReport reports={monthReports} />
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>
-            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                mb: 3,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
               <DatePicker
                 label="Select Year"
                 value={dayjs().year(selectedYear)}
@@ -316,7 +338,7 @@ const Report = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
               {reportType === 'expenses' ? 'Expense' : 'Income'} Categories - {selectedYear}
             </Typography>
             <DataGrid
