@@ -53,9 +53,9 @@ interface TabPanelProps {
 }
 
 const TabPanel = ({ children, value, index }: TabPanelProps) => {
-  return (
-    <div hidden={value !== index}>{value === index && <Box sx={{ py: 3 }}>{children}</Box>}</div>
-  );
+  if (value !== index) return null;
+
+  return <Box sx={{ py: 3 }}>{children}</Box>;
 };
 
 const categoryColumns: GridColDef[] = [
