@@ -195,7 +195,6 @@ const Report = () => {
           Financial Reports
         </Typography>
 
-        {/* Summary Cards */}
         <Box
           sx={{
             display: 'flex',
@@ -241,7 +240,6 @@ const Report = () => {
           </Card>
         </Box>
 
-        {/* Tabs */}
         <Paper sx={{ width: '100%' }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={activeTab} onChange={handleTabChange}>
@@ -251,7 +249,6 @@ const Report = () => {
             </Tabs>
           </Box>
 
-          {/* Yearly Overview Tab */}
           <TabPanel value={activeTab} index={0}>
             <Box sx={{ mb: 3 }}>
               <DatePicker
@@ -268,7 +265,6 @@ const Report = () => {
             <YearReport reports={yearReports} />
           </TabPanel>
 
-          {/* Monthly Details Tab */}
           <TabPanel value={activeTab} index={1}>
             <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
               <DatePicker
@@ -289,7 +285,6 @@ const Report = () => {
             <MonthReport reports={monthReports} />
           </TabPanel>
 
-          {/* Category Analysis Tab */}
           <TabPanel value={activeTab} index={2}>
             <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
               <DatePicker
@@ -321,7 +316,6 @@ const Report = () => {
               }))}
               columns={categoryColumns}
               disableRowSelectionOnClick
-              autoHeight
               localeText={{ noRowsLabel: `No ${reportType} data available for selected year!` }}
             />
           </TabPanel>
