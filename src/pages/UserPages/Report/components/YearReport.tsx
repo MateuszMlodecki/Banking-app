@@ -1,7 +1,24 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { FC } from 'react';
-import { Reports } from '../Report';
+import { FC, useEffect, useState } from 'react';
+import { useRequest } from 'utils/hooks/useRequest';
+import axios from 'axios';
+
+export interface YearReportData {
+  month: string;
+  year: number;
+  totalIncome: number;
+  totalExpenses: number;
+  balance: number;
+  transactionCount: number;
+}
+
+interface YearReportProps {
+  userId: string;
+  selectedYear: number;
+  onSummaryUpdate?: (totalIncome: number, totalExpenses: number) => void;
+  isActive: boolean;
+}
 
 const columns: GridColDef[] = [
   {
@@ -48,16 +65,58 @@ const columns: GridColDef[] = [
   },
 ];
 
-export const YearReport: FC<{ reports: Reports[] }> = ({ reports }) => {
+export const YearReport: FC<YearReportProps> = ({
+  userId,
+  selectedYear,
+  onSummaryUpdate,
+  isActive,
+}) => {
+  const { request } = useRequest();
+  const [loading, setLoading] = useState(false);
+  const [reports, setReports] = useState<YearReportData[]>([]);
+
+  useEffect(() => {
+    if (!isActive || !userId) return;
+
+    const fetchReport = async () => {
+      setLoading(true);
+      await request(async () => {
+        const response = await axios.get<{ reports: YearReportData[] }>(
+          `/user/${userId}/reports/year?year=${selectedYear}`,
+        );
+        setReports(response.data.reports);
+
+        if (onSummaryUpdate) {
+          const totalIncome = response.data.reports.reduce((sum, r) => sum + r.totalIncome, 0);
+          const totalExpenses = response.data.reports.reduce((sum, r) => sum + r.totalExpenses, 0);
+          onSummaryUpdate(totalIncome, totalExpenses);
+        }
+      }, false);
+      setLoading(false);
+    };
+
+    fetchReport();
+  }, [userId, selectedYear, isActive]);
+
   return (
-    <DataGrid
-      rows={reports.map((report, index) => ({
-        id: `${report.month}-${report.year}-${index}`,
-        ...report,
-      }))}
-      columns={columns}
-      disableRowSelectionOnClick
-      localeText={{ noRowsLabel: 'No data available for selected year!' }}
-    />
+    <>
+      <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+        Monthly Breakdown - {selectedYear}
+      </Typography>
+      <DataGrid
+        rows={reports.map((report, index) => ({
+          id: `${report.month}-${report.year}-${index}`,
+          ...report,
+        }))}
+        columns={columns}
+        loading={loading}
+        disableRowSelectionOnClick
+        localeText={{ noRowsLabel: 'No data available for selected year!' }}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 12 } },
+        }}
+        pageSizeOptions={[12]}
+      />
+    </>
   );
 };
