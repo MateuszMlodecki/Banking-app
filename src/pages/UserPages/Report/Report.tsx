@@ -11,40 +11,15 @@ import {
   Tab,
   Paper,
 } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
-import { useRequest } from 'utils/hooks/useRequest';
 import { YearReport } from './components/YearReport';
 import { MonthReport } from './components/MonthReport';
-
-interface Transaction {
-  title: string;
-  amount: string;
-  date: string;
-  isSent: boolean;
-}
-
-export interface Reports {
-  month: string;
-  year: number;
-  totalIncome: number;
-  totalExpenses: number;
-  balance: number;
-  transactionCount: number;
-}
-
-interface CategoryReport {
-  category: string;
-  totalAmount: number;
-  transactionCount: number;
-  percentage: number;
-}
+import { CategoryReport } from './components/CategoryReport';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -54,139 +29,86 @@ interface TabPanelProps {
 
 const TabPanel = ({ children, value, index }: TabPanelProps) => {
   if (value !== index) return null;
-
   return <Box sx={{ py: 3 }}>{children}</Box>;
 };
 
-const categoryColumns: GridColDef[] = [
-  {
-    field: 'category',
-    headerName: 'Category',
-    width: 200,
-  },
-  {
-    field: 'totalAmount',
-    headerName: 'Total Amount ($)',
-    width: 180,
-    renderCell: ({ row }) => <Box fontWeight="bold">{row.totalAmount.toFixed(2)}</Box>,
-  },
-  {
-    field: 'transactionCount',
-    headerName: 'Count',
-    width: 120,
-  },
-  {
-    field: 'percentage',
-    headerName: 'Percentage',
-    width: 120,
-    renderCell: ({ row }) => `${row.percentage.toFixed(1)}%`,
-  },
-];
+interface SummaryCardsProps {
+  totalIncome: number;
+  totalExpenses: number;
+}
+
+const SummaryCards = ({ totalIncome, totalExpenses }: SummaryCardsProps) => {
+  const totalBalance = totalIncome - totalExpenses;
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        gap: 2,
+        mb: 3,
+        flexWrap: 'wrap',
+        '& > *': { flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 16px)' } },
+      }}
+    >
+      <Card>
+        <CardContent>
+          <Typography variant="h6" color="success.main">
+            Total Income
+          </Typography>
+          <Typography variant="h4" fontWeight="bold">
+            +${totalIncome.toFixed(2)}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent>
+          <Typography variant="h6" color="error.main">
+            Total Expenses
+          </Typography>
+          <Typography variant="h4" fontWeight="bold">
+            -${totalExpenses.toFixed(2)}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent>
+          <Typography variant="h6" color={totalBalance >= 0 ? 'success.main' : 'error.main'}>
+            Net Balance
+          </Typography>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            color={totalBalance >= 0 ? 'success.main' : 'error.main'}
+          >
+            {totalBalance >= 0 ? '+' : ''}${totalBalance.toFixed(2)}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Box>
+  );
+};
 
 const Report = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [yearReports, setYearReports] = useState<Reports[]>([]);
-  const [monthReports, setMonthReports] = useState<Reports[]>([]);
-  const [categoryReports, setCategoryReports] = useState<CategoryReport[]>([]);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [reportType, setReportType] = useState<'expenses' | 'income'>('expenses');
   const [activeTab, setActiveTab] = useState(0);
+  const [summaryData, setSummaryData] = useState({ totalIncome: 0, totalExpenses: 0 });
   const { id: userId = '' } = useParams();
-  const { request } = useRequest();
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [userId]);
-
-  useEffect(() => {
-    if (activeTab === 0) {
-      fetchYearReport();
-    } else if (activeTab === 1) {
-      fetchMonthReport();
-    }
-  }, [userId, selectedYear, selectedMonth, activeTab]);
-
-  useEffect(() => {
-    if (transactions.length > 0 && activeTab === 2) {
-      generateCategoryReports();
-    }
-  }, [transactions, selectedYear, reportType, activeTab]);
-
-  const fetchTransactions = async () => {
-    await request(async () => {
-      const response = await axios.get<Transaction[]>(`/user/${userId}/transactions`);
-      setTransactions(response.data);
-    });
-  };
-
-  const fetchYearReport = async () => {
-    await request(async () => {
-      const response = await axios.get<{ reports: Reports[] }>(
-        `/user/${userId}/reports/year?year=${selectedYear}`,
-      );
-      setYearReports(response.data.reports);
-    });
-  };
-
-  const fetchMonthReport = async () => {
-    await request(async () => {
-      const response = await axios.get<{ reports: Reports[] }>(
-        `/user/${userId}/reports/month?year=${selectedYear}&month=${selectedMonth}`,
-      );
-      setMonthReports(response.data.reports);
-    });
-  };
-
-  const generateCategoryReports = () => {
-    const categoryData: { [key: string]: { total: number; count: number } } = {};
-    let totalAmount = 0;
-
-    transactions.forEach(transaction => {
-      const date = new Date(transaction.date);
-      if (date.getFullYear() !== selectedYear) return;
-
-      if (transaction.isSent === (reportType === 'expenses')) {
-        const category = transaction.title.split(' ')[0] || 'Other';
-        const amount = parseFloat(transaction.amount);
-
-        if (!categoryData[category]) {
-          categoryData[category] = { total: 0, count: 0 };
-        }
-
-        categoryData[category].total += amount;
-        categoryData[category].count++;
-        totalAmount += amount;
-      }
-    });
-
-    const reports: CategoryReport[] = Object.entries(categoryData).map(([category, data]) => ({
-      category,
-      totalAmount: data.total,
-      transactionCount: data.count,
-      percentage: totalAmount > 0 ? (data.total / totalAmount) * 100 : 0,
-    }));
-
-    reports.sort((a, b) => b.totalAmount - a.totalAmount);
-    setCategoryReports(reports);
-  };
+  const selectedYear = selectedDate ? selectedDate.year() : new Date().getFullYear();
+  const selectedMonth = selectedDate ? selectedDate.month() + 1 : new Date().getMonth() + 1;
 
   const handleDateChange = (newDate: Dayjs | null) => {
     setSelectedDate(newDate);
-    if (newDate) {
-      setSelectedYear(newDate.year());
-      setSelectedMonth(newDate.month() + 1);
-    }
   };
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
-  const totalIncome = yearReports.reduce((sum, report) => sum + report.totalIncome, 0);
-  const totalExpenses = yearReports.reduce((sum, report) => sum + report.totalExpenses, 0);
-  const totalBalance = totalIncome - totalExpenses;
+  const handleSummaryUpdate = (income: number, expenses: number) => {
+    setSummaryData({ totalIncome: income, totalExpenses: expenses });
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -195,78 +117,29 @@ const Report = () => {
           Financial Reports
         </Typography>
 
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 2,
-            mb: 3,
-            flexWrap: 'wrap',
-            '& > *': { flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 16px)' } },
-          }}
-        >
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color="success.main">
-                Total Income
-              </Typography>
-              <Typography variant="h4" fontWeight="bold">
-                +${totalIncome.toFixed(2)}
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color="error.main">
-                Total Expenses
-              </Typography>
-              <Typography variant="h4" fontWeight="bold">
-                -${totalExpenses.toFixed(2)}
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color={totalBalance >= 0 ? 'success.main' : 'error.main'}>
-                Net Balance
-              </Typography>
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                color={totalBalance >= 0 ? 'success.main' : 'error.main'}
-              >
-                {totalBalance >= 0 ? '+' : ''}${totalBalance.toFixed(2)}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
+        <SummaryCards {...summaryData} />
 
         <Paper sx={{ width: '100%' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              variant="fullWidth"
-              sx={{
-                '& .MuiTab-root': {
-                  flex: 1,
-                  maxWidth: 'none',
-                },
-              }}
-            >
-              <Tab label="Yearly Overview" />
-              <Tab label="Monthly Details" />
-              <Tab label="Category Analysis" />
-            </Tabs>
-          </Box>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="fullWidth"
+            sx={{
+              '& .MuiTab-root': {
+                flex: 1,
+                maxWidth: 'none',
+                borderBottom: 1,
+                borderColor: 'divider',
+              },
+            }}
+          >
+            <Tab label="Yearly Overview" />
+            <Tab label="Monthly Details" />
+            <Tab label="Category Analysis" />
+          </Tabs>
 
           <TabPanel value={activeTab} index={0}>
-            <Box
-              sx={{
-                mb: 3,
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-            >
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
               <DatePicker
                 label="Select Year"
                 value={dayjs().year(selectedYear)}
@@ -275,21 +148,17 @@ const Report = () => {
                 sx={{ width: { xs: '100%', md: '300px' } }}
               />
             </Box>
-            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-              Monthly Breakdown - {selectedYear}
-            </Typography>
-            <YearReport reports={yearReports} />
+            <YearReport
+              userId={userId}
+              selectedYear={selectedYear}
+              onSummaryUpdate={handleSummaryUpdate}
+              isActive={activeTab === 0}
+            />
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
             <Box
-              sx={{
-                display: 'flex',
-                gap: 2,
-                mb: 3,
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}
+              sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap', justifyContent: 'center' }}
             >
               <DatePicker
                 label="Select Month & Year"
@@ -299,25 +168,17 @@ const Report = () => {
                 sx={{ width: { xs: '100%', md: '300px' } }}
               />
             </Box>
-            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-              Daily Breakdown -
-              {dayjs()
-                .month(selectedMonth - 1)
-                .format('MMMM')}
-              {selectedYear}
-            </Typography>
-            <MonthReport reports={monthReports} />
+            <MonthReport
+              userId={userId}
+              selectedYear={selectedYear}
+              selectedMonth={selectedMonth}
+              isActive={activeTab === 1}
+            />
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>
             <Box
-              sx={{
-                display: 'flex',
-                gap: 2,
-                mb: 3,
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}
+              sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap', justifyContent: 'center' }}
             >
               <DatePicker
                 label="Select Year"
@@ -338,17 +199,11 @@ const Report = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-              {reportType === 'expenses' ? 'Expense' : 'Income'} Categories - {selectedYear}
-            </Typography>
-            <DataGrid
-              rows={categoryReports.map((report, index) => ({
-                id: `${report.category}-${index}`,
-                ...report,
-              }))}
-              columns={categoryColumns}
-              disableRowSelectionOnClick
-              localeText={{ noRowsLabel: `No ${reportType} data available for selected year!` }}
+            <CategoryReport
+              userId={userId}
+              selectedYear={selectedYear}
+              reportType={reportType}
+              isActive={activeTab === 2}
             />
           </TabPanel>
         </Paper>
